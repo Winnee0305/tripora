@@ -1,0 +1,49 @@
+# --------------------------
+# Flutter / Dart
+# --------------------------
+.dart_tool/
+.build/
+.packages
+.pub/
+pubspec.lock
+
+# Generated plugin files
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# --------------------------
+# Build outputs
+# --------------------------
+build/
+
+# --------------------------
+# Android
+# --------------------------
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# --------------------------
+# iOS
+# --------------------------
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Pods/
+ios/Podfile.lock
+ios/Runner.xcworkspace/
+ios/Runner/GeneratedPluginRegistrant.*
+
+# --------------------------
+# Editor / IDE
+# --------------------------
+.vscode/
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# --------------------------
+# System / OS
+# --------------------------
+.DS_Store
+*.log
