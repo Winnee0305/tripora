@@ -16,35 +16,47 @@ class AppTextStyles {
     fontSize: 24,
     fontWeight: ManropeFontWeight.semiBold,
     color: AppColors.darkPrimary,
+    letterSpacing: 1.2,
   );
 
   static const TextStyle heading2 = TextStyle(
     fontSize: 18,
     fontWeight: ManropeFontWeight.medium,
     color: AppColors.darkPrimary,
+    letterSpacing: 1.2,
   );
 
   static const TextStyle heading3 = TextStyle(
     fontSize: 16,
     fontWeight: ManropeFontWeight.semiBold,
     color: AppColors.darkPrimary,
+    letterSpacing: 1.2,
   );
 
   static const TextStyle subheading = TextStyle(
     fontSize: 14,
     fontWeight: ManropeFontWeight.medium,
     color: AppColors.textPrimary,
+    letterSpacing: 1.2,
   );
 
   static const TextStyle body = TextStyle(
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: ManropeFontWeight.medium,
     color: AppColors.textPrimary,
+    letterSpacing: 1.2,
   );
 
   static const TextStyle caption = TextStyle(
     fontSize: 10,
     fontWeight: ManropeFontWeight.medium,
     color: AppColors.textPrimary,
+    letterSpacing: 1.2,
   );
+}
+
+extension TextStyleX on TextStyle {
+  TextStyle alpha(double value) =>
+      copyWith(color: color?.withValues(alpha: value));
+  TextStyle weight(FontWeight w) => copyWith(fontWeight: w);
 }

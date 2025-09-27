@@ -38,4 +38,9 @@ class LoginViewModel extends ChangeNotifier {
     debugPrint("Forgot password for email: $_email");
     // Normally would trigger navigation or API call
   }
+
+  void register() {
+    debugPrint("Navigate to registration page");
+    // Normally would trigger navigation
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'text_style.dart';
+import 'shadow_theme.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
@@ -34,12 +35,26 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.surfaceBright,
-          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+          textStyle: AppTextStyles.subheading,
+          elevation: 0, // 👈 disable built-in shadow
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(24)),
           ),
         ),
       ),
+
+      // 👇 Add custom theme extension here
+      extensions: <ThemeExtension<dynamic>>[
+        ShadowTheme(
+          buttonShadows: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.16),
+              blurRadius: 10,
+              offset: const Offset(0, 0.4),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
