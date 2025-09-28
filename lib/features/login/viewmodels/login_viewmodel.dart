@@ -4,7 +4,7 @@ import '../models/login_request.dart';
 class LoginViewModel extends ChangeNotifier {
   String _email = '';
   String _password = '';
-  bool _isLoading = false; // <-- not final so it can change
+  bool _isLoading = false;
 
   String get email => _email;
   String get password => _password;
@@ -20,20 +20,21 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login() async {
+  /// Returns true if login successful
+  Future<bool> login() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Example async work
-      await Future.delayed(const Duration(seconds: 2));
-
+      await Future.delayed(const Duration(seconds: 2)); // simulate API call
       final request = LoginRequest(email: _email, password: _password);
       debugPrint("Logging in with: ${request.email}, ${request.password}");
 
-      // TODO: Call your API/auth service here
+      // TODO: call your auth API and check success
+      return true; // assume success
     } catch (e) {
       debugPrint("Login failed: $e");
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -42,11 +43,5 @@ class LoginViewModel extends ChangeNotifier {
 
   void forgotPassword() {
     debugPrint("Forgot password for email: $_email");
-    // Normally would trigger navigation or API call
-  }
-
-  void register() {
-    debugPrint("Navigate to registration page");
-    // Normally would trigger navigation
   }
 }
