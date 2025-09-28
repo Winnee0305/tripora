@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -62,47 +61,26 @@ class AuthPage extends StatelessWidget {
                         child: Center(
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 600),
+                            switchInCurve: Curves.easeIn,
+                            switchOutCurve: Curves.easeOut,
                             transitionBuilder: (child, animation) {
-                              final rotate = Tween(
-                                begin: pi,
-                                end: 0.0,
-                              ).animate(animation);
-                              return AnimatedBuilder(
-                                animation: rotate,
+                              return FadeTransition(
+                                opacity: animation,
                                 child: child,
-                                builder: (context, child) {
-                                  final isUnder =
-                                      (ValueKey(vm.isLoginMode) != child?.key);
-                                  var tilt =
-                                      ((animation.value - 0.5).abs() - 0.5) *
-                                      0.003;
-                                  tilt *= isUnder ? -1.0 : 1.0;
-
-                                  final value = isUnder
-                                      ? min(rotate.value, pi / 2)
-                                      : rotate.value;
-
-                                  return Transform(
-                                    transform: Matrix4.rotationY(value)
-                                      ..setEntry(3, 0, tilt),
-                                    alignment: Alignment.center,
-                                    child: child,
-                                  );
-                                },
                               );
                             },
                             child: vm.isLoginMode
                                 ? ChangeNotifierProvider(
+                                    key: const ValueKey(true),
                                     create: (_) => LoginViewModel(),
                                     child: LoginScreen(
-                                      key: const ValueKey(true),
                                       onToggleToRegister: vm.toggleMode,
                                     ),
                                   )
                                 : ChangeNotifierProvider(
+                                    key: const ValueKey(false),
                                     create: (_) => RegisterViewModel(),
                                     child: RegisterScreen(
-                                      key: const ValueKey(false),
                                       onToggleToLogin: vm.toggleMode,
                                     ),
                                   ),
