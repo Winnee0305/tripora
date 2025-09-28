@@ -4,7 +4,7 @@ import '../models/login_request.dart';
 class LoginViewModel extends ChangeNotifier {
   String _email = '';
   String _password = '';
-  bool _isLoading = false;
+  bool _isLoading = false; // <-- not final so it can change
 
   String get email => _email;
   String get password => _password;
@@ -24,14 +24,20 @@ class LoginViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    // Simulate API call delay
-    await Future.delayed(Duration(seconds: 2));
+    try {
+      // Example async work
+      await Future.delayed(const Duration(seconds: 2));
 
-    final request = LoginRequest(email: _email, password: _password);
-    debugPrint("Login attempted with: ${request.email}, ${request.password}");
+      final request = LoginRequest(email: _email, password: _password);
+      debugPrint("Logging in with: ${request.email}, ${request.password}");
 
-    _isLoading = false;
-    notifyListeners();
+      // TODO: Call your API/auth service here
+    } catch (e) {
+      debugPrint("Login failed: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void forgotPassword() {

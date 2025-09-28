@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/shadow_theme.dart';
 
 class AppButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
   final IconData? icon;
 

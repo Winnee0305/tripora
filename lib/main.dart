@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/features/login/viewmodels/auth_viewmodel.dart';
 import 'example/login_page.dart';
 import 'example/home_screen.dart';
-import 'package:tripora/features/login/views/login_page.dart';
+import 'package:tripora/features/login/views/auth_page.dart';
 import 'package:provider/provider.dart';
 import 'features/login/viewmodels/login_viewmodel.dart';
 import 'theme_preview.dart';
@@ -10,7 +11,7 @@ import 'core/theme/app_theme.dart';
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => LoginViewModel())],
+      providers: [ChangeNotifierProvider(create: (_) => AuthViewModel())],
       child: const TriporaApp(),
     ),
   );
@@ -25,7 +26,7 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LoginPage(), // 👈 Scaffold is now inside MaterialApp
+      home: const AuthPage(), // 👈 Scaffold is now inside MaterialApp
       // home: const ThemePreviewPage(),
     );
   }

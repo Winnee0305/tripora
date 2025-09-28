@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tripora/core/theme/text_style.dart';
-import 'package:tripora/core/theme/app_colors.dart';
 
 class ThemePreviewPage extends StatelessWidget {
   const ThemePreviewPage({super.key});
