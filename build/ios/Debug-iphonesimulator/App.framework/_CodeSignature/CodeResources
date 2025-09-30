@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		OX0QuH2IbJJraaO8uQ8x184t8EA=
+		hxVAvHjfxFyELYzcmfgbVMv5JXE=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		9Z3MfvTWITm+DQaqXrf6xRWdXd4=
+		YMh/Vs2/UCazll+trjazZ7o6Nvs=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -27,6 +27,30 @@
 		<key>flutter_assets/NativeAssetsManifest.json</key>
 		<data>
 		re4p7E8rPLLsN+wzaPN/+AVpXTY=
+		</data>
+		<key>flutter_assets/assets/icons/city.png</key>
+		<data>
+		/VhqnDDykWOxGU53XOvBT9hsCJI=
+		</data>
+		<key>flutter_assets/assets/icons/museum.png</key>
+		<data>
+		QpiZ+S7YnY4bbV2GTfMOgdfVF+c=
+		</data>
+		<key>flutter_assets/assets/icons/nature.png</key>
+		<data>
+		LxPzR+irUUWqLkhtOqwL1w0/i/k=
+		</data>
+		<key>flutter_assets/assets/icons/restaurant.png</key>
+		<data>
+		ot/LdlPJqGkSbA2v1rr+C7bD+Sw=
+		</data>
+		<key>flutter_assets/assets/images/exp_melaka_trip.png</key>
+		<data>
+		TdQhG56anqfwEJeLlYJ5Ui+mVH4=
+		</data>
+		<key>flutter_assets/assets/images/exp_profile_picture.png</key>
+		<data>
+		IjfDVQ6+ZCC3na6ljZa3zAWs8Oc=
 		</data>
 		<key>flutter_assets/assets/images/kl_towers.png</key>
 		<data>
@@ -42,7 +66,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		Q6TNTinkH4wLA6Rn6nEIP8NvPYM=
+		CraNu/CSBjkY+8QOVp1kh+gyMMQ=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -63,14 +87,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nL580DgwUg9PV+wGf17hSKxZ3QBNLVZ6vYNuWbxQM8E=
+			/xIGfHgSi2q4KK1hB20QYzaizENKe8G2PuNLQ9pnEyo=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			qVNnCweW4UsBI0F8WKgyrW0zLOQ1EaQIqjOeNBLX0Ow=
+			0Tpm+whF4BN6o0mGv7lDygegTs8Hj4B1GaIWrxqe1oo=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -92,6 +116,48 @@
 			<key>hash2</key>
 			<data>
 			lUijHkoEgTXB2U+Rkyi/tirix7s8q5ZVfHlB2ql3dss=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/city.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			U3Pa+HKByRxt3RYWl3fzg2PeYXUMBs1w/ym42Q+Yw04=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/museum.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pcZiT9pJEblaWtiI1Jea1EQ5tYYSzAAjkdDVPIiO0Bo=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/nature.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AnKrfWrDBx84DN8Vv2DvxDPxYoin0GMENx0NlHOtUig=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/restaurant.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3EqULL5mjRUvkDle6z+vcT9PWBd3XvICK29DZIeyN6A=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/exp_melaka_trip.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hGBbLKk30ABeg9eeCOtjknm1FhrLqQAxv2dekFnIzKE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/exp_profile_picture.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nIGrTMh7/U7pQcGkYqNL5SrVKE3NDj6Yo2NAViNTNRQ=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/kl_towers.png</key>
@@ -119,7 +185,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			xwS7URcVP1AzIRGLvdjfW53f0kEfz5clUEVLnDULlRg=
+			jrx7Bzm0ew2tz3uoRwcsXlEf/+SL60NMR7TLe2To66U=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

@@ -48,9 +48,9 @@ class AppTheme {
         ShadowTheme(
           buttonShadows: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.16),
-              blurRadius: 10,
-              offset: const Offset(0, 0.4),
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 4,
+              offset: const Offset(0.3, 0.3),
             ),
           ],
         ),

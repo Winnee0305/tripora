@@ -33,7 +33,7 @@ class TriporaApp extends StatelessWidget {
       },
 
       // home: const ThemePreviewPage(),
-      // home: const AuthPage(),
+      // home: const AuthPage(),`
       home: const HomePage(),
     );
   }

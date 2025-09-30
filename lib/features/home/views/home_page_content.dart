@@ -16,20 +16,30 @@ class HomePageContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              HomeHeader(),
-              // Search
-              HomeSearchBar(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 24),
 
-              // Tabs
-              HomeTabs(),
-            ],
-          ),
+              child: Column(
+                children: [
+                  HomeHeader(),
+
+                  // Search
+                  HomeSearchBar(),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Tabs
+            Expanded(
+              // let HomeTabs or its content take available space
+              child: HomeTabs(),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: AppNavigationBar(
