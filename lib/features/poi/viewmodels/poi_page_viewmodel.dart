@@ -38,7 +38,7 @@ class PoiPageViewmodel extends ChangeNotifier {
         userAvatar:
             "assets/images/exp_profile_picture.png", // placeholder avatar
         content:
-            "A must visit if you're in Melaka. Stunning architecture and a tourist hotspot...",
+            "A must visit if you're in Melaka. Stunning architecture and is a tourist hotspot for photography. Explore every building that used to be built from the Dutch's colonial. But do take umbrella and apply some sunscreen for UV protection. Do drink plenty of water. As current weather is so hot. 😄",
         rating: 5.0,
         date: DateTime(2025, 7, 2),
       ),
@@ -46,7 +46,7 @@ class PoiPageViewmodel extends ChangeNotifier {
         userName: "Syahmi Saiful",
         userAvatar: "assets/images/exp_profile_picture.png",
         content:
-            "The Stadthuys is a beautiful historical landmark showcasing Melaka’s heritage...",
+            "The Stadthuys is a beautiful historical landmark that showcases Melaka's rich heritage. The iconic red building and its surroundings are well-preserved, making it a must-visit for history enthusiasts and tourists alike. However, it would be great if more parking spaces could be provided nearby to make visits more convenient, especially during peak hours or weekends.",
         rating: 5.0,
         date: DateTime(2025, 6, 20),
       ),

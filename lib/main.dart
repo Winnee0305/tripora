@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
 import 'features/home/views/home_page.dart';
+import 'features/login/views/auth_page.dart';
 
 void main() {
   runApp(
@@ -29,8 +30,8 @@ class TriporaApp extends StatelessWidget {
       },
 
       // home: const ThemePreviewPage(),
-      // home: const AuthPage(),`
-      home: const HomePage(),
+      home: const AuthPage(),
+      // home: const HomePage(),
       // home: const PoiPage(),
     );
   }

@@ -35,17 +35,19 @@ class PoiHeaderScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppIconButton(
+                AppButton(
                   icon: CupertinoIcons.back,
                   onPressed: () {},
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  iconColor: Theme.of(context).colorScheme.secondary,
+                  text: "",
+                  // backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  // iconColor: Theme.of(context).colorScheme.secondary,
                 ),
-                AppIconButton(
+                AppButton(
                   icon: CupertinoIcons.heart,
                   onPressed: () {},
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  iconColor: Theme.of(context).colorScheme.secondary,
+                  text: "",
+                  // backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  // iconColor: Theme.of(context).colorScheme.secondary,
                 ),
               ],
             ),

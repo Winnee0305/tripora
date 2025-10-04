@@ -30,7 +30,7 @@ class PoiPage extends StatelessWidget {
 
                   // Details section (description, location, operating hours)
                   PoiDetailsScreen(vm: vm),
-
+                  const SizedBox(height: 20),
                   // Reviews section
                   PoiReviewsScreen(vm: vm),
 

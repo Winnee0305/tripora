@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/core/widgets/app_icon_button.dart';
+import 'package:tripora/core/widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -39,11 +39,7 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          AppIconButton(
-            icon: CupertinoIcons.bell,
-            onPressed: () {},
-            notificationCount: 3,
-          ),
+          AppButton(icon: CupertinoIcons.bell, onPressed: () {}, text: ""),
         ],
       ),
     );

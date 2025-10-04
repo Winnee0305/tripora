@@ -53,4 +53,12 @@ class PoiOperatingHoursViewModel extends ChangeNotifier {
       int.parse(parts[1]),
     );
   }
+
+  String get openOrCloseHours {
+    if (isOpenNow) {
+      return "Closes at ${hours.firstWhere((h) => h.day.toLowerCase() == DateFormat('EEEE').format(DateTime.now()).toLowerCase()).close}";
+    } else {
+      return "Opens at ${hours.firstWhere((h) => h.day.toLowerCase() == DateFormat('EEEE').format(DateTime.now()).toLowerCase()).open}";
+    }
+  }
 }
