@@ -112,10 +112,11 @@ class PoiDetailsScreen extends StatelessWidget {
                 ),
                 AppButton(
                   text: "Details",
-                  textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    fontWeight: ManropeFontWeight.light,
-                  ),
+                  textStyleOverride: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.light,
+                      ),
                   onPressed: () {
                     showDialog(
                       context: context,

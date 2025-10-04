@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import '../viewmodels/poi_page_viewmodel.dart';
-import 'package:tripora/core/widgets/app_icon_button.dart';
 import 'package:tripora/core/widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/poi/views/widgets/poi_tag.dart';
@@ -93,7 +92,9 @@ class PoiHeaderScreen extends StatelessWidget {
                             icon: CupertinoIcons.star_fill,
                             onPressed: () {},
                             text: " ${vm.place.rating}",
-                            textStyle: Theme.of(context).textTheme.labelMedium
+                            textStyleOverride: Theme.of(context)
+                                .textTheme
+                                .labelMedium
                                 ?.copyWith(
                                   color: Theme.of(
                                     context,

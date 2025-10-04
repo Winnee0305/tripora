@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/login/viewmodels/register_viewmodel.dart';
+import 'package:tripora/features/login/viewmodels/login_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/widgets/app_text_field.dart';
 import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/features/home/views/home_page.dart';
 import 'package:flutter/cupertino.dart';
 
-class RegisterScreen extends StatelessWidget {
-  final VoidCallback onToggleToLogin;
+class LoginScreen extends StatelessWidget {
+  final VoidCallback onToggleToRegister;
 
-  const RegisterScreen({super.key, required this.onToggleToLogin});
+  const LoginScreen({super.key, required this.onToggleToRegister});
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<RegisterViewModel>();
+    final vm = context.watch<LoginViewModel>(); // observe VM
     final containerHeight = MediaQuery.of(context).size.height * 0.64;
 
     return SizedBox(
@@ -23,20 +24,19 @@ class RegisterScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 34),
-
-          // ----- Title (fixed)
+          // ----- Title
           SizedBox(
             width: double.infinity,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Get Onboard.",
+                  "Welcome Back.",
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Create a new account",
+                  "Login to your account",
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: ManropeFontWeight.light,
                     letterSpacing: 0,
@@ -47,19 +47,14 @@ class RegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: 30),
 
-          // ----- Scrollable fields
+          // ----- Scrollable text fields + forgot password
           SizedBox(
-            height: containerHeight * 0.54,
+            height: containerHeight * 0.54, // fixed height for scrollable area
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppTextField(
-                    label: "Username",
-                    onChanged: vm.setUsername,
-                    icon: CupertinoIcons.person_fill,
-                  ),
-                  const SizedBox(height: 28),
                   AppTextField(
                     label: "Email Address",
                     onChanged: vm.setEmail,
@@ -72,12 +67,24 @@ class RegisterScreen extends StatelessWidget {
                     onChanged: vm.setPassword,
                     icon: CupertinoIcons.lock_fill,
                   ),
-                  const SizedBox(height: 28),
-                  AppTextField(
-                    label: "Confirm Password",
-                    obscureText: true,
-                    onChanged: vm.setConfirmPassword,
-                    icon: CupertinoIcons.lock_shield_fill,
+                  const SizedBox(height: 12),
+                  // Forgot password stays here, inside scroll
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: vm.forgotPassword,
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.titleLarge
+                            ?.copyWith(
+                              decoration: TextDecoration.underline,
+                              fontWeight: ManropeFontWeight.light,
+                            ),
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface,
+                      ),
+                      child: const Text("Forgot Password?"),
+                    ),
                   ),
                 ],
               ),
@@ -86,19 +93,31 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // ----- Register button (fixed)
-          AppButton(
+          // ----- Login button
+          AppButton.primary(
             onPressed: vm.isLoading
                 ? null
-                : () {
-                    vm.register();
+                : () async {
+                    final success = await vm.login();
+                    if (success) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      );
+                    } else {
+                      // Optionally show error
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Login failed')),
+                      );
+                    }
                   },
-            text: "Register",
-            icon: CupertinoIcons.person_badge_plus_fill,
+            text: vm.isLoading ? "Verifying..." : "Login",
+            icon: vm.isLoading ? null : CupertinoIcons.arrow_right_circle_fill,
           ),
+
           const SizedBox(height: 8),
 
-          // ----- Login link (fixed)
+          // ----- Register link
           RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -106,15 +125,16 @@ class RegisterScreen extends StatelessWidget {
                 letterSpacing: 0,
               ),
               children: [
-                const TextSpan(text: "Already have an account? "),
+                const TextSpan(text: "Don't have an account? "),
                 TextSpan(
-                  text: "Login Here.",
+                  text: "Register Here.",
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: ManropeFontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
                     letterSpacing: 0,
                   ),
-                  recognizer: TapGestureRecognizer()..onTap = onToggleToLogin,
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = onToggleToRegister,
                 ),
               ],
             ),
@@ -122,7 +142,7 @@ class RegisterScreen extends StatelessWidget {
 
           const Spacer(),
 
-          // ----- Footer (fixed)
+          // ----- Footer
           Text(
             "Copyright © 2024 Tripora. All rights reserved.",
             textAlign: TextAlign.center,

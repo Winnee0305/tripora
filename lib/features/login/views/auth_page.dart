@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/register_viewmodel.dart';
-import 'widgets/login_screen.dart';
-import 'widgets/register_screen.dart';
+import 'login_screen.dart';
+import 'register_screen.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});

@@ -39,7 +39,23 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          AppButton(icon: CupertinoIcons.bell, onPressed: () {}, text: ""),
+          Stack(
+            children: [
+              AppButton.iconOnly(icon: CupertinoIcons.bell, onPressed: () {}),
+              Positioned(
+                right: 1,
+                top: 1,
+                child: AppButton.textOnly(
+                  text: "3",
+                  textStyleOverride: Theme.of(
+                    context,
+                  ).textTheme.labelMedium?.copyWith(color: Colors.white),
+                  backgroundColorOverride: Colors.red,
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

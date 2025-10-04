@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/widgets/app_button.dart';
-import 'package:tripora/core/widgets/app_icon_button.dart';
 import 'package:tripora/features/home/models/destination.dart';
 import 'package:tripora/core/theme/app_shadow_theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -69,16 +68,18 @@ class DestinationCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    AppButton(
+                    AppButton.iconOnly(
                       icon: CupertinoIcons.heart,
                       onPressed: () {},
-                      text: "",
                     ),
-                    AppButton(
+                    AppButton.iconTextSmall(
                       onPressed: () {},
                       text: "5.0",
                       iconSize: 14,
-                      textStyle: Theme.of(context).textTheme.bodyMedium
+                      minHeight: 40,
+                      minWidth: 70,
+                      radius: 10,
+                      textStyleOverride: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(
                             fontWeight: ManropeFontWeight.regular,
                             color: Theme.of(context).colorScheme.onPrimary,

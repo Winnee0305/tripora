@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tripora/features/home/views/widgets/discover_continue_trip_section.dart';
 import 'package:tripora/features/home/views/widgets/discover_make_bookings_section.dart';
 import 'package:tripora/features/home/views/widgets/discover_recommendation_section.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:tripora/core/widgets/app_button.dart';
 
 class HomeDiscoverTab extends StatelessWidget {
   const HomeDiscoverTab({super.key});

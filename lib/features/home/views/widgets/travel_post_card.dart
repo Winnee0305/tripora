@@ -3,6 +3,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/home/models/travel_post.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/core/widgets/app_button.dart';
 
 class TravelPostCard extends StatelessWidget {
   final TravelPost post;
@@ -81,40 +82,58 @@ class TravelPostCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Likes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            CupertinoIcons.heart,
-                            size: 14,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "${post.likes}",
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: ManropeFontWeight.regular,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: AppButton.iconTextSmall(
+                    onPressed: () {},
+                    text: "${post.likes}",
+                    iconSize: 14,
+                    minHeight: 30,
+                    minWidth: 60,
+                    icon: CupertinoIcons.heart,
+                    boxShadow: [],
+                    textStyleOverride: Theme.of(context).textTheme.labelMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: ManropeFontWeight.regular,
+                        ),
+                    variant: BackgroundVariant.trans,
+                  ),
                 ),
+                // Likes
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     Container(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //         vertical: 4,
+                //       ),
+                //       decoration: BoxDecoration(
+                //         color: Colors.orange.shade50,
+                //         borderRadius: BorderRadius.circular(12),
+                //       ),
+
+                // child: Row(
+                //   children: [
+                //     const SizedBox(width: 8),
+                //     Icon(
+                //       CupertinoIcons.heart,
+                //       size: 14,
+                //       color: Theme.of(context).colorScheme.primary,
+                //     ),
+                //     const SizedBox(width: 4),
+                //     Text(
+                //       "${post.likes}",
+                //       style: Theme.of(context).textTheme.labelMedium
+                //           ?.copyWith(
+                //             color: Theme.of(context).colorScheme.primary,
+                //             fontWeight: ManropeFontWeight.regular,
+                //           ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
