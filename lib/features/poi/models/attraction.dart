@@ -2,7 +2,7 @@
 class Attraction {
   final String name;
   final String imageUrl;
-  final String distance;
+  final double distance;
 
   Attraction({
     required this.name,

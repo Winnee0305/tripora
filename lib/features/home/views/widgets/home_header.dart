@@ -43,9 +43,11 @@ class HomeHeader extends StatelessWidget {
             children: [
               AppButton.iconOnly(icon: CupertinoIcons.bell, onPressed: () {}),
               Positioned(
-                right: 1,
-                top: 1,
+                right: 0,
+                top: 0,
                 child: AppButton.textOnly(
+                  minWidth: 16,
+                  minHeight: 16,
                   text: "3",
                   textStyleOverride: Theme.of(
                     context,

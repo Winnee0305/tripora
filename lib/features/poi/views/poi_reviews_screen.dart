@@ -4,6 +4,7 @@ import 'package:tripora/features/poi/viewmodels/poi_page_viewmodel.dart';
 import '../models/review.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/widgets/app_expandable_text.dart';
+import 'package:flutter/cupertino.dart';
 
 class PoiReviewsScreen extends StatelessWidget {
   final PoiPageViewmodel vm;
@@ -25,15 +26,37 @@ class PoiReviewsScreen extends StatelessWidget {
                   fontWeight: ManropeFontWeight.semiBold,
                 ),
               ),
-              Text("${vm.reviews.length} Reviews"),
-              AppButton(onPressed: () {}, icon: Icons.add, text: "Add Review"),
-              Text("${vm.place.rating} / 5"),
+              Row(
+                // ----- Rating and Reviews Count
+                children: [
+                  AppButton.iconTextSmall(
+                    icon: CupertinoIcons.star_fill,
+                    text: "${vm.place.rating}",
+                    onPressed: () {},
+                    iconSize: 14,
+                    radius: 10,
+                    minHeight: 32,
+                    minWidth: 64,
+                    backgroundVariant: BackgroundVariant.primaryTrans,
+                  ),
+                  const SizedBox(width: 8),
+                  AppButton.iconTextSmall(
+                    icon: CupertinoIcons.ellipses_bubble_fill,
+                    text: "${vm.reviews.length}",
+                    onPressed: () {},
+                    iconSize: 14,
+                    radius: 10,
+                    minHeight: 32,
+                    minWidth: 64,
+                    backgroundVariant: BackgroundVariant.primaryTrans,
+                  ),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: 8),
-          ...vm.reviews
-              .map((review) => _buildReviewTile(review, context))
-              .toList(),
+          // ------ Reviews
+          ...vm.reviews.map((review) => _buildReviewTile(review, context)),
           TextButton(
             onPressed: () {},
             child: const Text("See more reviews..."),
@@ -45,29 +68,68 @@ class PoiReviewsScreen extends StatelessWidget {
   }
 
   Widget _buildReviewTile(Review review, context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      leading: CircleAvatar(backgroundImage: NetworkImage(review.userAvatar)),
-      title: Text(
-        review.userName,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Column(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppExpandableText(
-            review.content,
-            trimLines: 4,
-            style: Theme.of(context).textTheme.bodyMedium,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(
+              8,
+            ), // adjust corner radius as needed
+            child: Image.asset(
+              review.userAvatar,
+              width: 50, // set size same as your CircleAvatar radius * 2
+              height: 50,
+              fit: BoxFit.cover,
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            "${review.date.toLocal()}".split(' ')[0],
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  review.userName,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        5,
+                        (index) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "${review.date.toLocal()}".split(' ')[0],
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                AppExpandableText(
+                  review.content,
+                  trimLines: 4,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: ManropeFontWeight.light,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ],
       ),
-      trailing: const Icon(Icons.star, color: Colors.orange),
     );
   }
 }

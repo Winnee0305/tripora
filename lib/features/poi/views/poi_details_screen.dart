@@ -110,7 +110,7 @@ class PoiDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                AppButton(
+                AppButton.iconTextSmall(
                   text: "Details",
                   textStyleOverride: Theme.of(context).textTheme.bodyMedium
                       ?.copyWith(

@@ -98,7 +98,7 @@ class TravelPostCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: ManropeFontWeight.regular,
                         ),
-                    variant: BackgroundVariant.trans,
+                    backgroundVariant: BackgroundVariant.primaryTrans,
                   ),
                 ),
                 // Likes

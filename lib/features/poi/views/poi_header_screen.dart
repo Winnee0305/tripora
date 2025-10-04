@@ -28,32 +28,29 @@ class PoiHeaderScreen extends StatelessWidget {
           ),
         ),
 
+        // ---- Top Buttons
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppButton(
+                AppButton.iconOnly(
                   icon: CupertinoIcons.back,
                   onPressed: () {},
-                  text: "",
-                  // backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  // iconColor: Theme.of(context).colorScheme.secondary,
+                  backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
-                AppButton(
+                AppButton.iconOnly(
                   icon: CupertinoIcons.heart,
                   onPressed: () {},
-                  text: "",
-                  // backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  // iconColor: Theme.of(context).colorScheme.secondary,
+                  backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
               ],
             ),
           ),
         ),
 
-        // Title Section
+        // ----- Title Section
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -84,11 +81,25 @@ class PoiHeaderScreen extends StatelessWidget {
                             runSpacing:
                                 4, // vertical spacing if wrapped to next line
                             children: vm.place.tags
-                                .map((tag) => PoiTag(label: tag))
+                                .map(
+                                  (tag) => AppButton.textOnly(
+                                    text: tag,
+                                    backgroundVariant:
+                                        BackgroundVariant.primaryTrans,
+                                    onPressed: () {},
+                                    minHeight: 14,
+                                    minWidth: 0,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    textStyleVariant: TextStyleVariant.small,
+                                  ),
+                                )
                                 .toList(),
                           ),
 
-                          AppButton(
+                          AppButton.iconTextSmall(
                             icon: CupertinoIcons.star_fill,
                             onPressed: () {},
                             text: " ${vm.place.rating}",
@@ -103,7 +114,7 @@ class PoiHeaderScreen extends StatelessWidget {
                             boxShadow: [],
                             radius: 10,
                             iconSize: 12,
-                            minWidth: 50,
+                            minWidth: 60,
                             minHeight: 28,
                           ),
                         ],

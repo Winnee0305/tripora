@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/poi/viewmodels/poi_page_viewmodel.dart';
 import '../models/attraction.dart';
+import 'package:tripora/core/theme/app_text_style.dart';
 
 class PoiNearbyScreen extends StatelessWidget {
   final PoiPageViewmodel vm;
@@ -9,62 +11,98 @@ class PoiNearbyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// Nearby Attractions
-        const Text(
-          "Nearby Attractions",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Text(
+            "Nearby Attractions",
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: ManropeFontWeight.semiBold,
+            ),
+          ),
         ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 120,
+        const SizedBox(height: 12),
+        Container(
+          height: 110,
+          padding: const EdgeInsets.only(left: 30.0),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
             itemCount: vm.nearbyAttractions.length,
             itemBuilder: (context, index) {
               final attraction = vm.nearbyAttractions[index];
-              return _buildAttractionCard(attraction);
+              return _buildAttractionCard(attraction, context);
             },
           ),
         ),
+        const SizedBox(height: 50),
       ],
     );
   }
 
-  Widget _buildAttractionCard(Attraction attraction) {
+  Widget _buildAttractionCard(Attraction attraction, BuildContext context) {
     return Container(
-      width: 160,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey[100],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      height: 110,
+      width: 230, // ✅ Finite width (ListView needs this)
+      margin: const EdgeInsets.only(right: 20),
+      decoration: AppWidgetStyles.cardDecoration(context),
+      clipBehavior: Clip.antiAlias, // ensure shadow isn’t cut by content
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.network(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
               attraction.imageUrl,
-              height: 80,
-              width: double.infinity,
+              height: 110,
+              width: 110,
               fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  attraction.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  attraction.distance,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ],
+          Expanded(
+            // ✅ allows text to use remaining space
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    attraction.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: ManropeFontWeight.medium,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Image.asset(
+                        "assets/icons/distance.png",
+                        height: 12,
+                        width: 12,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          "${attraction.distance} km away",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                fontWeight: ManropeFontWeight.light,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

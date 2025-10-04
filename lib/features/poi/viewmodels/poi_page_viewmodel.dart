@@ -55,15 +55,24 @@ class PoiPageViewmodel extends ChangeNotifier {
     nearbyAttractions = [
       Attraction(
         name: "Jonker Street",
-        imageUrl:
-            "https://media.timeout.com/images/105875467/750/422/image.jpg",
-        distance: "0.3 km away",
+        imageUrl: "assets/images/exp_nearby1.png",
+        distance: 0.3,
       ),
       Attraction(
-        name: "Maritime Museum",
-        imageUrl:
-            "https://www.holidaygogogo.com/wp-content/uploads/2019/06/maritime-museum-melaka.jpg",
-        distance: "0.5 km away",
+        name: "Melaka River Cruise",
+        imageUrl: "assets/images/exp_nearby2.png",
+        distance: 0.3,
+      ),
+
+      Attraction(
+        name: "Baba & Nyonya Heritage Museum",
+        imageUrl: "assets/images/exp_nearby3.png",
+        distance: 0.5,
+      ),
+      Attraction(
+        name: "A' Famosa Port",
+        imageUrl: "assets/images/exp_nearby4.png",
+        distance: 0.4,
       ),
     ];
   }

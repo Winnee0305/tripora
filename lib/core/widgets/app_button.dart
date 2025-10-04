@@ -3,7 +3,11 @@ import 'package:tripora/core/theme/app_shadow_theme.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
 
-enum BackgroundVariant { filled, trans } // -- define the variants of background
+enum BackgroundVariant {
+  primaryFilled,
+  primaryTrans,
+  secondaryFilled,
+} // -- define the variants of background
 
 enum TextStyleVariant { small, medium, large } // -- define text style variants
 
@@ -35,7 +39,7 @@ class AppButton extends StatelessWidget {
     this.radius,
     this.iconPosition = true,
     this.boxShadow,
-    this.backgroundVariant = BackgroundVariant.filled,
+    this.backgroundVariant = BackgroundVariant.primaryFilled,
     this.textStyleVariant = TextStyleVariant.medium,
     this.padding,
     this.backgroundColorOverride,
@@ -71,7 +75,7 @@ class AppButton extends StatelessWidget {
       textStyleVariant: textStyleVariant ?? TextStyleVariant.large,
       boxShadow: boxShadow,
       iconSize: iconSize,
-      backgroundVariant: variant ?? BackgroundVariant.filled,
+      backgroundVariant: variant ?? BackgroundVariant.primaryFilled,
     );
   }
 
@@ -80,20 +84,24 @@ class AppButton extends StatelessWidget {
     required IconData icon,
     double? iconSize,
     VoidCallback? onPressed,
-    BackgroundVariant? variant,
+    BackgroundVariant? backgroundVariant,
+    Color? backgroundColorOverride,
+    Color? textColorOverride,
   }) {
     return AppButton(
       key: key,
       text: "",
       icon: icon,
       iconSize: iconSize ?? 24,
-      backgroundVariant: variant ?? BackgroundVariant.trans,
+      backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       onPressed: onPressed,
       radius: 30,
       minHeight: 40,
       minWidth: 40,
       boxShadow: [],
       padding: EdgeInsets.zero,
+      backgroundColorOverride: backgroundColorOverride,
+      textColorOverride: textColorOverride,
     );
   }
 
@@ -102,25 +110,28 @@ class AppButton extends StatelessWidget {
     required String text,
     TextStyleVariant? textStyleVariant,
     VoidCallback? onPressed,
-    BackgroundVariant? variant,
+    BackgroundVariant? backgroundVariant,
     Color? backgroundColorOverride,
     Color? textColorOverride,
     TextStyle? textStyleOverride,
+    double? radius,
+    double? minHeight,
+    double? minWidth,
+    EdgeInsetsGeometry? padding,
   }) {
     return AppButton(
       key: key,
       text: text,
-      backgroundVariant: variant ?? BackgroundVariant.filled,
+      backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       onPressed: onPressed,
-      textStyleVariant: textStyleVariant ?? TextStyleVariant.medium,
-      radius: 30,
-      minHeight: 14,
-      minWidth: 14,
+      radius: radius ?? 30,
+      minHeight: minHeight ?? 40,
+      minWidth: minWidth ?? 40,
       boxShadow: [],
-      padding: EdgeInsets.zero,
+      padding: padding ?? EdgeInsets.zero,
       backgroundColorOverride: backgroundColorOverride,
       textColorOverride: textColorOverride,
-      textStyleOverride: textStyleOverride,
+      textStyleVariant: textStyleVariant ?? TextStyleVariant.medium,
     );
   }
 
@@ -130,19 +141,21 @@ class AppButton extends StatelessWidget {
     required String text,
     double? iconSize,
     VoidCallback? onPressed,
-    BackgroundVariant? variant,
+    BackgroundVariant? backgroundVariant,
     double? minWidth,
     double? minHeight,
     List<BoxShadow>? boxShadow,
     TextStyle? textStyleOverride,
     double? radius,
+    bool? iconPosition,
   }) {
     return AppButton(
       key: key,
       text: text,
       icon: icon,
       iconSize: iconSize ?? 24,
-      backgroundVariant: variant ?? BackgroundVariant.filled,
+      backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
+      textStyleVariant: TextStyleVariant.small,
       onPressed: onPressed,
       radius: radius ?? 30,
       minHeight: minHeight ?? 40,
@@ -150,42 +163,9 @@ class AppButton extends StatelessWidget {
       boxShadow: [],
       padding: EdgeInsets.zero,
       textStyleOverride: textStyleOverride,
+      iconPosition: iconPosition ?? true,
     );
   }
-
-  // factory AppButton.iconTextSmall({
-  //   Key? key,
-  //   required String text,
-  //   TextStyleVariant? textStyleVariant,
-  //   required IconData icon,
-  //   bool? iconPosition,
-  //   double? iconSize,
-  //   double? radius,
-  //   double? minWidth,
-  //   double? minHeight,
-  //   List<BoxShadow>? boxShadow,
-  //   VoidCallback? onPressed,
-  //   BackgroundVariant? variant,
-  //   Color? backgroundColorOverride,
-  //   Color? textColorOverride,
-  //   TextStyle? textStyleOverride,
-  // }) {
-  //   return AppButton(
-  //     key: key,
-  //     text: text,
-  //     icon: icon,
-  //     iconPosition: iconPosition ?? true,
-  //     backgroundVariant: variant ?? BackgroundVariant.trans,
-  //     backgroundColorOverride: backgroundColorOverride,
-  //     textColorOverride: textColorOverride,
-  //     iconSize: iconSize ?? 16,
-  //     onPressed: onPressed,
-  //     radius: radius ?? 10,
-  //     minWidth: minWidth ?? 74,
-  //     minHeight: minHeight ?? 50,
-  //     textStyleVariant: textStyleVariant ?? TextStyleVariant.medium,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -200,15 +180,19 @@ class AppButton extends StatelessWidget {
     final bool isSingleElement = text.isEmpty || icon == null;
 
     switch (backgroundVariant) {
-      case BackgroundVariant.filled:
+      case BackgroundVariant.primaryFilled:
         backgroundColor = backgroundColorOverride ?? colorScheme.primary;
         textColor = textColorOverride ?? colorScheme.onPrimary;
         break;
-      case BackgroundVariant.trans:
+      case BackgroundVariant.primaryTrans:
         backgroundColor =
             backgroundColorOverride ??
             colorScheme.primary.withValues(alpha: 0.2);
         textColor = textColorOverride ?? colorScheme.primary;
+        break;
+      case BackgroundVariant.secondaryFilled:
+        backgroundColor = backgroundColorOverride ?? colorScheme.onPrimary;
+        textColor = textColorOverride ?? colorScheme.secondary;
         break;
     }
 
@@ -222,7 +206,10 @@ class AppButton extends StatelessWidget {
         break;
       case TextStyleVariant.medium:
         textStyle =
-            textStyleOverride ?? Theme.of(context).textTheme.bodyMedium!;
+            textStyleOverride ??
+            Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontWeight: ManropeFontWeight.light,
+            );
         break;
       case TextStyleVariant.large:
         textStyle =
