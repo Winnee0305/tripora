@@ -37,7 +37,9 @@ class PoiHeaderScreen extends StatelessWidget {
               children: [
                 AppButton.iconOnly(
                   icon: CupertinoIcons.back,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
                 AppButton.iconOnly(

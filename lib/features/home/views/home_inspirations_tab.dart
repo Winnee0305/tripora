@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/home/viewmodels/destinations_viewmodel.dart';
 import 'widgets/destination_card.dart';
+import 'package:tripora/features/poi/views/poi_page.dart';
 
 class HomeInspirationsTab extends StatelessWidget {
   const HomeInspirationsTab({super.key});
@@ -44,14 +45,21 @@ class HomeInspirationsTab extends StatelessWidget {
                         // Opacity decreases slightly with distance
                         opacity = (1 - (distance * 0.6)).clamp(0.1, 1.0);
                       }
+                      final destination = vm.destinations[index];
 
                       return Transform.scale(
                         scale: scale,
                         child: Opacity(
                           opacity: opacity,
                           child: SizedBox.expand(
-                            child: DestinationCard(
-                              destination: vm.destinations[index],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => PoiPage()),
+                                );
+                              },
+                              child: DestinationCard(destination: destination),
                             ),
                           ),
                         ),

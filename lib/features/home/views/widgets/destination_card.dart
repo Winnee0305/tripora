@@ -71,6 +71,7 @@ class DestinationCard extends StatelessWidget {
                     AppButton.iconOnly(
                       icon: CupertinoIcons.heart,
                       onPressed: () {},
+                      backgroundVariant: BackgroundVariant.primaryTrans,
                     ),
                     AppButton.iconTextSmall(
                       onPressed: () {},
