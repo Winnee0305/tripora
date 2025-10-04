@@ -81,6 +81,7 @@ class TravelPostCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
+                // Likes
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -95,13 +96,20 @@ class TravelPostCard extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.favorite,
-                            size: 16,
-                            color: Colors.orange,
+                          Icon(
+                            CupertinoIcons.heart,
+                            size: 14,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
-                          Text("${post.likes}"),
+                          Text(
+                            "${post.likes}",
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: ManropeFontWeight.regular,
+                                ),
+                          ),
                         ],
                       ),
                     ),

@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		S+W6Ptf3AVGIuCITBlTC6/7yfDg=
+		8A+M4ndTsXc4qBZbv1ykFi86zY8=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,15 +54,15 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		0p4JBonkayeHcTK1C79/6nI34SQ=
+		/6/UI2vmbc2ELj16HHhFEn6sDCk=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
-		hxVAvHjfxFyELYzcmfgbVMv5JXE=
+		3NBnCHV+ezVNt9i8FS/j6qKZhSo=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
-		YMh/Vs2/UCazll+trjazZ7o6Nvs=
+		Dsl7Bq356M3DpLeSXnHEdxd/ne4=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		DXFXuk4udTRgQK6Pltac6wyO/n0=
+		Z04Xp5vv32R2WfWLQSkq0/JwHiU=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
 		<data>
@@ -92,13 +92,53 @@
 		<data>
 		ot/LdlPJqGkSbA2v1rr+C7bD+Sw=
 		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_genting.png</key>
+		<data>
+		3m1IrDttWFs1mIG2YwjcKkufpjc=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_johor.png</key>
+		<data>
+		T+RrsCP9YJdh48L+JnG9URtevOE=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kinabalu.png</key>
+		<data>
+		n06VzJLf4IohvFlbvC/ACS8goN4=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kl.png</key>
+		<data>
+		IGhOjlW1+pzgg3KGR/VXnck9uPs=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kl2.png</key>
+		<data>
+		ewqou+GkIgsdhLyw2Mbe4UUcf30=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_location.png</key>
+		<data>
+		Jh/2tg8uiQGWJ1D3CCFfzl9poME=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_melaka.png</key>
+		<data>
+		DesU6N8uvOH+V9nSutQE4iVzpCQ=
+		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_melaka_trip.png</key>
 		<data>
 		TdQhG56anqfwEJeLlYJ5Ui+mVH4=
 		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_msia.png</key>
+		<data>
+		gaLX8xiXcw8dsTD2Iu7JDB5BNDs=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_penang.png</key>
+		<data>
+		zLe/rcsGWkUKTZvoHAW/gFGhPBQ=
+		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_profile_picture.png</key>
 		<data>
 		IjfDVQ6+ZCC3na6ljZa3zAWs8Oc=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_semporna.png</key>
+		<data>
+		fw52JqfLAsjPjSrAw1kJ1EApnhc=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/kl_towers.png</key>
 		<data>
@@ -114,7 +154,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		CraNu/CSBjkY+8QOVp1kh+gyMMQ=
+		5O54IGoOGcdrgzmbeedklWsFrws=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -313,7 +353,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nXUNhdyXamHOjAlfGOy6UVwHsrVxkqBmr1CFaYlNo6k=
+			bBPggVaFlTyFAwVJ3cCrPRWXZj3HJ+UPAXJjcnnGHzg=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -327,21 +367,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			/vEw4Ec3LRGA/LiiRqaGqJw6z5pqTg1E27ywBn0X/wo=
+			8d9Rg393lsueAJCVPzBFH33V1Su5bWoyA5spXc9rdDc=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/xIGfHgSi2q4KK1hB20QYzaizENKe8G2PuNLQ9pnEyo=
+			Luz1JMeAcH5G9u6m5hNZduBMBNjwSu3PstSma8nsSY0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			0Tpm+whF4BN6o0mGv7lDygegTs8Hj4B1GaIWrxqe1oo=
+			kG77cbwtEPgBrehEQnMOwM4Qla1zHEwNDV86Fdc2GtY=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
@@ -355,7 +395,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			MTZP8IdeYGP0kkfZOyMzxT/VEGVk1s2JYISh9Ozs/ls=
+			cw43rbnVNhbsxTdG9j6uaLpk2rwNFDDCotepRM54qJM=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
@@ -393,6 +433,55 @@
 			3EqULL5mjRUvkDle6z+vcT9PWBd3XvICK29DZIeyN6A=
 			</data>
 		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_genting.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2QfGP0ZnmqPiWJ6WA5z+SwciAZ3MVk0cOp8mZt4Sw/Y=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_johor.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pPrqoXjLgFREFe7zRSjd09ppc4rLnhamrcV94dEPEpM=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kinabalu.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6d9qxfKqCImDWZtReXVUHoPDRsrWJMd0GSOVlCptVtQ=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kl.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zn9s6CHUIuy4mFG6JVlg7nUg3FgvNR8+8mE9TlT2LYU=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_kl2.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			J59u0WU3NU5hPQnvA1Fg3UjmEwOrf0Yrcjkk2wJmWoA=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_location.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			98HyBwSPk0JdrmSBZ4KOhPk2k9XXZbBzsiTmPiG01/E=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_melaka.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1A99qwozJltZ+vt1q1b9nsm+pblgjoLGSK7M+LFvSJY=
+			</data>
+		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_melaka_trip.png</key>
 		<dict>
 			<key>hash2</key>
@@ -400,11 +489,32 @@
 			hGBbLKk30ABeg9eeCOtjknm1FhrLqQAxv2dekFnIzKE=
 			</data>
 		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_msia.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8NTc+KplmocIM0H0QvaMRZRBWtcY2iIUG3Mvr7ye1m0=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_penang.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gdODTlOz+07celu44B0pI/4Evhju3HxYmz+6xComrGY=
+			</data>
+		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_profile_picture.png</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			nIGrTMh7/U7pQcGkYqNL5SrVKE3NDj6Yo2NAViNTNRQ=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/exp_semporna.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			N+4RfkzyD98G83OTWcxH1Yq9CkLFlGln63fSOG8Eqtc=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/images/kl_towers.png</key>
@@ -432,7 +542,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			jrx7Bzm0ew2tz3uoRwcsXlEf/+SL60NMR7TLe2To66U=
+			Aory4tJ2OcvZl89/3kDdZBAQOztm+u1fgy2zyQPg5iU=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/features/login/viewmodels/auth_viewmodel.dart';
-import 'example/login_page.dart';
-import 'example/home_screen.dart';
-import 'package:tripora/features/login/views/auth_page.dart';
 import 'package:provider/provider.dart';
-import 'features/login/viewmodels/login_viewmodel.dart';
-import 'theme_preview.dart';
 import 'core/theme/app_theme.dart';
-import 'package:tripora/features/home/views/home_page.dart';
+import 'package:tripora/features/poi/views/poi_page.dart';
+import 'features/home/views/home_page.dart';
 
 void main() {
   runApp(
@@ -35,6 +31,7 @@ class TriporaApp extends StatelessWidget {
       // home: const ThemePreviewPage(),
       // home: const AuthPage(),`
       home: const HomePage(),
+      // home: const PoiPage(),
     );
   }
 }

@@ -17,12 +17,12 @@ class DiscoverMakeBookingsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _BookingItem(icon: CupertinoIcons.airplane, label: "Flights"),
-            _BookingItem(icon: CupertinoIcons.bed_double, label: "Stays"),
+            _BookingItem(icon: CupertinoIcons.bed_double_fill, label: "Stays"),
             _BookingItem(
               icon: CupertinoIcons.car_detailed,
               label: "Car Rental",
             ),
-            _BookingItem(icon: CupertinoIcons.ticket, label: "Tickets"),
+            _BookingItem(icon: CupertinoIcons.ticket_fill, label: "Tickets"),
           ],
         ),
       ],
@@ -53,10 +53,10 @@ class _BookingItem extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 30,
+                size: 22,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(

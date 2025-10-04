@@ -5,12 +5,16 @@ class AppIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
   final int notificationCount;
+  final Color? backgroundColor;
+  final Color? iconColor;
 
   const AppIconButton({
     super.key,
     required this.icon,
     this.onPressed,
     this.notificationCount = 0,
+    this.backgroundColor,
+    this.iconColor,
   });
 
   @override
@@ -24,16 +28,16 @@ class AppIconButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.primary.withOpacity(0.2),
+            backgroundColor:
+                backgroundColor ??
+                Theme.of(context).colorScheme.primary.withOpacity(0.2),
             shadowColor: Colors.transparent,
             padding: EdgeInsets.zero,
             minimumSize: const Size(40, 40),
           ),
           child: Icon(
             icon,
-            color: Theme.of(context).colorScheme.primary,
+            color: iconColor ?? Theme.of(context).colorScheme.primary,
             size: 28,
           ),
         ),

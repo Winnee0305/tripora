@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/core/theme/app_shadow_theme.dart';
 
 class AppTab extends StatelessWidget {
   final List<String> tabs;
