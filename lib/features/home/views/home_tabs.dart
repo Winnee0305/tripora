@@ -8,7 +8,7 @@ import '../viewmodels/destinations_viewmodel.dart';
 
 // ViewModel
 class HomeTabsViewModel extends ChangeNotifier {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
 
   void selectTab(int index) {
