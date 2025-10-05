@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/main_screen.dart';
 import 'core/theme/app_theme.dart';
+import 'features/trip/views/trip_info_page.dart';
 
 void main() {
   runApp(
@@ -22,7 +23,13 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const MainScreen(),
+      // home: const MainScreen(),
+      home: TripInfoPage(
+        tripTitle: 'Melaka 2 days family trip',
+        destination: 'Melacca, Malaysia',
+        startDate: DateTime(2025, 8, 13),
+        endDate: DateTime(2025, 8, 14),
+      ),
     );
   }
 }

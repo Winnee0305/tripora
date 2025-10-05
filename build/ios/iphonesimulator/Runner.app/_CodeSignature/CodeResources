@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		sdYyRvI5YMekaHgmOznlYtiGdD4=
+		wGvgXlLGbpQUUFQmjHkONSD3ulw=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,19 +54,19 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		3pYwl+kPs3GxXLmQJhRftWV1nRo=
+		1HTRiUgpOSC5IY3hY/nUhR/aItk=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
-		M3LcgErCGXvcqg3tQY/qBC5OoXs=
+		hiC8/Q546WJhV8UQv+j41qlwXBI=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
-		nBilVCMTBzrFvF+onDPi65J3MG4=
+		nSVBwq873O6RX5IXQWGa4vZUrMM=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
 		<data>
-		vKJkVIcw+LGHFnKJGwrQwCREv68=
+		O/j2Hw/4jmP+YFHTcTkSzRixh9I=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
@@ -76,6 +76,10 @@
 		<data>
 		re4p7E8rPLLsN+wzaPN/+AVpXTY=
 		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/fonts/Manrope-VariableFont_wght.ttf</key>
+		<data>
+		sZDJMdIAwOclY8lKX3Voymm9uLY=
+		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/icons/city.png</key>
 		<data>
 		/VhqnDDykWOxGU53XOvBT9hsCJI=
@@ -83,6 +87,10 @@
 		<key>Frameworks/App.framework/flutter_assets/assets/icons/distance.png</key>
 		<data>
 		CeBkAHFqy0oEZCnUTpQN7pOK0FU=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/icons/distance_white.png</key>
+		<data>
+		W6pmUaV+NlzcPIMF8y2XjhOyNVI=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/icons/museum.png</key>
 		<data>
@@ -174,7 +182,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		78DBVhrzUHSjQxXuAcPctX835t4=
+		bFL2doXOw9dOZOxTLXm+6d9C4S0=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -373,7 +381,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Q45EYX2fEPI5CLBgXmqiKr9xSRZ8oKUpTasb13gTqrI=
+			PpLItaWehdRRl0EQBkTx/SC8zw5wBHSY7l7WLaqFlUs=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -387,28 +395,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cROeRDoCkXmj4935EN46I4OvOEEltFA5L4AgkfcSNc0=
+			DZaRvToY22mo6YMb0rSzrN2XyDP/fsT0qAF04FOEOYU=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			jLTVgrtC/KTDcYeptn4o8Bmim+wj3l1ndVu0iHy2e1M=
+			NzyCgxbmZU92KTvRdx7P+OhcBd2e6yvHt6URdJ8UG4s=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			I1WN7VNSpO10/4muqrb7y7mjHEAdVUsO/8ym/bYvmco=
+			HZKD1kRY/igwnJ6p7p5EDE0LB/QAYAEBliZddrIaWW0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			zX4DZFvESy3Ue3y2JvUcTsv1Whl6t3JBYotHrBZfviE=
+			BC7HT8zpIrzjNJF/wTuzcDexbPyMGFnFSkx5h7Xwizo=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
@@ -425,6 +433,13 @@
 			lUijHkoEgTXB2U+Rkyi/tirix7s8q5ZVfHlB2ql3dss=
 			</data>
 		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/fonts/Manrope-VariableFont_wght.ttf</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			K3oevIDHkkb6obbnCTx7kd4qTO7bm5orL6Bc+b+Md80=
+			</data>
+		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/icons/city.png</key>
 		<dict>
 			<key>hash2</key>
@@ -437,6 +452,13 @@
 			<key>hash2</key>
 			<data>
 			pp7TOVL/ecrYBNu6je/Ay9II9nLUweBbyzoWk5bsm4A=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/icons/distance_white.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/wRbNePUSi0mNNUOMhCeQFneZJgWUIcWz/tdggr2aec=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/icons/museum.png</key>
@@ -597,7 +619,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			/Q4f10BZWeSpOj2npUX9i7b26g+LP7DgGi/bSFRzwoY=
+			JC0yltSDA6PJNUBSAIMG6HIr0TEsx5FZssVCtZLpbVQ=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

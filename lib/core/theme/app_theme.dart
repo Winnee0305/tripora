@@ -6,6 +6,7 @@ import 'app_shadow_theme.dart';
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
+      fontFamily: 'Manrope',
       colorScheme: ColorScheme(
         brightness: Brightness.light,
         primary: AppColors.primary,

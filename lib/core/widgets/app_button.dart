@@ -62,6 +62,7 @@ class AppButton extends StatelessWidget {
     BackgroundVariant? variant,
     List<BoxShadow>? boxShadow,
     double? iconSize,
+    TextStyle? textStyleOverride,
   }) {
     return AppButton(
       key: key,
@@ -76,6 +77,7 @@ class AppButton extends StatelessWidget {
       boxShadow: boxShadow,
       iconSize: iconSize,
       backgroundVariant: variant ?? BackgroundVariant.primaryFilled,
+      textStyleOverride: textStyleOverride,
     );
   }
 
@@ -87,6 +89,8 @@ class AppButton extends StatelessWidget {
     BackgroundVariant? backgroundVariant,
     Color? backgroundColorOverride,
     Color? textColorOverride,
+    double? minWidth,
+    double? minHeight,
   }) {
     return AppButton(
       key: key,
@@ -96,8 +100,8 @@ class AppButton extends StatelessWidget {
       backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       onPressed: onPressed,
       radius: 30,
-      minHeight: 40,
-      minWidth: 40,
+      minHeight: minHeight ?? 40,
+      minWidth: minWidth ?? 40,
       boxShadow: [],
       padding: EdgeInsets.zero,
       backgroundColorOverride: backgroundColorOverride,
