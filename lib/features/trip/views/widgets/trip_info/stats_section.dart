@@ -39,11 +39,11 @@ class StatsSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Icon(
-                      CupertinoIcons.create_solid,
+                      CupertinoIcons.doc_on_clipboard,
                       color: theme.colorScheme.onPrimary,
                       size: 52,
                     ),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 26),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -183,37 +183,53 @@ class StatsSection extends StatelessWidget {
                 height: 101.5,
                 decoration: AppWidgetStyles.cardDecoration(
                   context,
-                ).copyWith(color: AppColors.design2),
+                ).copyWith(color: AppColors.design4),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 20,
+                  vertical: 0,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      CupertinoIcons.create_solid,
-                      color: theme.colorScheme.onPrimary,
-                      size: 52,
+                    Text(
+                      "Smart Packing List",
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.regular,
+                      ),
                     ),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 6),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Notes",
-                          style: theme.textTheme.headlineSmall!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.regular,
-                          ),
+                        Icon(
+                          Icons.luggage_outlined,
+                          color: theme.colorScheme.onPrimary,
+                          size: 36,
                         ),
-                        Text(
-                          "5",
-                          style: theme.textTheme.headlineLarge!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
-                          ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "7",
+                              style: theme.textTheme.headlineLarge!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.semiBold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "/ 30",
+                              style: theme.textTheme.headlineSmall!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.regular,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -228,27 +244,20 @@ class StatsSection extends StatelessWidget {
                 ).copyWith(color: AppColors.design2),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 20,
+                  vertical: 0,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      CupertinoIcons.create_solid,
-                      color: theme.colorScheme.onPrimary,
-                      size: 52,
-                    ),
-                    const SizedBox(height: 36),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          "Notes",
-                          style: theme.textTheme.headlineSmall!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.regular,
-                          ),
+                        Icon(
+                          CupertinoIcons.paperclip,
+                          color: theme.colorScheme.onPrimary,
+                          size: 36,
                         ),
                         Text(
                           "5",
@@ -258,6 +267,14 @@ class StatsSection extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Attachment",
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.regular,
+                      ),
                     ),
                   ],
                 ),

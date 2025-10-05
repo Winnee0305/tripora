@@ -22,7 +22,7 @@ class AppTextStyles {
     fontSize: 24,
     fontWeight: ManropeFontWeight.semiBold,
     color: AppColors.darkPrimary,
-    letterSpacing: 0.8,
+    letterSpacing: 0.6,
     fontFeatures: _fontFeatures,
   );
 
@@ -58,7 +58,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: ManropeFontWeight.regular,
     color: AppColors.textPrimary,
-    letterSpacing: 0.1,
+    letterSpacing: 0,
     fontFeatures: _fontFeatures,
   );
 
