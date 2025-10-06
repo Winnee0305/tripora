@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/packing/views/packing_page.dart';
+import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
+import 'package:tripora/core/theme/app_theme.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -123,6 +127,8 @@ class StatsSection extends StatelessWidget {
                   ],
                 ),
               );
+
+            // ----- Itinerary
             case 2:
               return Container(
                 height: 216,
@@ -178,64 +184,81 @@ class StatsSection extends StatelessWidget {
                   ],
                 ),
               );
+
+            // ----- Packing List
             case 3:
-              return Container(
-                height: 101.5,
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design4),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Smart Packing List",
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: ManropeFontWeight.regular,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                        create: (_) => PackingPageViewModel(),
+                        child: const PackingPage(),
                       ),
                     ),
-                    const SizedBox(height: 6),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Icons.luggage_outlined,
+                  );
+                },
+                child: Container(
+                  height: 101.5,
+                  decoration: AppWidgetStyles.cardDecoration(
+                    context,
+                  ).copyWith(color: AppColors.design4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Smart Packing List",
+                        style: theme.textTheme.headlineSmall!.copyWith(
                           color: theme.colorScheme.onPrimary,
-                          size: 36,
+                          fontWeight: ManropeFontWeight.regular,
                         ),
+                      ),
+                      const SizedBox(height: 6),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              "7",
-                              style: theme.textTheme.headlineLarge!.copyWith(
-                                color: theme.colorScheme.onPrimary,
-                                fontWeight: ManropeFontWeight.semiBold,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            Icons.luggage_outlined,
+                            color: theme.colorScheme.onPrimary,
+                            size: 36,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "7",
+                                style: theme.textTheme.headlineLarge!.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                  fontWeight: ManropeFontWeight.semiBold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "/ 30",
-                              style: theme.textTheme.headlineSmall!.copyWith(
-                                color: theme.colorScheme.onPrimary,
-                                fontWeight: ManropeFontWeight.regular,
+                              const SizedBox(width: 8),
+                              Text(
+                                "/ 30",
+                                style: theme.textTheme.headlineSmall!.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                  fontWeight: ManropeFontWeight.regular,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
+
+            // ----- Attachment
             case 4:
               return Container(
                 height: 101.5,

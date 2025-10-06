@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
-import 'package:tripora/features/packing/views/widgets/packing_category_list.dart';
+import 'package:tripora/core/widgets/app_sticky_header_delegate.dart';
+import 'widgets/packing_page_header_section.dart';
+import 'widgets/packing_page_category_card.dart';
 
 class PackingPage extends StatelessWidget {
   const PackingPage({super.key});
@@ -18,64 +18,72 @@ class PackingPage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            children: [
-              // --- Page Header ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppButton.iconOnly(
-                    icon: CupertinoIcons.back,
-                    onPressed: () => Navigator.pop(context),
-                    backgroundVariant: BackgroundVariant.primaryTrans,
-                  ),
-                  Text(
-                    'Melaka 2 days family trip',
-                    style: theme.textTheme.headlineSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  AppButton.iconOnly(
-                    icon: CupertinoIcons.home,
-                    onPressed: () {},
-                    backgroundVariant: BackgroundVariant.primaryTrans,
-                  ),
-                ],
+        child: CustomScrollView(
+          slivers: [
+            // ---------- Sticky Header ----------
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: AppStickyHeaderDelegate(
+                minHeight: 120,
+                maxHeight: 120,
+                child: PackingPageHeaderSection(
+                  packedCount: packedCount,
+                  totalCount: totalCount,
+                ),
               ),
-              const SizedBox(height: 30),
+            ),
 
-              // --- Packing Header + Add Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Smart Packing List',
-                    style: theme.textTheme.headlineMedium?.weight(
-                      ManropeFontWeight.bold,
+            // ---------- Packing List ----------
+            if (vm.categories.isEmpty) // ----- Empty State -----
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 60),
+                    child: Text(
+                      'Tap the refresh icon to load Melaka trip list',
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  AppButton.textOnly(
-                    text: "$packedCount / $totalCount",
-                    onPressed: () {},
-                    backgroundVariant: BackgroundVariant.primaryFilled,
-                    radius: 10,
-                    minHeight: 38,
-                    minWidth: 80,
-                    textStyleOverride: theme.textTheme.titleLarge?.weight(
-                      ManropeFontWeight.regular,
+                ),
+              )
+            else
+              SliverList.builder(
+                // ----- Build various categories -----
+                itemCount: vm.categories.length,
+                itemBuilder: (context, index) {
+                  final category = vm.categories.elementAt(index);
+                  final items = vm.getItemsByCategory(category);
+                  final packed = items.where((e) => e.isPacked).length;
+
+                  vm.initControllersForCategory(category);
+
+                  return Padding(
+                    // padding around each category section
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 2,
                     ),
-                  ),
-                ],
+                    child: PackingPageCategoryCard(
+                      category: category,
+                      items: items,
+                      packedCount: packed,
+                      controller: vm.newItemControllers[category]!,
+                      onItemAdded: () {
+                        final text = vm.newItemControllers[category]!.text
+                            .trim();
+                        if (text.isNotEmpty) {
+                          vm.addItem(text, category);
+                          vm.newItemControllers[category]!.clear();
+                        }
+                      },
+                      onTogglePacked: vm.togglePacked,
+                      onRemoveItem: vm.removeItem,
+                    ),
+                  );
+                },
               ),
-              const SizedBox(height: 20),
-              // ---- Packing List ----
-              Expanded(
-                child: PackingCategoryList(vm: vm, theme: theme),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
