@@ -4,7 +4,7 @@ import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart
 import 'package:tripora/features/main_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'features/trip/views/trip_info_page.dart';
-import 'features/packing/views/packing_page.dart';
+import 'features/packing/views/packing_page1.dart';
 import 'features/packing/viewmodels/packing_page_viewmodel.dart';
 
 void main() {

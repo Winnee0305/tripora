@@ -27,7 +27,11 @@ class PackingCategoryList extends StatelessWidget {
       itemBuilder: (context, index) {
         final category = categories[index];
         vm.initControllersForCategory(category);
-        return PackingCategoryCard(category: category, vm: vm, theme: theme);
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+          child: PackingCategoryCard(category: category, vm: vm, theme: theme),
+        );
       },
     );
   }

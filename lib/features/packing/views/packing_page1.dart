@@ -20,11 +20,11 @@ class PackingPage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
           child: Column(
             children: [
-              // ----- Top bar
+              // ----- Top bar -----
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,6 +47,7 @@ class PackingPage extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 30),
 
               // ---- Header with packed count ----
@@ -72,279 +73,260 @@ class PackingPage extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 20),
 
-              // ----- Packing List
-              Expanded(
-                child:
-                    vm
-                        .categories
-                        .isEmpty // ----- No items -----
-                    ? const Center(
+              // ----- Packing List -----
+              vm.categories.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 60),
                         child: Text(
                           'Tap the refresh icon to load Melaka trip list',
                           textAlign: TextAlign.center,
                         ),
-                      )
-                    : ListView.builder(
-                        // ----- With items -----
-                        clipBehavior: Clip.none,
-                        itemCount: vm.categories.length,
-                        itemBuilder: (context, index) {
-                          final category = vm.categories.elementAt(index);
-                          final items = vm.getItemsByCategory(category);
-                          final packed = items.where((e) => e.isPacked).length;
-                          vm.initControllersForCategory(category);
+                      ),
+                    )
+                  : ListView.builder(
+                      physics:
+                          const NeverScrollableScrollPhysics(), // disable nested scroll
+                      shrinkWrap: true, // let it size within the scroll view
+                      itemCount: vm.categories.length,
+                      itemBuilder: (context, index) {
+                        final category = vm.categories.elementAt(index);
+                        final items = vm.getItemsByCategory(category);
+                        final packed = items.where((e) => e.isPacked).length;
 
-                          // ----- Each category section
-                          return Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            clipBehavior: Clip.none,
-                            decoration: AppWidgetStyles.cardDecoration(
+                        vm.initControllersForCategory(category);
+
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: AppWidgetStyles.cardDecoration(
+                            context,
+                          ).copyWith(borderRadius: BorderRadius.circular(10)),
+                          child: Theme(
+                            data: Theme.of(
                               context,
-                            ).copyWith(borderRadius: BorderRadius.circular(10)),
-                            child: Theme(
-                              data: Theme.of(
-                                context,
-                              ).copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                tilePadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                backgroundColor: Colors.transparent,
-                                collapsedBackgroundColor: Colors.transparent,
-                                childrenPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // ----- Category title + packed count + delete button -----
-                                    Expanded(
-                                      child: Text(
-                                        category,
-                                        style: theme.textTheme.headlineSmall
-                                            ?.weight(ManropeFontWeight.medium),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    AppButton.textOnly(
-                                      text: "$packed / ${items.length}",
-                                      onPressed: () {},
-                                      radius: 6,
-                                      backgroundVariant:
-                                          BackgroundVariant.primaryTrans,
-                                      minHeight: 30,
-                                      minWidth: 48,
-                                      textStyleOverride: theme
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.primary,
-                                          ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        CupertinoIcons.delete_simple,
-                                        size: 18,
-                                        color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.6),
-                                      ),
-                                      tooltip: "Remove category",
-                                      onPressed: () async {
-                                        final confirm = await showDialog<bool>(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                            title: const Text(
-                                              "Delete Category",
-                                            ),
-                                            content: Text(
-                                              "Are you sure you want to remove '$category'? All its items will be deleted.",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                  context,
-                                                  false,
-                                                ),
-                                                child: const Text("Cancel"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                  context,
-                                                  true,
-                                                ),
-                                                child: const Text("Delete"),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                        if (confirm == true) {
-                                          vm.removeCategory(category);
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-
-                                // ----- List of items -----
+                            ).copyWith(dividerColor: Colors.transparent),
+                            child: ExpansionTile(
+                              tilePadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              backgroundColor: Colors.transparent,
+                              collapsedBackgroundColor: Colors.transparent,
+                              childrenPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  ...items.map((item) {
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 4,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          // Checkbox
-                                          AppCheckBox(
-                                            value: item.isPacked,
-                                            onChanged: (_) =>
-                                                vm.togglePacked(item),
+                                  Expanded(
+                                    child: Text(
+                                      category,
+                                      style: theme.textTheme.headlineSmall
+                                          ?.weight(ManropeFontWeight.medium),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  AppButton.textOnly(
+                                    text: "$packed / ${items.length}",
+                                    onPressed: () {},
+                                    radius: 6,
+                                    backgroundVariant:
+                                        BackgroundVariant.primaryTrans,
+                                    minHeight: 30,
+                                    minWidth: 48,
+                                    textStyleOverride: theme
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      CupertinoIcons.delete_simple,
+                                      size: 18,
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6),
+                                    ),
+                                    tooltip: "Remove category",
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: const Text("Delete Category"),
+                                          content: Text(
+                                            "Are you sure you want to remove '$category'? All its items will be deleted.",
                                           ),
-                                          const SizedBox(width: 12),
-
-                                          // Use Expanded so text takes all available width (safe here)
-                                          Expanded(
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                // Wrapping text
-                                                Expanded(
-                                                  child: Text(
-                                                    item.name,
-                                                    style: theme
-                                                        .textTheme
-                                                        .titleLarge
-                                                        ?.copyWith(
-                                                          decoration:
-                                                              item.isPacked
-                                                              ? TextDecoration
-                                                                    .lineThrough
-                                                              : TextDecoration
-                                                                    .none,
-                                                        ),
-                                                    softWrap: true,
-                                                  ),
-                                                ),
-
-                                                // Delete icon pinned to the end
-                                                IconButton(
-                                                  icon: Icon(
-                                                    CupertinoIcons
-                                                        .clear_circled_solid,
-                                                    color: theme
-                                                        .colorScheme
-                                                        .onSurface
-                                                        .withValues(alpha: 0.3),
-                                                    size: 20,
-                                                  ),
-                                                  onPressed: () =>
-                                                      vm.removeItem(item),
-                                                  padding: EdgeInsets.zero,
-                                                  constraints:
-                                                      const BoxConstraints(),
-                                                ),
-                                              ],
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: const Text("Cancel"),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: 10,
-                                      left: 10,
-                                      top: 2,
-                                      bottom: 14,
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: const Text("Delete"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        vm.removeCategory(category);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+
+                              // ----- Items inside each category -----
+                              children: [
+                                ...items.map((item) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
                                     ),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        // ---- Add button ----
-                                        AppButton.iconOnly(
-                                          icon: CupertinoIcons.add,
-                                          iconSize: 16,
-                                          minHeight: 24,
-                                          minWidth: 24,
-                                          radius: 6,
-                                          backgroundVariant:
-                                              BackgroundVariant.primaryTrans,
-                                          tooltipMessage: "Add item",
-                                          onPressed: () {
-                                            final controller =
-                                                vm.newItemControllers[category];
-                                            final text =
-                                                controller?.text.trim() ?? '';
-                                            if (text.isNotEmpty) {
-                                              vm.addItem(text, category);
-                                              controller?.clear();
-                                            }
-                                          },
+                                        AppCheckBox(
+                                          value: item.isPacked,
+                                          onChanged: (_) =>
+                                              vm.togglePacked(item),
                                         ),
-                                        // ---- Input field ----
+                                        const SizedBox(width: 12),
                                         Expanded(
-                                          child: TextField(
-                                            controller:
-                                                vm.newItemControllers[category],
-                                            decoration: InputDecoration(
-                                              hintText: "Add new item...",
-                                              hintStyle: theme
-                                                  .textTheme
-                                                  .titleLarge
-                                                  ?.copyWith(
-                                                    color: theme
-                                                        .colorScheme
-                                                        .onSurface
-                                                        .withValues(alpha: 0.5),
-                                                  ),
-                                              isDense: true,
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 10,
-                                                  ),
-                                              border: InputBorder
-                                                  .none, // 👈 removes default underline
-                                              enabledBorder: InputBorder
-                                                  .none, // 👈 removes active border
-                                              focusedBorder: InputBorder
-                                                  .none, // 👈 removes focus border
-                                            ),
-
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            onSubmitted: (value) {
-                                              if (value.trim().isNotEmpty) {
-                                                vm.addItem(
-                                                  value.trim(),
-                                                  category,
-                                                );
-                                                vm.newItemControllers[category]
-                                                    ?.clear();
-                                              }
-                                            },
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  item.name,
+                                                  style: theme
+                                                      .textTheme
+                                                      .titleLarge
+                                                      ?.copyWith(
+                                                        decoration:
+                                                            item.isPacked
+                                                            ? TextDecoration
+                                                                  .lineThrough
+                                                            : TextDecoration
+                                                                  .none,
+                                                      ),
+                                                  softWrap: true,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  CupertinoIcons
+                                                      .clear_circled_solid,
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.3),
+                                                  size: 20,
+                                                ),
+                                                onPressed: () =>
+                                                    vm.removeItem(item),
+                                                padding: EdgeInsets.zero,
+                                                constraints:
+                                                    const BoxConstraints(),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
+                                  );
+                                }).toList(),
+
+                                // ----- Add item row -----
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 10,
+                                    left: 10,
+                                    top: 2,
+                                    bottom: 14,
                                   ),
-                                ],
-                              ),
+                                  child: Row(
+                                    children: [
+                                      AppButton.iconOnly(
+                                        icon: CupertinoIcons.add,
+                                        iconSize: 16,
+                                        minHeight: 24,
+                                        minWidth: 24,
+                                        radius: 6,
+                                        backgroundVariant:
+                                            BackgroundVariant.primaryTrans,
+                                        tooltipMessage: "Add item",
+                                        onPressed: () {
+                                          final controller =
+                                              vm.newItemControllers[category];
+                                          final text =
+                                              controller?.text.trim() ?? '';
+                                          if (text.isNotEmpty) {
+                                            vm.addItem(text, category);
+                                            controller?.clear();
+                                          }
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: TextField(
+                                          controller:
+                                              vm.newItemControllers[category],
+                                          decoration: InputDecoration(
+                                            hintText: "Add new item...",
+                                            hintStyle: theme
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.5),
+                                                ),
+                                            isDense: true,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 10,
+                                                ),
+                                            border: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            focusedBorder: InputBorder.none,
+                                          ),
+                                          textInputAction: TextInputAction.done,
+                                          onSubmitted: (value) {
+                                            if (value.trim().isNotEmpty) {
+                                              vm.addItem(
+                                                value.trim(),
+                                                category,
+                                              );
+                                              vm.newItemControllers[category]
+                                                  ?.clear();
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-              ),
+                          ),
+                        );
+                      },
+                    ),
             ],
           ),
         ),

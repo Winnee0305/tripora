@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/widgets/app_button.dart';
-import 'package:tripora/core/widgets/app_check_box.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/features/packing/views/widgets/add_item_row.dart';
 import 'package:tripora/features/packing/views/widgets/packing_item_row.dart';
@@ -89,10 +87,14 @@ class PackingCategoryCard extends StatelessWidget {
           ),
 
           children: [
-            ...items.map(
-              (item) => PackingItemRow(item: item, vm: vm, theme: theme),
+            Column(
+              children: [
+                ...items.map(
+                  (item) => PackingItemRow(item: item, vm: vm, theme: theme),
+                ),
+                AddItemRow(vm: vm, category: category, theme: theme),
+              ],
             ),
-            AddItemRow(vm: vm, category: category, theme: theme),
           ],
         ),
       ),
