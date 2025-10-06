@@ -14,7 +14,6 @@ class HomePageContent extends StatelessWidget {
     final vm = context.watch<HomeViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

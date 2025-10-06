@@ -7,7 +7,7 @@ class AppColors {
 
   // Surfaces
   static const Color surface = Color(0xFFFAFCFB); // #FAFCFB (light cards / bg)
-  static const Color surfaceBright = Color(0xFFFFFFFF); // #FFFFFF (pure white)
+  static const Color surfaceBright = Colors.white; // #FFFFFF (pure white)
 
   // Text
   static const Color textPrimary = Color(0xFF5F6062); // #5F6062
