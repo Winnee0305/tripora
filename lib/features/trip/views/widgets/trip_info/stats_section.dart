@@ -261,10 +261,9 @@ class StatsSection extends StatelessWidget {
                         ),
                         Text(
                           "5",
-                          style: theme.textTheme.headlineLarge!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
-                          ),
+                          style: theme.textTheme.headlineLarge!
+                              .weight(ManropeFontWeight.semiBold)
+                              .colorize(theme.colorScheme.onPrimary),
                         ),
                       ],
                     ),

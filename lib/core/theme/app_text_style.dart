@@ -80,4 +80,7 @@ extension TextStyleX on TextStyle {
 
   /// Change weight dynamically
   TextStyle weight(FontWeight w) => copyWith(fontWeight: w);
+
+  // Change color dynamically
+  TextStyle colorize(Color c) => copyWith(color: c);
 }

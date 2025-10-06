@@ -43,6 +43,7 @@ class AppTheme {
           ),
         ),
       ),
+      dividerColor: Colors.transparent,
 
       // 👇 Add custom theme extension here
       extensions: <ThemeExtension<dynamic>>[

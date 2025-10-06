@@ -27,6 +27,7 @@ class AppButton extends StatelessWidget {
   final Color? backgroundColorOverride;
   final Color? textColorOverride;
   final TextStyle? textStyleOverride;
+  final String? tooltipMessage;
 
   const AppButton({
     super.key,
@@ -45,6 +46,7 @@ class AppButton extends StatelessWidget {
     this.backgroundColorOverride,
     this.textColorOverride,
     this.textStyleOverride,
+    this.tooltipMessage,
   });
 
   /// 🔹 Factory constructors for common button styles
@@ -91,6 +93,8 @@ class AppButton extends StatelessWidget {
     Color? textColorOverride,
     double? minWidth,
     double? minHeight,
+    String? tooltipMessage,
+    double? radius,
   }) {
     return AppButton(
       key: key,
@@ -99,13 +103,14 @@ class AppButton extends StatelessWidget {
       iconSize: iconSize ?? 24,
       backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       onPressed: onPressed,
-      radius: 30,
+      radius: radius ?? 30,
       minHeight: minHeight ?? 40,
       minWidth: minWidth ?? 40,
       boxShadow: [],
       padding: EdgeInsets.zero,
       backgroundColorOverride: backgroundColorOverride,
       textColorOverride: textColorOverride,
+      tooltipMessage: tooltipMessage,
     );
   }
 
@@ -134,6 +139,7 @@ class AppButton extends StatelessWidget {
       boxShadow: [],
       padding: padding ?? EdgeInsets.zero,
       backgroundColorOverride: backgroundColorOverride,
+      textStyleOverride: textStyleOverride,
       textColorOverride: textColorOverride,
       textStyleVariant: textStyleVariant ?? TextStyleVariant.medium,
     );
@@ -224,41 +230,45 @@ class AppButton extends StatelessWidget {
         break;
     }
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        boxShadow: boxShadow ?? shadowTheme?.buttonShadows ?? [],
-        borderRadius: BorderRadius.circular(radius ?? 12),
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: textColor,
-          minimumSize: Size(minWidth ?? 0, minHeight ?? 42),
-          padding:
-              padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius ?? 12),
-          ),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          elevation: 0,
-          // ).copyWith(
-          //   overlayColor: MaterialStateProperty.all(
-          //     Colors.transparent,
-          //   ), // 🚫 No press effect
-          //   shadowColor: MaterialStateProperty.all(
-          //     Colors.transparent,
-          //   ), // 🚫 No
+    return Tooltip(
+      message: tooltipMessage ?? '',
+      waitDuration: const Duration(milliseconds: 500),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: boxShadow ?? shadowTheme?.buttonShadows ?? [],
+          borderRadius: BorderRadius.circular(radius ?? 12),
         ),
-        child: isSingleElement
-            ? (icon != null
-                  ? Icon(icon, size: iconSize ?? 20, color: textColor)
-                  : Text(text, style: textStyle.copyWith(color: textColor)))
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildContent(textColor, textStyle),
-              ),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: backgroundColor,
+            foregroundColor: textColor,
+            minimumSize: Size(minWidth ?? 0, minHeight ?? 42),
+            padding:
+                padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radius ?? 12),
+            ),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            elevation: 0,
+            // ).copyWith(
+            //   overlayColor: MaterialStateProperty.all(
+            //     Colors.transparent,
+            //   ), // 🚫 No press effect
+            //   shadowColor: MaterialStateProperty.all(
+            //     Colors.transparent,
+            //   ), // 🚫 No
+          ),
+          child: isSingleElement
+              ? (icon != null
+                    ? Icon(icon, size: iconSize ?? 20, color: textColor)
+                    : Text(text, style: textStyle.copyWith(color: textColor)))
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _buildContent(textColor, textStyle),
+                ),
+        ),
       ),
     );
   }
