@@ -18,4 +18,7 @@ class AppColors {
   static final Color design3 = const Color(0xFFFD4F80).withOpacity(0.8);
   static final Color design4 = const Color(0xFF4240A5).withOpacity(0.8);
   static final Color design5 = const Color(0xFFA8C256).withOpacity(0.8);
+
+  // Accent Colors
+  static final Color accent1 = Colors.purple;
 }

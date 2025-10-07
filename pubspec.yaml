@@ -105,6 +105,12 @@ flutter:
     - assets/icons/distance.png
     - assets/icons/distance_white.png
     - assets/images/exp_map.png
+    - assets/images/itinerary/sunway_university.png
+    - assets/images/itinerary/stadthuys.png
+    - assets/images/itinerary/peranakan_place.png
+    - assets/images/itinerary/tan_kim_hock.png
+    - assets/images/itinerary/mamee.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/itinerary/models/itinerary.dart';
+import 'package:flutter/cupertino.dart';
 
 class ItineraryCard extends StatelessWidget {
   final Itinerary item;
@@ -8,10 +10,8 @@ class ItineraryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
+    return Container(
+      decoration: AppWidgetStyles.cardDecoration(context),
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -23,12 +23,28 @@ class ItineraryCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          item.title,
+          item.destination,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(item.subtitle),
-        trailing: const Icon(Icons.drag_handle),
+        subtitle: Text(item.tags.join(", ")),
+        trailing: const Icon(CupertinoIcons.line_horizontal_3),
       ),
+      // child: Row(
+      //   children: [
+      //     Text("hello"),
+      //     Container(
+      //       margin: const EdgeInsets.only(left: 12),
+      //       padding: const EdgeInsets.all(8),
+      //       decoration: AppWidgetStyles.cardDecoration(context),
+      //       child: Image.asset(
+      //         item.image,
+      //         width: 60,
+      //         height: 60,
+      //         fit: BoxFit.cover,
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

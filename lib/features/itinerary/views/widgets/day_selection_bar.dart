@@ -20,7 +20,6 @@ class DaySelectionBar extends StatelessWidget {
       height: 64,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
         clipBehavior: Clip.none,
 
         itemCount: days.length,

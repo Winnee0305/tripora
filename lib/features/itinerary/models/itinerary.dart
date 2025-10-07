@@ -1,23 +1,15 @@
 class Itinerary {
-  final int id;
-  final String time;
-  final String title;
-  final String subtitle;
+  final String destination;
+  final List<String> tags;
   final String image;
-  final String distance;
-  final String duration;
-  final String cost;
-  final String category;
+  final String recommendedVisitDuration;
+  final String estimatedCost;
 
   Itinerary({
-    required this.id,
-    required this.time,
-    required this.title,
-    required this.subtitle,
+    required this.destination,
+    required this.tags,
     required this.image,
-    required this.distance,
-    required this.duration,
-    required this.cost,
-    required this.category,
+    required this.recommendedVisitDuration,
+    required this.estimatedCost,
   });
 }
