@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_card.dart';
+import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
 
 class ItineraryReorderableList extends StatefulWidget {
   const ItineraryReorderableList({super.key});
@@ -45,7 +45,7 @@ class _ItineraryReorderableListState extends State<ItineraryReorderableList> {
         final item = vm.itinerary[index];
         item.routeInfo = vm.routeInfoMap[index];
 
-        return ItineraryCard(
+        return ItineraryItem(
           key: ValueKey(item),
           item: item,
           isFirst: index == 0,

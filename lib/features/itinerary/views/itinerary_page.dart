@@ -4,7 +4,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/day_selection_bar.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_card.dart';
+import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
 import 'package:tripora/core/widgets/app_sticky_header_delegate.dart';
 import 'package:tripora/features/itinerary/views/widgets/Itinerary_header_delegate.dart';
 import 'package:tripora/features/itinerary/viewmodels/day_selection_viewmodel.dart';

@@ -7,7 +7,8 @@ import 'package:tripora/core/theme/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
-import 'package:tripora/core/theme/app_theme.dart';
+import 'package:tripora/features/itinerary/views/itinerary_page.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -130,58 +131,71 @@ class StatsSection extends StatelessWidget {
 
             // ----- Itinerary
             case 2:
-              return Container(
-                height: 216,
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design1),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(
-                      "assets/icons/distance_white.png",
-                      width: 88,
-                      height: 88,
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        "Itinerary",
-                        style: theme.textTheme.headlineSmall!.copyWith(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: ManropeFontWeight.regular,
-                        ),
-                        textAlign: TextAlign.start,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                        create: (_) => ItineraryPageViewModel(),
+                        child: const ItineraryPage(),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          "9",
-                          style: theme.textTheme.headlineLarge!.copyWith(
+                  );
+                },
+                child: Container(
+                  height: 216,
+                  decoration: AppWidgetStyles.cardDecoration(
+                    context,
+                  ).copyWith(color: AppColors.design1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Image.asset(
+                        "assets/icons/distance_white.png",
+                        width: 88,
+                        height: 88,
+                      ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          "Itinerary",
+                          style: theme.textTheme.headlineSmall!.copyWith(
                             color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
+                            fontWeight: ManropeFontWeight.regular,
                           ),
+                          textAlign: TextAlign.start,
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Activities",
-                          style: theme.textTheme.titleLarge!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.light,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "9",
+                            style: theme.textTheme.headlineLarge!.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: ManropeFontWeight.semiBold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 8),
+                          Text(
+                            "Activities",
+                            style: theme.textTheme.titleLarge!.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: ManropeFontWeight.light,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
 
