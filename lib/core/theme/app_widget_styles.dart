@@ -7,7 +7,13 @@ class AppWidgetStyles {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.onPrimary,
       borderRadius: BorderRadius.circular(10),
-      boxShadow: shadowTheme?.buttonShadows ?? [],
+      boxShadow: [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
     );
   }
 }

@@ -7,6 +7,7 @@ enum BackgroundVariant {
   primaryFilled,
   primaryTrans,
   secondaryFilled,
+  secondaryTrans,
 } // -- define the variants of background
 
 enum TextStyleVariant { small, medium, large } // -- define text style variants
@@ -204,6 +205,12 @@ class AppButton extends StatelessWidget {
         backgroundColor = backgroundColorOverride ?? colorScheme.onPrimary;
         textColor = textColorOverride ?? colorScheme.secondary;
         break;
+      case BackgroundVariant.secondaryTrans:
+        backgroundColor =
+            backgroundColorOverride ??
+            colorScheme.surface.withValues(alpha: 0.7);
+        textColor = textColorOverride ?? colorScheme.secondary;
+        break;
     }
 
     switch (textStyleVariant) {
@@ -262,7 +269,12 @@ class AppButton extends StatelessWidget {
           child: isSingleElement
               ? (icon != null
                     ? Icon(icon, size: iconSize ?? 20, color: textColor)
-                    : Text(text, style: textStyle.copyWith(color: textColor)))
+                    : Text(
+                        text,
+                        style: textStyle.copyWith(color: textColor),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ))
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +289,12 @@ class AppButton extends StatelessWidget {
     final content = <Widget>[
       if (icon != null) Icon(icon, size: iconSize ?? 16, color: textColor),
       if (icon != null) const SizedBox(width: 6),
-      Text(text, style: textStyle.copyWith(color: textColor)),
+      Text(
+        text,
+        style: textStyle.copyWith(color: textColor),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     ];
     return iconPosition ? content : content.reversed.toList();
   }

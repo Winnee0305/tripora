@@ -11,10 +11,10 @@ import 'features/itinerary/views/itinerary_page.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => NavigationViewModel())],
-      child: const TriporaApp(),
-    ),
+    // MultiProvider(
+    //   providers: [ChangeNotifierProvider(create: (_) => NavigationViewModel())],
+    //   child: const TriporaApp(),
+    // ),
 
     // ChangeNotifierProvider(
     //   create: (_) => PackingPageViewModel(),
@@ -24,12 +24,12 @@ void main() {
     //     home: PackingPage(),
     //   ),
     // ),
-    // MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider(create: (_) => ItineraryPageViewModel()),
-    //   ],
-    //   child: const TriporaApp(),
-    // ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ItineraryPageViewModel()),
+      ],
+      child: const TriporaApp(),
+    ),
   );
 }
 
@@ -43,7 +43,7 @@ class TriporaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
 
-      home: const MainScreen(),
+      // home: const MainScreen(),
       // home: TripInfoPage(
       //   tripTitle: 'Melaka 2 days family trip',
       //   destination: 'Melacca, Malaysia',
@@ -51,7 +51,7 @@ class TriporaApp extends StatelessWidget {
       //   endDate: DateTime(2025, 8, 14),
       // ),
       // home: const PackingPage(),
-      // home: const ItineraryPage(),
+      home: const ItineraryPage(),
     );
   }
 }
