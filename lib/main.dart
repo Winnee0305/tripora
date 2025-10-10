@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/main_screen.dart';
+import 'package:tripora/features/trip/views/create_trip_page.dart';
 import 'core/theme/app_theme.dart';
 import 'features/trip/views/trip_info_page.dart';
 import 'features/packing/views/packing_page.dart';
 import 'features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'features/itinerary/views/itinerary_page.dart';
+import 'features/trip/viewmodels/create_trip_viewmodel.dart';
 
 void main() {
   runApp(
@@ -30,6 +32,10 @@ void main() {
     //   ],
     //   child: const TriporaApp(),
     // );
+    // MultiProvider(
+    //   providers: [ChangeNotifierProvider(create: (_) => CreateTripViewModel())],
+    //   child: const TriporaApp(),
+    // ),
   );
 }
 
@@ -42,7 +48,7 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-
+      // home: const CreateTripPage(),
       home: const MainScreen(),
       // home: TripInfoPage(
       //   tripTitle: 'Melaka 2 days family trip',

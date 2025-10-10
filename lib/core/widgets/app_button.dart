@@ -258,13 +258,6 @@ class AppButton extends StatelessWidget {
             ),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             elevation: 0,
-            // ).copyWith(
-            //   overlayColor: MaterialStateProperty.all(
-            //     Colors.transparent,
-            //   ), // 🚫 No press effect
-            //   shadowColor: MaterialStateProperty.all(
-            //     Colors.transparent,
-            //   ), // 🚫 No
           ),
           child: isSingleElement
               ? (icon != null

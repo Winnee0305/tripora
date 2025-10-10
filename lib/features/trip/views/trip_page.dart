@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/trip/viewmodels/create_trip_viewmodel.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 import 'package:provider/provider.dart';
 import 'trip_info_page.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'create_trip_page.dart';
 
 class TripPage extends StatelessWidget {
   const TripPage({super.key});
@@ -29,7 +31,18 @@ class TripPage extends StatelessWidget {
                   AppButton.primary(
                     text: 'Create Trip',
                     icon: CupertinoIcons.plus,
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to Create Trip Page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) => CreateTripViewModel(),
+                            child: const CreateTripPage(),
+                          ),
+                        ),
+                      );
+                    },
                     minWidth: 140,
                     radius: 10,
                     textStyleOverride: Theme.of(context).textTheme.titleLarge

@@ -20,7 +20,7 @@ class HeaderSection extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(58),
             child: Image.asset(
-              vm.trip.image,
+              vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
               height: 300,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -64,7 +64,7 @@ class HeaderSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      vm.trip.location,
+                      "${vm.trip.destination}, ${vm.trip.country}",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: ManropeFontWeight.light,
                       ),
@@ -73,7 +73,7 @@ class HeaderSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  vm.trip.title,
+                  vm.trip.name ?? '',
                   style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -83,7 +83,10 @@ class HeaderSection extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _DateRange(start: vm.trip.start, end: vm.trip.end),
+                    _DateRange(
+                      start: vm.trip.start ?? DateTime.now(),
+                      end: vm.trip.end ?? DateTime.now(),
+                    ),
                     AppButton.iconOnly(
                       icon: CupertinoIcons.settings,
                       onPressed: () {},

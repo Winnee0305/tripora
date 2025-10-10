@@ -1,30 +1,38 @@
 // Trip model (simplified)
 class Trip {
-  final String id;
-  final String title;
-  final String location;
-  final DateTime start;
-  final DateTime end;
-  final String image;
-  final int notesCount;
-  final double expense;
-  final int itineraryCount;
-  final int packingCount;
-  final int attachments;
-  final List<String> tags;
+  String? id;
+  String? name;
+  String? destination;
+  String? country;
+  DateTime? start;
+  DateTime? end;
+  String? image;
+  int notesCount;
+  double expense;
+  int itineraryCount;
+  int packingCount;
+  int attachments;
+  List<String> tags;
+  String? travelStyle;
+  String? travelPartner;
+  int? numTravellers;
 
   Trip({
-    required this.id,
-    required this.title,
-    required this.location,
-    required this.start,
-    required this.end,
-    required this.image,
+    this.id,
+    this.name,
+    this.destination,
+    this.country,
+    this.start,
+    this.end,
+    this.image,
     this.notesCount = 0,
     this.expense = 0,
     this.itineraryCount = 0,
     this.packingCount = 0,
     this.attachments = 0,
     this.tags = const [],
+    this.travelStyle,
+    this.travelPartner,
+    this.numTravellers,
   });
 }

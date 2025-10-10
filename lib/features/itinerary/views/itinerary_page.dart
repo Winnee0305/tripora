@@ -86,6 +86,16 @@ class ItineraryPage extends StatelessWidget {
                     const ItineraryReorderableList(),
 
                     const SizedBox(height: 40),
+
+                    Center(
+                      child: AppButton.primary(
+                        onPressed: () {},
+                        text: "Add Activity",
+                        icon: Icons.add,
+                      ),
+                    ),
+
+                    const SizedBox(height: 50),
                   ],
                 ),
               ),

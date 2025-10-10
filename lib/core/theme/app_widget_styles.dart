@@ -9,7 +9,7 @@ class AppWidgetStyles {
       borderRadius: BorderRadius.circular(10),
       boxShadow: [
         BoxShadow(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),

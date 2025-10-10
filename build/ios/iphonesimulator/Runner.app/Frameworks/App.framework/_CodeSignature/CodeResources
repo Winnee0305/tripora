@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		5gVGaKIb2u/GkSJ+roYT/zKlY48=
+		auFKioRyRaE5z+NnEJy5tnivZaY=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		wfRsaKoDqgIPrjq/UvHMudhilqI=
+		8/2YFxKFoEM48/JzAYA1NvsjORg=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		Z04Xp5vv32R2WfWLQSkq0/JwHiU=
+		LQX8QySdpMPzKQxaHvSdaOqozJ0=
 		</data>
 		<key>flutter_assets/NativeAssetsManifest.json</key>
 		<data>
@@ -83,6 +83,70 @@
 		<key>flutter_assets/assets/icons/restaurant.png</key>
 		<data>
 		ot/LdlPJqGkSbA2v1rr+C7bD+Sw=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/johor.png</key>
+		<data>
+		Ejr7+7SXGsn3T7cHpJHb5A6MhXg=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/kedah.png</key>
+		<data>
+		niR2dVnZnsMjEqj561kePJH9/K4=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/kelantan.png</key>
+		<data>
+		VHK962MRR/N35jzcycldNdUmrq0=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/kl.png</key>
+		<data>
+		s/VB3nsW7ddRtvFahjSTOofQ7fQ=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/labuan.png</key>
+		<data>
+		pWucdzn2Lc07FblTayCDP/hK9XM=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/melaka.png</key>
+		<data>
+		kOQoWC2rehLXBZT0q86e/ZCM5aE=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/negeri_sembilan.png</key>
+		<data>
+		R5gxGU5LbfiB658uUBcbQKb2iso=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/pahang.png</key>
+		<data>
+		dt4nrwDlbztATHgiDnxue8moEIA=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/penang.png</key>
+		<data>
+		mOHTyPthqaS6iMVwNak/pmGEL/Y=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/perak.png</key>
+		<data>
+		kXeOofdqJVVfmlQz02vNmuFX1NE=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/perlis.png</key>
+		<data>
+		oqN5yMrQOoB1+F6OlvV1MF60XUk=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/putrajaya.png</key>
+		<data>
+		RO+Z9k2butXQeZzbvwOf4Juk2Yw=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/sabah.png</key>
+		<data>
+		9n+dOhfLjw3jHVQqTEZenH5l2K4=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/sarawak.png</key>
+		<data>
+		Xmpa3vH5gYUqw+ZeLpaz9bQUT8Y=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/selangor.png</key>
+		<data>
+		G1H/6JYjOLY1Phh9EbqWVFVvSWE=
+		</data>
+		<key>flutter_assets/assets/images/destination_selection/terengganu.png</key>
+		<data>
+		wRbso6tjp7stMI6fXD3uZYa+6PE=
 		</data>
 		<key>flutter_assets/assets/images/exp_genting.png</key>
 		<data>
@@ -152,9 +216,77 @@
 		<data>
 		fw52JqfLAsjPjSrAw1kJ1EApnhc=
 		</data>
+		<key>flutter_assets/assets/images/itinerary/mamee.png</key>
+		<data>
+		C8ulZvQ09rTOE2mZYpZvOdtS4L4=
+		</data>
+		<key>flutter_assets/assets/images/itinerary/peranakan_place.png</key>
+		<data>
+		y8SpVaC/PLVAF4mMr9HA1sOqIWo=
+		</data>
+		<key>flutter_assets/assets/images/itinerary/stadthuys.png</key>
+		<data>
+		Nd6akFajqW76ISgA5CIzdhBsTq0=
+		</data>
+		<key>flutter_assets/assets/images/itinerary/sunway_university.png</key>
+		<data>
+		9AoQwddKL5czYQfNFDBTeMubWMI=
+		</data>
+		<key>flutter_assets/assets/images/itinerary/tan_kim_hock.png</key>
+		<data>
+		XZr9H+VHufCyDhkUwG3UwrsMqf8=
+		</data>
 		<key>flutter_assets/assets/images/kl_towers.png</key>
 		<data>
 		sj1HkqjCVlmPpQG6FUeczec3wmc=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/business.png</key>
+		<data>
+		0UWaSHZSlJeyHOFt5Ry4ozISfnc=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/couple.png</key>
+		<data>
+		kdnzMDdtqNfsJ9goVWExVbI/Hf4=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/family.png</key>
+		<data>
+		h1LC8BY+TuzHKFeHPAPlgs/FIMs=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/friends.png</key>
+		<data>
+		3JJVS4nvEMqgE/rAHFOC/5umPPM=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/group_tour.png</key>
+		<data>
+		7OEQ64HrFdDFv3VopfWQDW6mMww=
+		</data>
+		<key>flutter_assets/assets/images/travel_partner/solo.png</key>
+		<data>
+		9I79cgpWdTM3vydatSW0twEpwXU=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/adventure_outdoor.png</key>
+		<data>
+		lxvuB7Tj3u8xjzoM+cW+hYVObik=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/cultural_historical.png</key>
+		<data>
+		3v0nVIPLS68w/SwrguroKvxbtFM=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/food_culinary.png</key>
+		<data>
+		CooOeB/oOg3slBEfSDwbUdDjgdc=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/leisure_relaxation.png</key>
+		<data>
+		qYHw64sz8+Oj6vjqkmlvkgIHVu0=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/nature.png</key>
+		<data>
+		Vw7pDGZTxAkh5vvYZDqWU21uiEA=
+		</data>
+		<key>flutter_assets/assets/images/travel_style/urban_exploration.png</key>
+		<data>
+		Twx958+e5+lB6BK7zSar2ky1+E4=
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -166,7 +298,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		+DQlxhMUojca6RvOGzM3bwAaQPI=
+		/bYnZbQJ9kYOOFK4JZdsntNUmNc=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -187,14 +319,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			acgRySvunzrMVcyVi+G9i70xcAI3YPSAe4JROB+i4YQ=
+			Qh+FvwQof4LagRUTUuwpr/wG0BdKgvEqBCA3KhLGEZ8=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZTfNYBRM+bQfBOvqE0tyjeBewjFGj+J6NDnEYBGcYwo=
+			CX4KsYC+dEyYje2ddZ3V5FZoyUwnzx21zgNLLS97HLk=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -208,7 +340,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cw43rbnVNhbsxTdG9j6uaLpk2rwNFDDCotepRM54qJM=
+			EI/vUsmWh61a9ed1pFz+8jkRNBmL3JmzaUsoK/aAMsQ=
 			</data>
 		</dict>
 		<key>flutter_assets/NativeAssetsManifest.json</key>
@@ -314,6 +446,118 @@
 			<key>hash2</key>
 			<data>
 			3EqULL5mjRUvkDle6z+vcT9PWBd3XvICK29DZIeyN6A=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/johor.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4cMHOYa3LvyU+XtR+PSTBUDnnZg8P2nRI6isiXW7kyI=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/kedah.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			w8QIizyTo3IQFiSwZsnvC23jdAu2nV6qQGCbOcT5rfo=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/kelantan.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ywbkcu6tssa32daRXIc5S1Rccn0Oxlcxpw+rQgQKvks=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/kl.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/vzdb0rxrg1l+/M7W85TlowadR2Eqx1Zf5cVu93yYPs=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/labuan.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			HhaHjsBC+gJz7pBio19LYU4EpdWJGDOg6obYrCH6L0U=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/melaka.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nvmmVdOOUyLqC8vY35rPpeXG25R0dBI10ZMxMLquB+8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/negeri_sembilan.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AJL1aff2PM8O1mx9AsfzWaoEZZG4peerqsXDXijGGPw=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/pahang.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			F5JgYy9w0WcT7GrBrtRcR60J8yc4D0IeYlxIvXGLGIo=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/penang.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u6cGireOjYNNID4v3lHjs6j6sWi49rzutt5yO2UzpvI=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/perak.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l689boniiy14MENQmmLY7nex0qHWfdwHmeyLXZV3U6w=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/perlis.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			TeXjHRioAbjSbdiAEWUWRqO06ehtuKClmjBwKsQVByE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/putrajaya.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vqmmvNwZ1EqDzepwoRnz732DMh909N37FU9kooay2yI=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/sabah.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Y4iV123Sg8U0M6M48KT/bXgRBhVCda6iBbMVZ2YJ5WQ=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/sarawak.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ECwUPbQlNcs/1dwpq0W17fHrAnrqAcL4FLVvtmR1WyU=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/selangor.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3xjy/VWlkU40DbtuZl1NiDetdkwZ5cxLj+WoCiSMylw=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/destination_selection/terengganu.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zTc3yIw7sP93Op7PDsVCSmyc92FRmfwrpBFx3LQkAN0=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/exp_genting.png</key>
@@ -435,11 +679,130 @@
 			N+4RfkzyD98G83OTWcxH1Yq9CkLFlGln63fSOG8Eqtc=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/itinerary/mamee.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yR94EIJ3U1hsrfkvmZ4pfmtmp3YTKYlHeznzRypvc6o=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/itinerary/peranakan_place.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			okFFdf87jKOQta9yyVBvR11DYARtzieSsealks+wIbE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/itinerary/stadthuys.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			XaB2+tggRV+/e4aD/1LPefx8znlNO4PX1r1KRop+Frs=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/itinerary/sunway_university.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JFwcp9Rt54A4+dzoFuCG8gF8r0hrM9zS32hRke1huHE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/itinerary/tan_kim_hock.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			caq9e6aO+B8fcdK4kO7V0QVMK+DjSCLCi3i7lkAVhJ0=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/kl_towers.png</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			CCnIymCGZ6C/+EvaDr6LSWZte3Guex0MK2dLnhueYgQ=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/business.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			crDkJ7vQ+8vDb02c8m0OHn6+tpVDxzHP+JMpXYY/JQk=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/couple.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+5bupjuKHO9vvBR9pXevZHyshy5bIASE4jKAniHHE34=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/family.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vE0jKG/N0JPznzmvXSipyF9IMXgoZEdyHkr/6f+dkTI=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/friends.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			YxLSgRZDoXw3eYkz1lGLfehniTLkOvzihnPg5jG6I10=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/group_tour.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			npi5I50AGax2qwx9gqbo+OuYmgjOs2okNAsiiO4dbuw=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_partner/solo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			L0cfoA3afhd81XsheLjQNnbyRXY8XrDiwzvFioO8Y30=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/adventure_outdoor.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xNXRhSMU5wS1Sg9QzSHurPUfJANEupv1dTqSTZLXGq4=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/cultural_historical.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KNyT7RJWTZs2kh8wHs4W/UmttduLYuUX/19U0G28Lto=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/food_culinary.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nRHGCP7VdoeJTQEur+norqY8Zaxu18fXVnKZGbr7+vM=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/leisure_relaxation.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3pPkWeTygt/anqe+Ix1AHiVKLpf55pj1Kn5nmsIPO6g=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/nature.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0tcura1PNqvfRYGTs5oHBF3HeCYOl23YyZKuCg1/P+Y=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/travel_style/urban_exploration.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EgUXEPdy/0jln4JMLD9VLcCqOD506fJt13JmYk7/X4s=
 			</data>
 		</dict>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -460,7 +823,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			YqltIqvtADQmK7w3yGPnpo3dcRXMiWJyFFrmkjuBpPk=
+			BBFLbbxCvMICtfPoe3KDKSN6JKlRbMe+BqjCv/i7GLw=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

@@ -11,9 +11,10 @@ class TripViewModel extends ChangeNotifier {
     // mock trip data
     trip = Trip(
       id: 't1',
-      title: 'Melaka 2 days family trip',
+      name: 'Melaka 2 days family trip',
       image: 'assets/images/exp_melaka_trip.png',
-      location: 'Melacca, Malaysia',
+      destination: 'Melacca',
+      country: 'Malaysia',
       start: DateTime(2025, 8, 13),
       end: DateTime(2025, 8, 14),
       notesCount: 5,

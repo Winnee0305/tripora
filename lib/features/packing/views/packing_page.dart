@@ -12,7 +12,6 @@ class PackingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PackingPageViewModel>();
-    final theme = Theme.of(context);
     final packedCount = vm.packedItemCount;
     final totalCount = vm.items.length;
 

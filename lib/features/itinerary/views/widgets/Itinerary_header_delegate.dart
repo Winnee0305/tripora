@@ -81,7 +81,7 @@ class ItineraryHeaderDelegate extends SliverPersistentHeaderDelegate {
                               .headlineSmall
                               ?.weight(ManropeFontWeight.semiBold),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
-                          radius: 10,
+                          radius: 30,
                           backgroundVariant: BackgroundVariant.secondaryTrans,
                           onPressed: () {},
                         ),

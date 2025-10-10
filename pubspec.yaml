@@ -37,6 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -110,6 +111,36 @@ flutter:
     - assets/images/itinerary/peranakan_place.png
     - assets/images/itinerary/tan_kim_hock.png
     - assets/images/itinerary/mamee.png
+    - assets/images/destination_selection/johor.png
+    - assets/images/destination_selection/kedah.png
+    - assets/images/destination_selection/kelantan.png
+    - assets/images/destination_selection/kl.png
+    - assets/images/destination_selection/labuan.png
+    - assets/images/destination_selection/melaka.png
+    - assets/images/destination_selection/negeri_sembilan.png
+    - assets/images/destination_selection/pahang.png
+    - assets/images/destination_selection/penang.png
+    - assets/images/destination_selection/perak.png
+    - assets/images/destination_selection/perlis.png
+    - assets/images/destination_selection/putrajaya.png
+    - assets/images/destination_selection/sabah.png
+    - assets/images/destination_selection/sarawak.png
+    - assets/images/destination_selection/selangor.png
+    - assets/images/destination_selection/terengganu.png
+    - assets/images/travel_style/adventure_outdoor.png
+    - assets/images/travel_style/cultural_historical.png
+    - assets/images/travel_style/food_culinary.png
+    - assets/images/travel_style/leisure_relaxation.png
+    - assets/images/travel_style/nature.png
+    - assets/images/travel_style/urban_exploration.png
+    - assets/images/travel_partner/solo.png
+    - assets/images/travel_partner/couple.png
+    - assets/images/travel_partner/family.png
+    - assets/images/travel_partner/friends.png
+    - assets/images/travel_partner/business.png
+    - assets/images/travel_partner/group_tour.png
+    
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

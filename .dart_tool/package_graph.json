@@ -11,7 +11,8 @@
         "flutter",
         "flutter_staggered_grid_view",
         "intl",
-        "provider"
+        "provider",
+        "table_calendar"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -51,6 +52,15 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "table_calendar",
+      "version": "3.2.0",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "simple_gesture_detector"
       ]
     },
     {
@@ -256,6 +266,13 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "simple_gesture_detector",
+      "version": "0.2.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
