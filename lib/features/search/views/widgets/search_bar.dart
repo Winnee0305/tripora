@@ -3,8 +3,8 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:flutter/cupertino.dart';
 
-class HomeSearchBar extends StatelessWidget {
-  const HomeSearchBar({super.key});
+class AppSearchBar extends StatelessWidget {
+  const AppSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {

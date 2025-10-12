@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/home/viewmodels/travelers_voice_viewmodel.dart';
-import 'package:tripora/features/home/views/widgets/travel_post_card.dart';
+import 'package:tripora/features/search/viewmodels/post_section_viewmodel.dart';
+import 'package:tripora/features/search/views/widgets/travel_post_card.dart';
 
-class HomeTravelersVoiceTab extends StatelessWidget {
-  const HomeTravelersVoiceTab({super.key});
+class PostSection extends StatelessWidget {
+  const PostSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TravelersVoiceViewmodel(),
+      create: (_) => PostSectionViewmodel(),
       child: Scaffold(
-        body: Consumer<TravelersVoiceViewmodel>(
+        body: Consumer<PostSectionViewmodel>(
           builder: (context, vm, _) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

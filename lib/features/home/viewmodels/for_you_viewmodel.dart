@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
+import 'package:provider/provider.dart';
 
-class DestinationViewModel extends ChangeNotifier {
-  final PageController pageController = PageController(viewportFraction: 0.8);
+class ForYouViewModel extends ChangeNotifier {
+  final PageController pageController = PageController(viewportFraction: 0.85);
   int _currentPage = 0;
 
   int get currentPage => _currentPage;

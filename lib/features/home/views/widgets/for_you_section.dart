@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/home/viewmodels/destinations_viewmodel.dart';
-import 'widgets/destination_card.dart';
+import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
+import 'destination_card.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
 
-class HomeInspirationsTab extends StatelessWidget {
-  const HomeInspirationsTab({super.key});
+class ForYouSection extends StatelessWidget {
+  const ForYouSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DestinationViewModel>(
+    return Consumer<ForYouViewModel>(
       builder: (context, vm, child) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                "For You",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
+            const SizedBox(height: 10),
+
             SizedBox(
-              height: 412,
-              width: 500,
+              height: 240,
+              width: double.infinity,
               child: PageView.builder(
                 controller: vm.pageController,
                 itemCount: vm.destinations.length,
@@ -70,7 +79,7 @@ class HomeInspirationsTab extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 26),
+            const SizedBox(height: 10),
 
             // Indicators
             Row(
@@ -83,8 +92,10 @@ class HomeInspirationsTab extends StatelessWidget {
                   height: 8,
                   decoration: BoxDecoration(
                     color: vm.currentPage == index
-                        ? Colors.orange
-                        : Colors.grey.shade400,
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

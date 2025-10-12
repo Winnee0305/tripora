@@ -1,11 +1,11 @@
-class TravelPost {
+class Post {
   final String title;
   final String location;
   final String imageUrl;
   final String authorImageUrl;
   final int likes;
 
-  TravelPost({
+  Post({
     required this.title,
     required this.location,
     required this.imageUrl,

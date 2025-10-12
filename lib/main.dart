@@ -12,13 +12,17 @@ import 'features/itinerary/views/itinerary_page.dart';
 import 'features/trip/viewmodels/create_trip_viewmodel.dart';
 import 'features/expense/viewmodels/expense_page_viewmodel.dart';
 import 'features/expense/views/expense_page.dart';
+import 'features/home/viewmodels/home_viewmodel.dart';
 
 void main() {
   runApp(
-    // MultiProvider(
-    //   providers: [ChangeNotifierProvider(create: (_) => NavigationViewModel())],
-    //   child: const TriporaApp(),
-    // ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NavigationViewModel()),
+        ChangeNotifierProvider(create: (_) => HomeViewModel()),
+      ],
+      child: const TriporaApp(),
+    ),
 
     // ChangeNotifierProvider(
     //   create: (_) => PackingPageViewModel(),
@@ -38,13 +42,13 @@ void main() {
     //   providers: [ChangeNotifierProvider(create: (_) => CreateTripViewModel())],
     //   child: const TriporaApp(),
     // ),
-    ChangeNotifierProvider(
-      create: (_) => ExpensePageViewModel(
-        tripStartDate: DateTime(2025, 8, 13),
-        tripEndDate: DateTime(2025, 8, 14),
-      ),
-      child: const TriporaApp(),
-    ),
+    // ChangeNotifierProvider(
+    //   create: (_) => ExpensePageViewModel(
+    //     tripStartDate: DateTime(2025, 8, 13),
+    //     tripEndDate: DateTime(2025, 8, 14),
+    //   ),
+    //   child: const TriporaApp(),
+    // ),
   );
 }
 
@@ -58,7 +62,7 @@ class TriporaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       // home: const CreateTripPage(),
-      // home: const MainScreen(),
+      home: const MainScreen(),
       // home: TripInfoPage(
       //   tripTitle: 'Melaka 2 days family trip',
       //   destination: 'Melacca, Malaysia',
@@ -67,7 +71,7 @@ class TriporaApp extends StatelessWidget {
       // ),
       // home: const PackingPage(),
       // home: const ItineraryPage(),
-      home: const ExpensePage(),
+      // home: const ExpensePage(),
     );
   }
 }

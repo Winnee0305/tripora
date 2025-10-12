@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class AppNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -35,9 +36,9 @@ class AppNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildItem(CupertinoIcons.home, "Home", 0, theme),
-            _buildItem(CupertinoIcons.chat_bubble_text, "Chat", 1, theme),
+            _buildItem(LucideIcons.search, "Search", 1, theme),
             _buildItem(CupertinoIcons.map, "Trip", 2, theme),
-            _buildItem(CupertinoIcons.person, "Profile", 3, theme),
+            _buildItem(CupertinoIcons.chat_bubble_text, "Chat", 3, theme),
           ],
         ),
       ),

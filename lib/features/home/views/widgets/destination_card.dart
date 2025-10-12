@@ -12,85 +12,99 @@ class DestinationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The entire card
+    final theme = Theme.of(context);
+
     return Container(
-      margin: const EdgeInsets.all(6),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       decoration: BoxDecoration(
-        boxShadow:
-            Theme.of(context).extension<ShadowTheme>()?.buttonShadows ?? [],
-        borderRadius: BorderRadius.circular(30),
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: theme.colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: theme.extension<ShadowTheme>()?.buttonShadows ?? [],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
-          ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(30)),
-            child: Image.asset(
-              destination.imagePath,
-              height: 280,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+          // ---------- Image Section ----------
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: Image.asset(
+                  destination.imagePath,
+                  height: 160,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: AppButton.iconOnly(
+                  icon: CupertinoIcons.heart,
+                  onPressed: () {},
+                  backgroundVariant: BackgroundVariant.secondaryTrans,
+                ),
+              ),
+            ],
           ),
 
-          // Info
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  destination.name,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 14,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      destination.location,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: ManropeFontWeight.light,
+          // ---------- Info Section (centered) ----------
+          SizedBox(
+            height: 68, // fixed height for balanced layout
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // <-- centers vertically
+                children: [
+                  // Left text block
+                  Column(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // <-- centers text vertically
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        destination.name,
+                        style: theme.textTheme.headlineMedium,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppButton.iconOnly(
-                      icon: CupertinoIcons.heart,
-                      onPressed: () {},
-                      backgroundVariant: BackgroundVariant.primaryTrans,
-                    ),
-                    AppButton.iconTextSmall(
-                      onPressed: () {},
-                      text: "5.0",
-                      iconSize: 14,
-                      minHeight: 40,
-                      minWidth: 70,
-                      radius: 10,
-                      textStyleOverride: Theme.of(context).textTheme.bodyMedium
-                          ?.copyWith(
-                            fontWeight: ManropeFontWeight.regular,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 12,
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
                           ),
-                      icon: CupertinoIcons.star_fill,
-                      boxShadow: [],
+                          const SizedBox(width: 4),
+                          Text(
+                            destination.location,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: ManropeFontWeight.light,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // Rating button
+                  AppButton.iconTextSmall(
+                    onPressed: () {},
+                    text: destination.rating.toStringAsFixed(1),
+                    iconSize: 14,
+                    minHeight: 30,
+                    minWidth: 60,
+                    radius: 30,
+                    textStyleOverride: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: ManropeFontWeight.regular,
+                      color: theme.colorScheme.onPrimary,
                     ),
-                  ],
-                ),
-              ],
+                    icon: CupertinoIcons.star_fill,
+                    boxShadow: [],
+                    backgroundVariant: BackgroundVariant.primaryTrans,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

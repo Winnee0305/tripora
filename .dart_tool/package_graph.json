@@ -11,6 +11,7 @@
         "flutter",
         "flutter_staggered_grid_view",
         "intl",
+        "lucide_icons",
         "provider",
         "table_calendar"
       ],
@@ -52,6 +53,13 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "lucide_icons",
+      "version": "0.257.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

@@ -5,7 +5,7 @@ import 'package:tripora/core/widgets/app_navigation_bar.dart';
 import 'package:tripora/features/home/views/home_page.dart';
 import 'package:tripora/features/chat/views/chat_page.dart';
 import 'package:tripora/features/trip/views/trip_page.dart';
-import 'package:tripora/features/profile/views/profile_page.dart';
+import 'package:tripora/features/search/views/search_page.dart';
 
 class NavigationShell extends StatelessWidget {
   const NavigationShell({super.key});
@@ -14,7 +14,7 @@ class NavigationShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<NavigationViewModel>();
 
-    final pages = const [HomePage(), ChatPage(), TripPage(), ProfilePage()];
+    final pages = const [HomePage(), SearchPage(), TripPage(), ChatPage()];
 
     return Scaffold(
       extendBody: true,
