@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/itinerary_page.dart';
@@ -16,41 +15,41 @@ class StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 30),
-      child: MasonryGridView.count(
-        padding: EdgeInsets.zero,
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          switch (index) {
-            // ----- Notes
-            case 0:
-              return Container(
-                height: 158,
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+      child: MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.9,
+          children: [
+            // ----- NOTES
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {}, // Dummy tap
+              child: Container(
                 decoration: AppWidgetStyles.cardDecoration(
                   context,
                 ).copyWith(color: AppColors.design2),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Icon(
                       CupertinoIcons.doc_on_clipboard,
                       color: theme.colorScheme.onPrimary,
-                      size: 52,
+                      size: 58,
                     ),
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           "Notes",
@@ -64,56 +63,54 @@ class StatsSection extends StatelessWidget {
                           style: theme.textTheme.headlineLarge!.copyWith(
                             color: theme.colorScheme.onPrimary,
                             fontWeight: ManropeFontWeight.semiBold,
+                            fontSize: 32,
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-              );
+              ),
+            ),
 
-            // ----- Expense
-            case 1:
-              return Container(
-                height: 158,
+            // ----- EXPENSE
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {}, // Dummy tap
+              child: Container(
                 decoration: AppWidgetStyles.cardDecoration(
                   context,
                 ).copyWith(color: AppColors.design3),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Icon(
-                      CupertinoIcons.money_dollar_circle,
-                      color: theme.colorScheme.onPrimary,
-                      size: 52,
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        "Expense",
-                        style: theme.textTheme.headlineSmall!.copyWith(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: ManropeFontWeight.regular,
-                        ),
-                        textAlign: TextAlign.end,
+                    Center(
+                      child: Icon(
+                        CupertinoIcons.money_dollar_circle,
+                        color: theme.colorScheme.onPrimary,
+                        size: 58,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Expense",
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.regular,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           "RM",
-                          style: theme.textTheme.titleLarge!.copyWith(
+                          style: theme.textTheme.labelMedium!.copyWith(
                             color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.light,
+                            fontWeight: ManropeFontWeight.semiBold,
                           ),
                         ),
                         Text(
@@ -122,203 +119,136 @@ class StatsSection extends StatelessWidget {
                             color: theme.colorScheme.onPrimary,
                             fontWeight: ManropeFontWeight.semiBold,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ],
                 ),
-              );
+              ),
+            ),
 
-            // ----- Itinerary
-            case 2:
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (_) => ItineraryPageViewModel(),
-                        child: const ItineraryPage(),
-                      ),
+            // ----- ITINERARY
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => ItineraryPageViewModel(),
+                      child: const ItineraryPage(),
                     ),
-                  );
-                },
-                child: Container(
-                  height: 216,
-                  decoration: AppWidgetStyles.cardDecoration(
-                    context,
-                  ).copyWith(color: AppColors.design1),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Image.asset(
-                        "assets/icons/distance_white.png",
-                        width: 88,
-                        height: 88,
-                      ),
-                      const SizedBox(height: 18),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          "Itinerary",
-                          style: theme.textTheme.headlineSmall!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.regular,
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "9",
-                            style: theme.textTheme.headlineLarge!.copyWith(
-                              color: theme.colorScheme.onPrimary,
-                              fontWeight: ManropeFontWeight.semiBold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Activities",
-                            style: theme.textTheme.titleLarge!.copyWith(
-                              color: theme.colorScheme.onPrimary,
-                              fontWeight: ManropeFontWeight.light,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-
-            // ----- Packing List
-            case 3:
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (_) => PackingPageViewModel(),
-                        child: const PackingPage(),
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  height: 101.5,
-                  decoration: AppWidgetStyles.cardDecoration(
-                    context,
-                  ).copyWith(color: AppColors.design4),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Smart Packing List",
-                        style: theme.textTheme.headlineSmall!.copyWith(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: ManropeFontWeight.regular,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(
-                            Icons.luggage_outlined,
-                            color: theme.colorScheme.onPrimary,
-                            size: 36,
-                          ),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "7",
-                                style: theme.textTheme.headlineLarge!.copyWith(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontWeight: ManropeFontWeight.semiBold,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                "/ 30",
-                                style: theme.textTheme.headlineSmall!.copyWith(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontWeight: ManropeFontWeight.regular,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-
-            // ----- Attachment
-            case 4:
-              return Container(
-                height: 101.5,
+                );
+              },
+              child: Container(
                 decoration: AppWidgetStyles.cardDecoration(
                   context,
-                ).copyWith(color: AppColors.design2),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 0,
-                ),
+                ).copyWith(color: AppColors.design1),
+                padding: const EdgeInsets.all(20),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          CupertinoIcons.paperclip,
-                          color: theme.colorScheme.onPrimary,
-                          size: 36,
-                        ),
-                        Text(
-                          "5",
-                          style: theme.textTheme.headlineLarge!
-                              .weight(ManropeFontWeight.semiBold)
-                              .colorize(theme.colorScheme.onPrimary),
-                        ),
-                      ],
+                    Center(
+                      child: Image.asset(
+                        "assets/icons/distance_white.png",
+                        width: 64,
+                        height: 64,
+                      ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 16),
                     Text(
-                      "Attachment",
+                      "Itinerary",
                       style: theme.textTheme.headlineSmall!.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: ManropeFontWeight.regular,
                       ),
                     ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "9 Activities",
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.semiBold,
+                      ),
+                    ),
                   ],
                 ),
-              );
-            default:
-              return const SizedBox.shrink();
-          }
-        },
+              ),
+            ),
+
+            // ----- PACKING LIST
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => PackingPageViewModel(),
+                      child: const PackingPage(),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: AppWidgetStyles.cardDecoration(
+                  context,
+                ).copyWith(color: AppColors.design4),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Smart Packing List",
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: ManropeFontWeight.regular,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 28),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(
+                          Icons.luggage_outlined,
+                          color: theme.colorScheme.onPrimary,
+                          size: 52,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "7",
+                              style: theme.textTheme.headlineLarge!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.semiBold,
+                                fontSize: 32,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "/ 30",
+                              style: theme.textTheme.headlineSmall!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

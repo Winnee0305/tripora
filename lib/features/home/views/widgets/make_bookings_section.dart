@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons/lucide_icons.dart';
