@@ -12,6 +12,10 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool chooseButton;
   final bool isNumber;
+  final bool autofocus;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
+  final InputDecoration? decoration;
 
   const AppTextField({
     super.key,
@@ -24,18 +28,22 @@ class AppTextField extends StatelessWidget {
     this.onChanged,
     this.chooseButton = false,
     this.isNumber = false,
+    this.autofocus = false,
+    this.controller,
+    this.keyboardType = TextInputType.text,
+    this.decoration,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final controller = readOnly
-        ? TextEditingController(text: text ?? '')
-        : null;
+    final effectiveController =
+        controller ??
+        (readOnly ? TextEditingController(text: text ?? '') : null);
 
     return TextField(
-      controller: controller,
+      controller: effectiveController,
       readOnly: readOnly,
       onTap: onTap,
       onChanged: onChanged,
@@ -61,6 +69,7 @@ class AppTextField extends StatelessWidget {
         prefixIcon: icon != null
             ? Icon(icon, color: theme.colorScheme.primary, size: 20)
             : null,
+        prefixText: isNumber ? "RM " : null,
         labelText: label,
         labelStyle: theme.textTheme.titleLarge
             ?.alpha(0.4)
