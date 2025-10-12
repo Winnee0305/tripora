@@ -23,7 +23,7 @@ class DaySelectionBar extends StatelessWidget {
         clipBehavior: Clip.none,
 
         itemCount: days.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 0),
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final dayNumber = index + 1;
           final formattedDate = vm.getFormattedDayLabel(dayNumber);

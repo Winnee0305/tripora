@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
+import 'package:tripora/core/theme/app_widget_styles.dart';
 
 class DayCard extends StatelessWidget {
   final int day;
@@ -19,39 +20,11 @@ class DayCard extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          bottomLeft: Radius.circular(0),
-          topRight: Radius.circular(18),
-          bottomRight: Radius.circular(0),
-        ),
+      decoration: AppWidgetStyles.cardDecoration(context).copyWith(
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
         color: isSelected
             ? theme.colorScheme.primary
             : theme.colorScheme.surface,
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.08),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                  offset: const Offset(
-                    0,
-                    -8,
-                  ), // 👈 negative Y = shadow above the box
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: theme.colorScheme.onSurface.withOpacity(0.08),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                  offset: const Offset(
-                    0,
-                    -8,
-                  ), // 👈 negative Y = shadow above the box
-                ),
-              ],
       ),
 
       clipBehavior: Clip.none,
