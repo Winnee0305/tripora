@@ -138,7 +138,7 @@ class StatsSection extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
                       create: (_) => ItineraryPageViewModel(),
-                      child: const ItineraryPage(),
+                      child: ItineraryPage(),
                     ),
                   ),
                 );
