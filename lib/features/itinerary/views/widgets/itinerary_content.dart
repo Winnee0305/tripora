@@ -9,7 +9,9 @@ import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
 
 class ItineraryContent extends StatelessWidget {
-  const ItineraryContent({super.key});
+  const ItineraryContent({super.key, required this.listKey});
+
+  final GlobalKey<MultiDayItineraryListState> listKey;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class ItineraryContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        MultiDayItineraryList(scrollController: scrollController),
+        MultiDayItineraryList(key: listKey, scrollController: scrollController),
         const SizedBox(height: 40),
         Center(
           child: AppButton.primary(

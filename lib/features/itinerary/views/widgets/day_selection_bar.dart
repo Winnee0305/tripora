@@ -5,7 +5,9 @@ import 'day__card.dart';
 import 'multi_day_itinerary_list.dart';
 
 class DaySelectionBar extends StatelessWidget {
-  const DaySelectionBar({super.key});
+  const DaySelectionBar({super.key, required this.listKey});
+
+  final GlobalKey<MultiDayItineraryListState> listKey;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +32,20 @@ class DaySelectionBar extends StatelessWidget {
           final formattedDate = vm.getFormattedDayLabel(dayNumber);
           final isSelected = vm.selectedDay == dayNumber;
 
-          return GestureDetector(
-            onTap: () {
-              final parentListState = context
-                  .findAncestorStateOfType<MultiDayItineraryListState>();
-              parentListState?.scrollToDay(dayNumber);
-            },
-
-            child: DayCard(
-              day: dayNumber,
-              dateLabel: formattedDate, // add this field to your widget
-              isSelected: isSelected,
+          return Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                // update selection and scroll
+                vm.selectDay(dayNumber);
+                listKey.currentState?.scrollToDay(dayNumber);
+              },
+              child: DayCard(
+                day: dayNumber,
+                dateLabel: formattedDate,
+                isSelected: isSelected,
+              ),
             ),
           );
         },

@@ -13,6 +13,13 @@ class RouteInfo {
 
 /// ViewModel with mock route data
 class ItineraryPageViewModel extends ChangeNotifier {
+  // Simple per-day weather and lodging mocks
+  final Map<int, String> _dailyWeather = {1: "Sunny 29°C", 2: "Cloudy 27°C"};
+  final Map<int, String> _dailyLodging = {
+    1: "AMES Hotel",
+    2: "Motel Riverside",
+  };
+
   final Map<int, List<Itinerary>> _dailyItineraries = {
     1: [
       Itinerary(
@@ -61,6 +68,9 @@ class ItineraryPageViewModel extends ChangeNotifier {
   };
 
   Map<int, List<Itinerary>> get dailyItineraries => _dailyItineraries;
+
+  String? getWeatherForDay(int day) => _dailyWeather[day];
+  String? getLodgingForDay(int day) => _dailyLodging[day];
 
   final Map<int, RouteInfo> _routeInfoMap = {};
   Map<int, RouteInfo> get routeInfoMap => _routeInfoMap;

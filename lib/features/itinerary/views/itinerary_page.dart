@@ -7,9 +7,18 @@ import 'package:tripora/features/itinerary/viewmodels/day_selection_viewmodel.da
 import 'package:tripora/features/itinerary/views/widgets/itinerary_header_section.dart';
 import 'package:tripora/features/itinerary/views/widgets/day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_content.dart';
+import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 
-class ItineraryPage extends StatelessWidget {
+class ItineraryPage extends StatefulWidget {
   const ItineraryPage({super.key});
+
+  @override
+  State<ItineraryPage> createState() => _ItineraryPageState();
+}
+
+class _ItineraryPageState extends State<ItineraryPage> {
+  final GlobalKey<MultiDayItineraryListState> _listKey =
+      GlobalKey<MultiDayItineraryListState>();
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +154,7 @@ class ItineraryPage extends StatelessWidget {
                               color: Theme.of(
                                 context,
                               ).colorScheme.surface, // or any color
-                              child: const DaySelectionBar(),
+                              child: DaySelectionBar(listKey: _listKey),
                             ),
                           ),
                         ),
@@ -157,7 +166,7 @@ class ItineraryPage extends StatelessWidget {
                               horizontal: 24,
                               vertical: 16,
                             ),
-                            child: ItineraryContent(),
+                            child: ItineraryContent(listKey: _listKey),
                           ),
                         ),
                       ],
