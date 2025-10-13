@@ -4,7 +4,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/widgets/app_button.dart';
 import 'package:tripora/core/theme/app_colors.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_reoderable_list.dart';
+import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
 
@@ -13,6 +13,7 @@ class ItineraryContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scrollController = ScrollController();
     return Column(
       children: [
         ChangeNotifierProvider(
@@ -50,7 +51,7 @@ class ItineraryContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        const ItineraryReorderableList(),
+        MultiDayItineraryList(scrollController: scrollController),
         const SizedBox(height: 40),
         Center(
           child: AppButton.primary(

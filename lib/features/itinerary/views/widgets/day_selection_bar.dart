@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/itinerary/viewmodels/day_selection_viewmodel.dart';
 import 'day__card.dart';
+import 'multi_day_itinerary_list.dart';
 
 class DaySelectionBar extends StatelessWidget {
   const DaySelectionBar({super.key});
@@ -30,7 +31,11 @@ class DaySelectionBar extends StatelessWidget {
           final isSelected = vm.selectedDay == dayNumber;
 
           return GestureDetector(
-            onTap: () => vm.selectDay(dayNumber),
+            onTap: () {
+              final parentListState = context
+                  .findAncestorStateOfType<MultiDayItineraryListState>();
+              parentListState?.scrollToDay(dayNumber);
+            },
 
             child: DayCard(
               day: dayNumber,
