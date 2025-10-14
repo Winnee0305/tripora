@@ -18,7 +18,10 @@ class DaySelectionViewModel extends ChangeNotifier {
 
   /// Select a specific day
   void selectDay(int day) {
-    if (day >= 1 && day <= totalDays) {
+    if (day == 0) {
+      _selectedDay = 0;
+      notifyListeners();
+    } else if (day >= 1 && day <= totalDays) {
       _selectedDay = day;
       notifyListeners();
     }

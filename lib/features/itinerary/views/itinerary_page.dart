@@ -8,15 +8,12 @@ import 'package:tripora/features/itinerary/views/widgets/itinerary_header_sectio
 import 'package:tripora/features/itinerary/views/widgets/day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
+import 'package:tripora/features/notes_and_itinerary/notes/views/notes_page.dart';
 
-class ItineraryPage extends StatefulWidget {
-  const ItineraryPage({super.key});
+class ItineraryPage extends StatelessWidget {
+  ItineraryPage({super.key});
 
-  @override
-  State<ItineraryPage> createState() => _ItineraryPageState();
-}
-
-class _ItineraryPageState extends State<ItineraryPage> {
+  // The listKey is final, so it can be used inside a StatelessWidget
   final GlobalKey<MultiDayItineraryListState> _listKey =
       GlobalKey<MultiDayItineraryListState>();
 
@@ -33,7 +30,7 @@ class _ItineraryPageState extends State<ItineraryPage> {
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-            // ----- Map Background
+            // ----- Map Background -----
             Positioned.fill(
               child: Image.asset(
                 "assets/images/exp_map.png",
@@ -41,19 +38,16 @@ class _ItineraryPageState extends State<ItineraryPage> {
               ),
             ),
 
-            // ------ Back button, title, home button
-            ItineraryHeaderSection(),
+            // ----- Header (Back, Home, etc.)
+            const ItineraryHeaderSection(),
 
-            // ------ Draggable Scrollable Sheet
+            // ----- Draggable Sheet -----
             DraggableScrollableSheet(
               initialChildSize: 0.5,
               minChildSize: 0.11,
               maxChildSize: 0.85,
-              snap: false,
               builder: (context, scrollController) {
-                // ----- The white rounded container -----
                 return Container(
-                  padding: EdgeInsets.symmetric(vertical: 8),
                   decoration: AppWidgetStyles.cardDecoration(context).copyWith(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(48),
@@ -64,112 +58,125 @@ class _ItineraryPageState extends State<ItineraryPage> {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(48),
                     ),
-                    child: CustomScrollView(
-                      controller: scrollController,
-                      slivers: [
-                        // ---------- Sticky Drag Handle ----------
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: _StickyHeaderDelegate(
-                            height: 20,
-                            child: Container(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              alignment: Alignment.center,
-                              child: Container(
-                                width: 40,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.onSurface
-                                      .withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(2),
+                    child: Consumer<DaySelectionViewModel>(
+                      builder: (context, vm, _) {
+                        return CustomScrollView(
+                          controller: scrollController,
+                          slivers: [
+                            // ---------- Sticky Handle ----------
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: _StickyHeaderDelegate(
+                                height: 20,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  color: Theme.of(
+                                    context,
+                                  ).scaffoldBackgroundColor,
+                                  child: Container(
+                                    width: 40,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
 
-                        // ---------- Title (not sticky) ----------
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 30,
-                              right: 30,
-                              top: 0,
-                              bottom: 4,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Melaka 2 Days Family Trip",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium
-                                      ?.weight(ManropeFontWeight.semiBold),
+                            // ---------- Title ----------
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 4,
                                 ),
-                                const SizedBox(height: 6),
-                                Row(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "6 - 12 October 2025",
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.onSurface
-                                                .withOpacity(0.6),
-                                          ),
+                                      "Melaka 2 Days Family Trip",
+                                      style: theme.textTheme.headlineMedium
+                                          ?.weight(ManropeFontWeight.semiBold),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      "6 Days, 5 Nights",
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.onSurface
-                                                .withOpacity(0.6),
-                                          ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Icon(
-                                      CupertinoIcons.chevron_right,
-                                      size: 12,
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(0.6),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "6 - 12 October 2025",
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.6),
+                                              ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          "6 Days, 5 Nights",
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.6),
+                                              ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          CupertinoIcons.chevron_right,
+                                          size: 12,
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // ---------- Sticky Day Selection Bar ----------
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: _StickyHeaderDelegate(
-                            height: 86,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
                               ),
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surface, // or any color
-                              child: DaySelectionBar(listKey: _listKey),
                             ),
-                          ),
-                        ),
 
-                        // ---------- Main Content (scrollable itinerary for each day)----------
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 16,
+                            // ---------- Sticky Selection Bar ----------
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: _StickyHeaderDelegate(
+                                height: 86,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  color: theme.colorScheme.surface,
+                                  child: DaySelectionBar(listKey: _listKey),
+                                ),
+                              ),
                             ),
-                            child: ItineraryContent(listKey: _listKey),
-                          ),
-                        ),
-                      ],
+
+                            // ---------- Main Content ----------
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 300),
+                                  switchInCurve: Curves.easeInOut,
+                                  child: vm.selectedDay == 0
+                                      ? const NotesPage()
+                                      : ItineraryContent(
+                                          key: const ValueKey('itinerary'),
+                                          listKey: _listKey,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 );
@@ -182,6 +189,7 @@ class _ItineraryPageState extends State<ItineraryPage> {
   }
 }
 
+// ---------- Sticky Header Delegate ----------
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double height;
@@ -214,9 +222,8 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
-    return oldDelegate.child != child ||
-        oldDelegate.height != height ||
-        oldDelegate.backgroundColor != backgroundColor;
-  }
+  bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) =>
+      oldDelegate.child != child ||
+      oldDelegate.height != height ||
+      oldDelegate.backgroundColor != backgroundColor;
 }
