@@ -6,8 +6,8 @@ import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
-import 'package:tripora/features/itinerary/views/notes_itinerary_page.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
+import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_content_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -37,7 +37,7 @@ class StatsSection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ItineraryPageViewModel(),
+                      create: (_) => ItineraryContentViewModel(),
                       child: NotesItineraryPage(currentTab: 0),
                     ),
                   ),
@@ -147,7 +147,7 @@ class StatsSection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ItineraryPageViewModel(),
+                      create: (_) => ItineraryContentViewModel(),
                       child: NotesItineraryPage(currentTab: 1),
                     ),
                   ),

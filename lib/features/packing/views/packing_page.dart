@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/core/widgets/app_sticky_header_delegate.dart';
 import 'widgets/packing_page_header_section.dart';

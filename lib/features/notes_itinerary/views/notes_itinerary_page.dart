@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
-import 'package:tripora/features/itinerary/viewmodels/day_selection_viewmodel.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_header_section.dart';
-import 'package:tripora/features/itinerary/views/widgets/day_selection_bar.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_content.dart';
+import 'package:tripora/features/notes_itinerary/viewmodels/day_selection_viewmodel.dart';
+import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
+import 'package:tripora/features/notes_itinerary/views/widgets/day_selection_bar.dart';
+import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
-import 'package:tripora/features/itinerary/views/notes_content.dart';
+import 'package:tripora/features/notes/views/notes_content.dart';
 
 class NotesItineraryPage extends StatelessWidget {
   NotesItineraryPage({super.key, required this.currentTab});
@@ -45,7 +45,7 @@ class NotesItineraryPage extends StatelessWidget {
             ),
 
             // ----- Header (Back, Home, etc.)
-            const ItineraryHeaderSection(),
+            const NotesItineraryPageHeaderSection(),
 
             // ----- Draggable Sheet -----
             DraggableScrollableSheet(

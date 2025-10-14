@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/itinerary/models/itinerary.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_content_viewmodel.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
-import 'package:tripora/features/itinerary/views/widgets/itinerary_lodging_card.dart';
+import 'package:tripora/features/itinerary/views/widgets/lodging_card.dart';
 import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 
 @immutable
@@ -31,7 +31,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
   void initState() {
     super.initState();
     Future.microtask(
-      () => context.read<ItineraryPageViewModel>().loadAllDayRoutes(),
+      () => context.read<ItineraryContentViewModel>().loadAllDayRoutes(),
     );
   }
 
@@ -48,7 +48,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<ItineraryPageViewModel>();
+    final vm = context.watch<ItineraryContentViewModel>();
 
     return Column(
       children: List.generate(vm.dailyItineraries.keys.length, (dayIndex) {
@@ -81,7 +81,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 ),
                 const SizedBox(height: 16),
                 // ----- Lodging info (if any)
-                const ItineraryLodgingCard(),
+                const LodgingCard(),
                 const SizedBox(height: 26),
                 // ----- Itinerary items -----
                 ReorderableListView.builder(

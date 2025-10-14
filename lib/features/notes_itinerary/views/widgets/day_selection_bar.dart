@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/widgets/app_button.dart';
-import 'package:tripora/features/itinerary/viewmodels/day_selection_viewmodel.dart';
-import 'package:tripora/features/itinerary/views/widgets/notes_tab_card.dart';
-import 'day__card.dart';
-import 'multi_day_itinerary_list.dart';
+import 'package:tripora/features/notes_itinerary/viewmodels/day_selection_viewmodel.dart';
+import 'package:tripora/features/notes_itinerary/views/widgets/notes_tab_card.dart';
+import 'day_tab_card.dart';
+import '../../../itinerary/views/widgets/multi_day_itinerary_list.dart';
 
 class DaySelectionBar extends StatelessWidget {
   const DaySelectionBar({super.key, required this.listKey});
@@ -62,7 +61,7 @@ class DaySelectionBar extends StatelessWidget {
                   },
                   child: isNotesTab
                       ? NotesTabCard(isSelected: isSelected)
-                      : DayCard(
+                      : DayTabCard(
                           day: dayNumber,
                           dateLabel: formattedDate,
                           isSelected: isSelected,

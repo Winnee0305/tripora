@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 
-class DayCard extends StatelessWidget {
+class DayTabCard extends StatelessWidget {
   final int day;
   final String dateLabel;
   final bool isSelected;
 
-  const DayCard({
+  const DayTabCard({
     super.key,
     required this.day,
     required this.dateLabel,

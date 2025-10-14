@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/widgets/app_button.dart';
 
-class ItineraryHeaderSection extends StatelessWidget {
-  const ItineraryHeaderSection({super.key});
+class NotesItineraryPageHeaderSection extends StatelessWidget {
+  const NotesItineraryPageHeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
-import 'package:provider/provider.dart';
 
 class ForYouViewModel extends ChangeNotifier {
   final PageController pageController = PageController(viewportFraction: 0.85);

@@ -5,7 +5,6 @@ import 'package:tripora/core/widgets/app_check_box.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/packing/models/packing_item.dart';
-import 'package:tripora/features/packing/models/packing_item.dart'; // adjust import path as needed
 
 class PackingPageCategoryCard extends StatelessWidget {
   final String category;

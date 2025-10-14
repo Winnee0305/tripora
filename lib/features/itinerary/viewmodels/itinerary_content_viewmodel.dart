@@ -14,7 +14,7 @@ class RouteInfo {
 }
 
 /// ViewModel with mock route data
-class ItineraryPageViewModel extends ChangeNotifier {
+class ItineraryContentViewModel extends ChangeNotifier {
   // Simple per-day weather and lodging mocks
   final Map<int, String> _dailyWeather = {1: "Sunny 29°C", 2: "Cloudy 27°C"};
   final Map<int, String> _dailyLodging = {
