@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/itinerary/models/itinerary.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
+import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
+import 'package:tripora/features/itinerary/views/widgets/itinerary_lodging_card.dart';
+import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 
 @immutable
 class _DraggedItinerary {
@@ -56,241 +60,177 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
         return DragTarget<_DraggedItinerary>(
           key: _dayKeys[day],
           builder: (context, candidateData, rejectedData) {
-            final isActive = candidateData.isNotEmpty;
-            return Container(
-              decoration: isActive
-                  ? BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.5),
-                      ),
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    )
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: 16,
-                    ),
-                    child: Text(
-                      "Day $day • ${vm.getDateLabelForDay(day)}",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Text(
+                    "Day $day • ${vm.getDateLabelForDay(day)}",
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: ManropeFontWeight.semiBold,
                     ),
                   ),
-                  // Per-day white cards: Weather & Lodging (hardcoded for now)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.wb_sunny_outlined, size: 18),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  vm.getWeatherForDay(day) ??
-                                      (day == 1 ? "Sunny 29°C" : "Cloudy 27°C"),
+                ),
+                const SizedBox(height: 12),
+
+                // ----- Weather card
+                ChangeNotifierProvider(
+                  create: (_) => WeatherCardViewModel(),
+                  child: const WeatherCard(),
+                ),
+                const SizedBox(height: 16),
+                // ----- Lodging info (if any)
+                const ItineraryLodgingCard(),
+                const SizedBox(height: 26),
+                // ----- Itinerary items -----
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  onReorder:
+                      (
+                        oldIndex,
+                        newIndex,
+                      ) => // to implement reordering when within same day
+                          vm.reorderWithinDay(day, oldIndex, newIndex),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    // Each item is both draggable and a drop target
+                    return DragTarget<_DraggedItinerary>(
+                      key: ValueKey(item),
+                      builder: (context, candidateData, rejectedData) {
+                        final isActive = candidateData.isNotEmpty;
+                        // Highlight drop target when active
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Highlight drop target when active
+                            if (isActive)
+                              Container(
+                                height: 12,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.12),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(6),
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.hotel, size: 18),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  vm.getLodgingForDay(day) ??
-                                      (day == 1
-                                          ? "AMES Hotel"
-                                          : "Motel Riverside"),
+                            // The actual itinerary item with drag handle
+                            Stack(
+                              children: [
+                                // The itinerary item card
+                                ItineraryItem(
+                                  item: item,
+                                  isFirst: index == 0,
+                                  isLast: index == items.length - 1,
+                                  index: index,
                                 ),
-                              ),
-                              const Text(
-                                "CHECK IN",
-                                style: TextStyle(color: Colors.purple),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ReorderableListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    onReorder: (oldIndex, newIndex) =>
-                        vm.reorderWithinDay(day, oldIndex, newIndex),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return DragTarget<_DraggedItinerary>(
-                        key: ValueKey(item),
-                        builder: (context, candidateData, rejectedData) {
-                          final isActive = candidateData.isNotEmpty;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              if (isActive)
-                                Container(
-                                  height: 12,
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary.withOpacity(0.12),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(6),
+                                // The drag handle
+                                Positioned(
+                                  right: 8,
+                                  top: 8,
+                                  // Using LongPressDraggable for better UX
+                                  child: LongPressDraggable<_DraggedItinerary>(
+                                    data: _DraggedItinerary(
+                                      item: item,
+                                      fromDay: day,
+                                    ),
+                                    feedback: Material(
+                                      elevation: 6,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 360,
+                                        ),
+                                        child: Opacity(
+                                          opacity: 0.95,
+                                          child: ItineraryItem(
+                                            item: item,
+                                            isFirst: true,
+                                            isLast: true,
+                                            index: index,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    childWhenDragging: Opacity(
+                                      opacity: 0.3,
+                                      child: Icon(
+                                        Icons.open_with,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        size: 12,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.open_with,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.6),
+                                      size: 16,
                                     ),
                                   ),
                                 ),
-                              Stack(
-                                children: [
-                                  ItineraryItem(
-                                    item: item,
-                                    isFirst: index == 0,
-                                    isLast: index == items.length - 1,
-                                    index: index,
-                                  ),
-                                  Positioned(
-                                    right: 4,
-                                    top: 4,
-                                    child:
-                                        LongPressDraggable<_DraggedItinerary>(
-                                          data: _DraggedItinerary(
-                                            item: item,
-                                            fromDay: day,
-                                          ),
-                                          feedback: Material(
-                                            elevation: 6,
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            child: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                maxWidth: 320,
-                                              ),
-                                              child: Opacity(
-                                                opacity: 0.95,
-                                                child: ItineraryItem(
-                                                  item: item,
-                                                  isFirst: true,
-                                                  isLast: true,
-                                                  index: index,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          childWhenDragging: Opacity(
-                                            opacity: 0.3,
-                                            child: Icon(
-                                              Icons.open_with,
-                                              color: Theme.of(
-                                                context,
-                                              ).iconTheme.color,
-                                              size: 18,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            Icons.open_with,
-                                            color: Theme.of(
-                                              context,
-                                            ).iconTheme.color,
-                                            size: 18,
-                                          ),
-                                        ),
-                                  ),
-                                ],
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                      onWillAcceptWithDetails: (details) {
+                        return details.data.fromDay != day;
+                      },
+                      onAcceptWithDetails: (details) {
+                        final dragged = details.data;
+                        vm.moveItemBetweenDays(
+                          dragged.fromDay,
+                          day,
+                          dragged.item,
+                          index,
+                        );
+                      },
+                    );
+                  },
+                ),
+                // Trailing drop target to append at end of day
+                DragTarget<_DraggedItinerary>(
+                  builder: (context, candidateData, rejectedData) {
+                    final isActive = candidateData.isNotEmpty;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 120),
+                      height: isActive ? 16 : 8,
+                      margin: const EdgeInsets.only(top: 8, bottom: 4),
+                      decoration: isActive
+                          ? BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.12),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(6),
                               ),
-                            ],
-                          );
-                        },
-                        onWillAcceptWithDetails: (details) {
-                          return details.data.fromDay != day;
-                        },
-                        onAcceptWithDetails: (details) {
-                          final dragged = details.data;
-                          vm.moveItemBetweenDays(
-                            dragged.fromDay,
-                            day,
-                            dragged.item,
-                            index,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  // Trailing drop target to append at end of day
-                  DragTarget<_DraggedItinerary>(
-                    builder: (context, candidateData, rejectedData) {
-                      final isActive = candidateData.isNotEmpty;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 120),
-                        height: isActive ? 16 : 8,
-                        margin: const EdgeInsets.only(top: 8, bottom: 4),
-                        decoration: isActive
-                            ? BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withOpacity(0.12),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(6),
-                                ),
-                              )
-                            : null,
-                      );
-                    },
-                    onWillAcceptWithDetails: (details) {
-                      return details.data.fromDay != day;
-                    },
-                    onAcceptWithDetails: (details) {
-                      final dragged = details.data;
-                      final insertIndex = vm.dailyItineraries[day]?.length ?? 0;
-                      vm.moveItemBetweenDays(
-                        dragged.fromDay,
-                        day,
-                        dragged.item,
-                        insertIndex,
-                      );
-                    },
-                  ),
-                ],
-              ),
+                            )
+                          : null,
+                    );
+                  },
+                  onWillAcceptWithDetails: (details) {
+                    return details.data.fromDay != day;
+                  },
+                  onAcceptWithDetails: (details) {
+                    final dragged = details.data;
+                    final insertIndex = vm.dailyItineraries[day]?.length ?? 0;
+                    vm.moveItemBetweenDays(
+                      dragged.fromDay,
+                      day,
+                      dragged.item,
+                      insertIndex,
+                    );
+                  },
+                ),
+              ],
             );
           },
           onWillAcceptWithDetails: (details) {

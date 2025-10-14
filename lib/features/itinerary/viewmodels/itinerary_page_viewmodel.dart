@@ -7,6 +7,8 @@ import 'package:tripora/features/itinerary/models/itinerary.dart';
 class RouteInfo {
   final String distance;
   final String duration;
+  final Map<int, GlobalKey> dayKeys = {};
+  final ScrollController scrollController = ScrollController();
 
   RouteInfo({required this.distance, required this.duration});
 }

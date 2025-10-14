@@ -18,41 +18,6 @@ class ItineraryContent extends StatelessWidget {
     final scrollController = ScrollController();
     return Column(
       children: [
-        ChangeNotifierProvider(
-          create: (_) => WeatherCardViewModel(),
-          child: const WeatherCard(),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: AppWidgetStyles.cardDecoration(context),
-          child: Row(
-            children: [
-              AppButton.iconOnly(
-                icon: Icons.hotel,
-                onPressed: () {},
-                iconSize: 18,
-                minHeight: 30,
-                minWidth: 30,
-                backgroundColorOverride: AppColors.accent1.withValues(
-                  alpha: 0.1,
-                ),
-                textColorOverride: AppColors.accent1,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  "AMES Hotel",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.weight(ManropeFontWeight.semiBold),
-                ),
-              ),
-              const Text("CHECK IN", style: TextStyle(color: Colors.purple)),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
         MultiDayItineraryList(key: listKey, scrollController: scrollController),
         const SizedBox(height: 40),
         Center(

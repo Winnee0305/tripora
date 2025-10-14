@@ -5,6 +5,7 @@ class WeatherCardViewModel extends ChangeNotifier {
   String _condition = "Sunny";
   double _temperature = 29.0;
   String _lastUpdated = "5 min ago";
+  bool _isDisposed = false; // 👈 track disposal
   // Getters
   String get condition => _condition;
   double get temperature => _temperature;
@@ -16,13 +17,20 @@ class WeatherCardViewModel extends ChangeNotifier {
   }
 
   void _loadMockData() {
-    // Simulate fetching mock weather data
     Future.delayed(const Duration(milliseconds: 500), () {
+      if (_isDisposed) return; // 👈 avoid notifying after dispose
+
       _condition = "Cloudy";
       _temperature = 27.4;
       _lastUpdated = "5 mins ago";
       notifyListeners();
     });
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true; // 👈 mark disposed
+    super.dispose();
   }
 
   // Optional: refresh function (for pull-to-refresh)
