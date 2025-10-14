@@ -159,42 +159,133 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         vm.reorderWithinDay(day, oldIndex, newIndex),
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      return LongPressDraggable<_DraggedItinerary>(
+                      return DragTarget<_DraggedItinerary>(
                         key: ValueKey(item),
-                        data: _DraggedItinerary(item: item, fromDay: day),
-                        feedback: Material(
-                          elevation: 6,
-                          borderRadius: BorderRadius.circular(8),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 320),
-                            child: Opacity(
-                              opacity: 0.95,
-                              child: ItineraryItem(
-                                item: item,
-                                isFirst: true,
-                                isLast: true,
-                                index: index,
+                        builder: (context, candidateData, rejectedData) {
+                          final isActive = candidateData.isNotEmpty;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (isActive)
+                                Container(
+                                  height: 12,
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.12),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                  ),
+                                ),
+                              Stack(
+                                children: [
+                                  ItineraryItem(
+                                    item: item,
+                                    isFirst: index == 0,
+                                    isLast: index == items.length - 1,
+                                    index: index,
+                                  ),
+                                  Positioned(
+                                    right: 4,
+                                    top: 4,
+                                    child:
+                                        LongPressDraggable<_DraggedItinerary>(
+                                          data: _DraggedItinerary(
+                                            item: item,
+                                            fromDay: day,
+                                          ),
+                                          feedback: Material(
+                                            elevation: 6,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 320,
+                                              ),
+                                              child: Opacity(
+                                                opacity: 0.95,
+                                                child: ItineraryItem(
+                                                  item: item,
+                                                  isFirst: true,
+                                                  isLast: true,
+                                                  index: index,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          childWhenDragging: Opacity(
+                                            opacity: 0.3,
+                                            child: Icon(
+                                              Icons.open_with,
+                                              color: Theme.of(
+                                                context,
+                                              ).iconTheme.color,
+                                              size: 18,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.open_with,
+                                            color: Theme.of(
+                                              context,
+                                            ).iconTheme.color,
+                                            size: 18,
+                                          ),
+                                        ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ),
-                        ),
-                        childWhenDragging: Opacity(
-                          opacity: 0.3,
-                          child: ItineraryItem(
-                            key: ValueKey(item),
-                            item: item,
-                            isFirst: index == 0,
-                            isLast: index == items.length - 1,
-                            index: index,
-                          ),
-                        ),
-                        child: ItineraryItem(
-                          key: ValueKey(item),
-                          item: item,
-                          isFirst: index == 0,
-                          isLast: index == items.length - 1,
-                          index: index,
-                        ),
+                            ],
+                          );
+                        },
+                        onWillAcceptWithDetails: (details) {
+                          return details.data.fromDay != day;
+                        },
+                        onAcceptWithDetails: (details) {
+                          final dragged = details.data;
+                          vm.moveItemBetweenDays(
+                            dragged.fromDay,
+                            day,
+                            dragged.item,
+                            index,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  // Trailing drop target to append at end of day
+                  DragTarget<_DraggedItinerary>(
+                    builder: (context, candidateData, rejectedData) {
+                      final isActive = candidateData.isNotEmpty;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 120),
+                        height: isActive ? 16 : 8,
+                        margin: const EdgeInsets.only(top: 8, bottom: 4),
+                        decoration: isActive
+                            ? BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.12),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(6),
+                                ),
+                              )
+                            : null,
+                      );
+                    },
+                    onWillAcceptWithDetails: (details) {
+                      return details.data.fromDay != day;
+                    },
+                    onAcceptWithDetails: (details) {
+                      final dragged = details.data;
+                      final insertIndex = vm.dailyItineraries[day]?.length ?? 0;
+                      vm.moveItemBetweenDays(
+                        dragged.fromDay,
+                        day,
+                        dragged.item,
+                        insertIndex,
                       );
                     },
                   ),
