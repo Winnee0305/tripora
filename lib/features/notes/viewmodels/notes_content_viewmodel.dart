@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/features/poi/models/operating_hours.dart';
+import 'package:tripora/features/poi/models/poi.dart';
+import 'package:tripora/features/poi/viewmodels/poi_page_viewmodel.dart';
 import '../models/note_base.dart';
 import '../models/attraction_note.dart';
 import '../models/lodging_note.dart';
 import '../models/restaurant_note.dart';
 import '../models/transportation_note.dart';
-import '../models/note.dart';
+import '../models/user_note.dart';
 import '../models/attachment_note.dart';
 
 class NotesContentViewModel extends ChangeNotifier {
@@ -12,116 +15,99 @@ class NotesContentViewModel extends ChangeNotifier {
   final List<LodgingNote> lodgings = [];
   final List<RestaurantNote> restaurants = [];
   final List<TransportationNote> transportations = [];
-  final List<Note> tickets = [];
+  final List<UserNote> tickets = [];
   final List<AttachmentNote> attachments = [];
 
+  late final Map<Type, List<NoteBase>> _noteMap;
+
   NotesContentViewModel() {
+    // Initialize the map
+    _noteMap = {
+      AttractionNote: attractions,
+      LodgingNote: lodgings,
+      RestaurantNote: restaurants,
+      TransportationNote: transportations,
+      UserNote: tickets,
+      AttachmentNote: attachments,
+    };
+
     _loadMockData();
   }
 
   void _loadMockData() {
+    attractions.addAll([AttractionNote(poi: PoiPageViewmodel().place)]);
+
     attractions.addAll([
       AttractionNote(
-        id: '1',
-        title: 'Jonker Walk Melaka',
-        location: 'Melaka City',
-        description:
-            'Night market only opens at Friday and weekend. Souvenirs and local food.',
-        tags: ['Tourist Attraction', 'Popular Spot'],
-        imageUrl: 'https://example.com/jonker.jpg',
-      ),
-      AttractionNote(
-        id: '2',
-        title: 'Stadthuys',
-        location: 'Melaka City',
-        tags: ['Museum', 'Historical Site', 'Free Entry'],
-        imageUrl: 'https://example.com/stadthuys.jpg',
+        poi: PoiPageViewmodel().place,
+        userMessage: 'Great place!',
       ),
     ]);
 
-    lodgings.add(
+    lodgings.addAll([
       LodgingNote(
-        id: '3',
-        title: 'AMES Hotel',
-        address: 'Melaka, Malaysia',
-        checkIn: DateTime(2025, 8, 13, 15, 0),
+        poi: Poi(
+          name: 'Ames Hotel',
+          description: 'A nice hotel in the city center.',
+          location: '123 Main St, Cityville',
+          image: 'assets/images/hotel.png',
+          rating: 4.5,
+          operatingHours: [
+            OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
+          ],
+          address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
+          tags: ["Historical", "Museum", "Architecture"],
+        ),
+        checkIn: DateTime(2025, 8, 13, 14, 0),
         checkOut: DateTime(2025, 8, 14, 12, 0),
-        imageUrl: 'https://example.com/ames.jpg',
       ),
-    );
+    ]);
 
     restaurants.add(
       RestaurantNote(
-        id: '4',
-        title: 'Peranakan Place',
-        cuisine: 'Nyonya',
-        reservationTime: DateTime(2025, 8, 13, 18, 0),
-        imageUrl: 'https://example.com/peranakan.jpg',
+        poi: Poi(
+          name: 'Peranakan Place',
+          description: '',
+          location: '123 Main St, Cityville',
+          image: 'assets/images/hotel.png',
+          rating: 4.5,
+          operatingHours: [
+            OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
+            OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
+          ],
+          address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
+          tags: ["Historical", "Museum", "Architecture"],
+        ),
       ),
     );
 
-    transportations.add(
-      TransportationNote(
-        id: '5',
-        title: 'KLIA',
-        mode: 'Flight',
-        from: 'Tokyo / HND',
-        to: 'Kuala Lumpur / KUL',
-        departureTime: DateTime(2025, 8, 12, 23, 30),
-        arrivalTime: DateTime(2025, 8, 13, 7, 30),
-        ticketNumber: 'NH885',
-        imageUrl: 'https://example.com/klia.jpg',
-      ),
-    );
+    transportations.add(TransportationNote(type: TransportType.flight));
 
     notifyListeners();
   }
 
   void addNote(NoteBase note) {
-    switch (note.type) {
-      case NoteType.attraction:
-        attractions.add(note as AttractionNote);
-        break;
-      case NoteType.lodging:
-        lodgings.add(note as LodgingNote);
-        break;
-      case NoteType.restaurant:
-        restaurants.add(note as RestaurantNote);
-        break;
-      case NoteType.transportation:
-        transportations.add(note as TransportationNote);
-        break;
-      case NoteType.note:
-        tickets.add(note as Note);
-        break;
-      case NoteType.attachment:
-        attachments.add(note as AttachmentNote);
-        break;
-    }
+    final list = _noteMap[note.runtimeType];
+    if (list == null) throw Exception("Unknown note type: ${note.runtimeType}");
+    list.add(note);
     notifyListeners();
   }
 
   void removeNote(NoteBase note) {
-    switch (note.type) {
-      case NoteType.attraction:
-        attractions.remove(note);
-        break;
-      case NoteType.lodging:
-        lodgings.remove(note);
-        break;
-      case NoteType.restaurant:
-        restaurants.remove(note);
-        break;
-      case NoteType.transportation:
-        transportations.remove(note);
-        break;
-      case NoteType.note:
-        tickets.remove(note);
-        break;
-      case NoteType.attachment:
-        attachments.remove(note);
-        break;
-    }
+    final list = _noteMap[note.runtimeType];
+    if (list == null) throw Exception("Unknown note type: ${note.runtimeType}");
+    list.remove(note);
     notifyListeners();
   }
 }

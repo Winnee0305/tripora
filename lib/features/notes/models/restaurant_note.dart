@@ -1,16 +1,14 @@
-import 'note_base.dart';
+import 'package:tripora/features/notes/models/note_base.dart';
+import 'package:tripora/features/poi/models/poi.dart';
 
 class RestaurantNote extends NoteBase {
-  final DateTime reservationTime;
-  final String cuisine;
-  final bool isReservationRequired;
+  final Poi poi;
+  DateTime? reservationDateTime;
 
-  const RestaurantNote({
-    required super.id,
-    required super.title,
-    required this.reservationTime,
-    required this.cuisine,
-    this.isReservationRequired = false,
-    super.imageUrl,
-  }) : super(type: NoteType.restaurant);
+  RestaurantNote({
+    required this.poi,
+    this.reservationDateTime,
+    super.userMessage,
+    super.userPhotoPath,
+  });
 }

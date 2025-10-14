@@ -8,15 +8,9 @@ enum NoteType {
 }
 
 abstract class NoteBase {
-  final String id;
-  final String title;
-  final String? imageUrl;
-  final NoteType type;
+  // User customizable fields
+  String? userMessage;
+  String? userPhotoPath;
 
-  const NoteBase({
-    required this.id,
-    required this.title,
-    required this.type,
-    this.imageUrl,
-  });
+  NoteBase({this.userMessage, this.userPhotoPath});
 }

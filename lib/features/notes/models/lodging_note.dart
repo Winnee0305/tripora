@@ -1,16 +1,16 @@
-import 'note_base.dart';
+import 'package:tripora/features/notes/models/note_base.dart';
+import 'package:tripora/features/poi/models/poi.dart';
 
 class LodgingNote extends NoteBase {
-  final DateTime checkIn;
-  final DateTime checkOut;
-  final String address;
+  final Poi poi;
+  DateTime? checkIn;
+  DateTime? checkOut;
 
-  const LodgingNote({
-    required super.id,
-    required super.title,
-    required this.checkIn,
-    required this.checkOut,
-    required this.address,
-    super.imageUrl,
-  }) : super(type: NoteType.lodging);
+  LodgingNote({
+    required this.poi,
+    this.checkIn,
+    this.checkOut,
+    super.userMessage,
+    super.userPhotoPath,
+  });
 }
