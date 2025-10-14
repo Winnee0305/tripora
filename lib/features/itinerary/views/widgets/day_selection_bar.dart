@@ -53,8 +53,12 @@ class DaySelectionBar extends StatelessWidget {
                       : BorderRadius.circular(12),
                   onTap: () {
                     vm.selectDay(index);
-                    if (!isNotesTab)
-                      listKey.currentState?.scrollToDay(dayNumber);
+                    if (!isNotesTab) {
+                      // Wait until ItineraryContent finishes building
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        listKey.currentState?.scrollToDay(dayNumber);
+                      });
+                    }
                   },
                   child: isNotesTab
                       ? NotesTabCard(isSelected: isSelected)
