@@ -29,6 +29,7 @@ class AppButton extends StatelessWidget {
   final Color? textColorOverride;
   final TextStyle? textStyleOverride;
   final String? tooltipMessage;
+  final MainAxisAlignment? mainAxisAlignment;
 
   const AppButton({
     super.key,
@@ -48,6 +49,7 @@ class AppButton extends StatelessWidget {
     this.textColorOverride,
     this.textStyleOverride,
     this.tooltipMessage,
+    this.mainAxisAlignment,
   });
 
   /// 🔹 Factory constructors for common button styles
@@ -62,10 +64,11 @@ class AppButton extends StatelessWidget {
     double? minWidth,
     double? minHeight,
     TextStyleVariant? textStyleVariant,
-    BackgroundVariant? variant,
+    BackgroundVariant? backgroundVariant,
     List<BoxShadow>? boxShadow,
     double? iconSize,
     TextStyle? textStyleOverride,
+    MainAxisAlignment? mainAxisAlignment,
   }) {
     return AppButton(
       key: key,
@@ -79,8 +82,9 @@ class AppButton extends StatelessWidget {
       textStyleVariant: textStyleVariant ?? TextStyleVariant.large,
       boxShadow: boxShadow,
       iconSize: iconSize,
-      backgroundVariant: variant ?? BackgroundVariant.primaryFilled,
+      backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       textStyleOverride: textStyleOverride,
+      mainAxisAlignment: mainAxisAlignment,
     );
   }
 
@@ -242,7 +246,12 @@ class AppButton extends StatelessWidget {
       waitDuration: const Duration(milliseconds: 500),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          boxShadow: boxShadow ?? shadowTheme?.buttonShadows ?? [],
+          boxShadow:
+              (backgroundVariant == BackgroundVariant.primaryTrans ||
+                  backgroundVariant == BackgroundVariant.secondaryTrans)
+              ? []
+              : (boxShadow ?? shadowTheme?.buttonShadows ?? []),
+
           borderRadius: BorderRadius.circular(radius ?? 12),
         ),
         child: ElevatedButton(
@@ -269,8 +278,9 @@ class AppButton extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ))
               : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment:
+                      mainAxisAlignment ?? MainAxisAlignment.center,
                   children: _buildContent(textColor, textStyle),
                 ),
         ),
