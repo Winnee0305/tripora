@@ -6,7 +6,7 @@ import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
-import 'package:tripora/features/itinerary/views/itinerary_page.dart';
+import 'package:tripora/features/itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
@@ -32,7 +32,17 @@ class StatsSection extends StatelessWidget {
             // ----- NOTES
             InkWell(
               borderRadius: BorderRadius.circular(16),
-              onTap: () {}, // Dummy tap
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => ItineraryPageViewModel(),
+                      child: NotesItineraryPage(currentTab: 0),
+                    ),
+                  ),
+                );
+              }, // Dummy tap
               child: Container(
                 decoration: AppWidgetStyles.cardDecoration(
                   context,
@@ -138,7 +148,7 @@ class StatsSection extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
                       create: (_) => ItineraryPageViewModel(),
-                      child: ItineraryPage(),
+                      child: NotesItineraryPage(currentTab: 1),
                     ),
                   ),
                 );

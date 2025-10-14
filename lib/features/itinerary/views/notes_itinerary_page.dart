@@ -8,24 +8,30 @@ import 'package:tripora/features/itinerary/views/widgets/itinerary_header_sectio
 import 'package:tripora/features/itinerary/views/widgets/day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
-import 'package:tripora/features/notes_and_itinerary/notes/views/notes_page.dart';
+import 'package:tripora/features/itinerary/views/notes_content.dart';
 
-class ItineraryPage extends StatelessWidget {
-  ItineraryPage({super.key});
+class NotesItineraryPage extends StatelessWidget {
+  NotesItineraryPage({super.key, required this.currentTab});
 
   // The listKey is final, so it can be used inside a StatelessWidget
   final GlobalKey<MultiDayItineraryListState> _listKey =
       GlobalKey<MultiDayItineraryListState>();
+
+  final int currentTab;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return ChangeNotifierProvider(
-      create: (_) => DaySelectionViewModel(
-        startDate: DateTime(2025, 10, 6),
-        endDate: DateTime(2025, 10, 12),
-      ),
+      create: (_) {
+        final vm = DaySelectionViewModel(
+          startDate: DateTime(2025, 10, 6),
+          endDate: DateTime(2025, 10, 12),
+        );
+        vm.selectDay(currentTab); // 👈 preselect the tab
+        return vm;
+      },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         body: Stack(
@@ -166,7 +172,7 @@ class ItineraryPage extends StatelessWidget {
                                   duration: const Duration(milliseconds: 300),
                                   switchInCurve: Curves.easeInOut,
                                   child: vm.selectedDay == 0
-                                      ? const NotesPage()
+                                      ? const NotesContent()
                                       : ItineraryContent(
                                           key: const ValueKey('itinerary'),
                                           listKey: _listKey,
