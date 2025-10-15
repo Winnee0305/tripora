@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/utils/format_utils.dart';
-import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class HeaderSection extends StatelessWidget {

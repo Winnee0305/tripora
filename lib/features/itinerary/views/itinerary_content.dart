@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 
 class ItineraryContent extends StatelessWidget {

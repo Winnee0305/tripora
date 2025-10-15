@@ -4,10 +4,10 @@ import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_pa
 import '../viewmodels/create_trip_viewmodel.dart';
 import 'widgets/create_trip/choose_destination_page.dart';
 import 'widgets/create_trip/choose_travel_style_page.dart';
-import '../../../core/widgets/app_sticky_header.dart';
-import 'package:tripora/core/widgets/app_sticky_header_delegate.dart';
-import '../../../core/widgets/calendar_range_picker.dart';
-import 'package:tripora/core/widgets/app_text_field.dart';
+import '../../../core/reusable_widgets/app_sticky_header.dart';
+import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
+import '../../../core/reusable_widgets/calendar_range_picker.dart';
+import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 
 class CreateTripPage extends StatelessWidget {
   const CreateTripPage({super.key});

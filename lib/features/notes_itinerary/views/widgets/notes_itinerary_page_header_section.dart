@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
 
 class NotesItineraryPageHeaderSection extends StatelessWidget {
   const NotesItineraryPageHeaderSection({super.key});

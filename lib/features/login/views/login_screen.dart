@@ -3,8 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/login/viewmodels/login_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/core/widgets/app_text_field.dart';
-import 'package:tripora/core/widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_text_field.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/home/views/home_page.dart';
 import 'package:flutter/cupertino.dart';
 

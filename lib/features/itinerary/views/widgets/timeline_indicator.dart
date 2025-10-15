@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_colors.dart';
-import 'package:tripora/core/widgets/pin_icon.dart';
+import 'package:tripora/core/reusable_widgets/pin_icon.dart';
 
 class TimelineIndicator extends StatelessWidget {
   const TimelineIndicator({

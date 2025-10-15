@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
-import 'package:tripora/core/widgets/app_button.dart';
-import 'package:tripora/core/widgets/app_text_field.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 
 class ExpenseSummary extends StatelessWidget {
   final double totalExpense;
