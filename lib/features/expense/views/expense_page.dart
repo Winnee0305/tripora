@@ -76,12 +76,8 @@ class ExpensePage extends StatelessWidget {
                             height: 64,
                             child: AppSpecialTabNDaySelectionBar(
                               listKey: _listKey,
-                              firstTabLabel: 'Overview',
-                              firstTabBuilder: (isSelected) => SpecialTabCard(
-                                text: "Overview",
-                                isSelected: isSelected,
-                                color: AppColors.design3,
-                              ),
+                              firstTabLabel: 'Expense\nOverview',
+                              color: AppColors.design3,
                             ),
                           ),
                         ),

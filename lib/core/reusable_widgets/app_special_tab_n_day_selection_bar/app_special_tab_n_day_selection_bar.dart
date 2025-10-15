@@ -11,7 +11,7 @@ class AppSpecialTabNDaySelectionBar extends StatelessWidget {
     super.key,
     required this.listKey,
     required this.firstTabLabel,
-    required this.firstTabBuilder,
+    required this.color,
   });
 
   final GlobalKey<MultiDayItineraryListState> listKey;
@@ -20,7 +20,8 @@ class AppSpecialTabNDaySelectionBar extends StatelessWidget {
   final String firstTabLabel;
 
   /// Builder for the first tab widget
-  final Widget Function(bool isSelected) firstTabBuilder;
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +65,9 @@ class AppSpecialTabNDaySelectionBar extends StatelessWidget {
                   },
                   child: isSpecialTab
                       ? SpecialTabCard(
-                          text: "Notes",
+                          text: firstTabLabel,
                           isSelected: isSelected,
-                          color: AppColors.design2,
+                          color: color,
                         )
                       : DayTabCard(
                           day: dayNumber,

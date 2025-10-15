@@ -20,7 +20,7 @@ class SpecialTabCard extends StatelessWidget {
     final theme = Theme.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
       decoration: AppWidgetStyles.cardDecoration(context).copyWith(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
         color: isSelected ? color : theme.colorScheme.surface,
@@ -38,6 +38,7 @@ class SpecialTabCard extends StatelessWidget {
                   : theme.colorScheme.secondary,
               fontWeight: ManropeFontWeight.semiBold,
             ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
         ],

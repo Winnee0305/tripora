@@ -161,12 +161,8 @@ class NotesItineraryPage extends StatelessWidget {
                                   child: AppSpecialTabNDaySelectionBar(
                                     listKey: _listKey,
                                     firstTabLabel: 'Notes',
-                                    firstTabBuilder: (isSelected) =>
-                                        SpecialTabCard(
-                                          text: "Notes",
-                                          isSelected: isSelected,
-                                          color: AppColors.design2,
-                                        ),
+
+                                    color: AppColors.design2,
                                   ),
                                 ),
                               ),
