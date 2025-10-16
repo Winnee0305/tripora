@@ -180,10 +180,7 @@ class NotesItineraryPage extends StatelessWidget {
                                   switchInCurve: Curves.easeInOut,
                                   child: vm.selectedDay == 0
                                       ? const NotesContent()
-                                      : ItineraryContent(
-                                          key: const ValueKey('itinerary'),
-                                          listKey: _listKey,
-                                        ),
+                                      : ItineraryContent(listKey: _listKey),
                                 ),
                               ),
                             ),
