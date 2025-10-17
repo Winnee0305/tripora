@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
-import 'package:tripora/features/expense/viewmodels/expense_page_viewmodel.dart';
+import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/expense/views/expense_page.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
@@ -92,7 +92,7 @@ class StatsSection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ExpensePageViewModel(
+                      create: (_) => ExpenseViewModel(
                         tripStartDate: DateTime(2025, 8, 13),
                         tripEndDate: DateTime(2025, 8, 14),
                       ),

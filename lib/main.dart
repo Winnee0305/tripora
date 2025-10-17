@@ -11,7 +11,6 @@ import 'features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'features/itinerary/viewmodels/itinerary_content_viewmodel.dart';
 import 'features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'features/trip/viewmodels/create_trip_viewmodel.dart';
-import 'features/expense/viewmodels/expense_page_viewmodel.dart';
 import 'features/expense/views/expense_page.dart';
 import 'features/home/viewmodels/home_viewmodel.dart';
 

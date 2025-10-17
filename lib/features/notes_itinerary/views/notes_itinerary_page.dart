@@ -10,7 +10,6 @@ import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_ba
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/notes/views/notes_content.dart';
-import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/special_tab_card.dart';
 
 class NotesItineraryPage extends StatelessWidget {
   NotesItineraryPage({super.key, required this.currentTab});

@@ -4,7 +4,6 @@ import 'package:tripora/features/notes/views/widgets/category_button_grid.dart';
 import 'package:tripora/features/notes/views/widgets/notes_section.dart';
 import '../viewmodels/notes_content_viewmodel.dart';
 import '../models/note_base.dart';
-import 'widgets/note_card_factory.dart';
 
 class NotesContent extends StatefulWidget {
   const NotesContent({super.key});

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_shadow_theme.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:flutter/cupertino.dart';
 
 enum BackgroundVariant {
   primaryFilled,
@@ -228,8 +227,8 @@ class AppButton extends StatelessWidget {
       case TextStyleVariant.medium:
         textStyle =
             textStyleOverride ??
-            Theme.of(context).textTheme.bodyMedium!.copyWith(
-              fontWeight: ManropeFontWeight.light,
+            Theme.of(context).textTheme.titleLarge!.copyWith(
+              fontWeight: ManropeFontWeight.semiBold,
             );
         break;
       case TextStyleVariant.large:

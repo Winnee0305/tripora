@@ -72,7 +72,7 @@ class AppTextField extends StatelessWidget {
         prefixText: isNumber ? "RM " : null,
         labelText: label,
         labelStyle: theme.textTheme.titleLarge
-            ?.alpha(0.4)
+            ?.alpha(0.7)
             .weight(ManropeFontWeight.light),
         floatingLabelBehavior: text?.isNotEmpty ?? false
             ? FloatingLabelBehavior.always
@@ -87,7 +87,9 @@ class AppTextField extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: onTap,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
+                    backgroundColor: theme.colorScheme.primary.withValues(
+                      alpha: 0.6,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -102,8 +104,8 @@ class AppTextField extends StatelessWidget {
                       Text(
                         "Choose",
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: ManropeFontWeight.medium,
                         ),
                       ),
                       const SizedBox(width: 4),
