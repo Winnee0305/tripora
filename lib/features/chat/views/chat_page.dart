@@ -1,11 +1,15 @@
 import 'package:animated_background/animated_background.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/reusable_widgets/app_text_field2.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
 import 'package:tripora/features/chat/models/chat_message.dart';
-import 'package:tripora/features/chat/views/animated_gradient_background.dart';
-import 'package:tripora/features/chat/views/bubble_animated_background.dart';
+import 'package:tripora/features/chat/views/widgets/bubble_animated_background.dart';
+import 'package:tripora/features/chat/views/widgets/chat_content.dart';
+import 'package:tripora/features/chat/views/widgets/chat_input_bar.dart';
 import 'package:tripora/features/chat/views/widgets/chat_page_header.dart';
+import 'package:tripora/features/chat/views/widgets/empty_chat_screen.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -14,13 +18,13 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ChatViewModel(),
-      child: const _ChatPageContent(),
+      child: const _ChatPage(),
     );
   }
 }
 
-class _ChatPageContent extends StatelessWidget {
-  const _ChatPageContent();
+class _ChatPage extends StatelessWidget {
+  const _ChatPage();
 
   @override
   Widget build(BuildContext context) {
@@ -30,206 +34,46 @@ class _ChatPageContent extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                ChatPageHeader(),
-                Expanded(child: _ChatMessagesView(vm: vm)),
-              ],
-            ),
-          ),
-        ),
-
-        // backgroundColor: Colors.transparent,
-        // appBar: AppBar(
-        //   backgroundColor: Colors.transparent,
-        //   elevation: 0,
-        //   title: const Text(
-        //     'Ask Chatbot',
-        //     style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
-        //   ),
-        //   centerTitle: false,
-        //   actions: [
-        //     IconButton(
-        //       tooltip: 'New Chat',
-        //       icon: const Icon(Icons.add_circle_outline, color: Colors.orange),
-        //       onPressed: () => vm.startNewChat(),
-        //     ),
-        //     IconButton(
-        //       tooltip: 'Open Previous Chats',
-        //       icon: const Icon(Icons.menu_open_rounded, color: Colors.orange),
-        //       onPressed: () => vm.toggleHistorySidebar(),
-        //     ),
-        //   ],
-        // ),
-        // body: BubbleGradientBackground(
-        //   baseColor: Theme.of(context).colorScheme.primary,
-
-        // if (vm.isSidebarVisible)
-        //   Positioned(
-        //     top: 0,
-        //     right: 0,
-        //     bottom: 0,
-        //     width: MediaQuery.of(context).size.width * 0.7,
-        //     child: _ChatHistorySidebar(
-        //       onClose: vm.toggleHistorySidebar,
-        //     ),
-        //   ),
-      ),
-    );
-  }
-}
-
-class _ChatEmptyState extends StatelessWidget {
-  final ChatViewModel vm;
-  const _ChatEmptyState({required this.vm});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(),
-        const Text(
-          'Hello Winnee',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w600,
-            color: Colors.orange,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'How can I help you today?',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const Spacer(),
-        Wrap(
-          spacing: 8,
-          children: [
-            _QuickActionChip(
-              label: 'Must-visit cultural attractions in Malaysia',
-              onTap: () =>
-                  vm.sendMessage('Must-visit cultural attractions in Malaysia'),
-            ),
-            _QuickActionChip(
-              label: 'Plan a trip to Melaka',
-              onTap: () => vm.sendMessage('Plan a trip to Melaka'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        _ChatInputBar(vm: vm),
-      ],
-    );
-  }
-}
-
-class _ChatMessagesView extends StatelessWidget {
-  final ChatViewModel vm;
-  const _ChatMessagesView({required this.vm});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: vm.messages.length,
-            itemBuilder: (context, index) {
-              final message = vm.messages[index];
-              final isUser = message.sender == MessageSender.user;
-              return Align(
-                alignment: isUser
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser ? Colors.orange[100] : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    message.text,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        _ChatInputBar(vm: vm),
-      ],
-    );
-  }
-}
-
-class _ChatInputBar extends StatelessWidget {
-  final ChatViewModel vm;
-  const _ChatInputBar({required this.vm});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: vm.textController,
-                decoration: InputDecoration(
-                  hintText: 'Ask anything related to travel...',
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                onSubmitted: vm.sendMessage,
+          left: false,
+          right: false,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: ChatPageHeader(vm: vm),
               ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.send, color: Colors.orange),
-              onPressed: () => vm.sendMessage(vm.textController.text),
-            ),
-          ],
+              if (vm.hasMessages)
+                Expanded(child: ChatContent(vm: vm))
+              else
+                Expanded(child: EmptyChatScreen(vm: vm)),
+              if (vm.isSidebarVisible)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: _ChatHistorySidebar(
+                        onClose: vm.toggleHistorySidebar,
+                      ),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: AppTextField2(
+                  hintText: "Ask anything related to travel...",
+                  icon: CupertinoIcons.return_icon,
+                  controller: vm.textController,
+                  onSubmitted: vm.sendMessage,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _QuickActionChip extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  const _QuickActionChip({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Chip(
-        label: Text(label),
-        backgroundColor: Colors.orange[50],
-        labelStyle: const TextStyle(color: Colors.orange),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
     );
   }

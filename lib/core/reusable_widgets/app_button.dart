@@ -228,7 +228,7 @@ class AppButton extends StatelessWidget {
         textStyle =
             textStyleOverride ??
             Theme.of(context).textTheme.titleLarge!.copyWith(
-              fontWeight: ManropeFontWeight.semiBold,
+              fontWeight: ManropeFontWeight.regular,
             );
         break;
       case TextStyleVariant.large:

@@ -47,6 +47,8 @@ class _BubbleAnimatedBackgroundState extends State<BubbleAnimatedBackground>
                     spawnMaxSpeed: 90.0,
                     spawnMinSpeed: 30.0,
                     particleCount: 12,
+                    minOpacity: 0.1,
+                    maxOpacity: 0.3,
                   ),
                 ),
                 child: const SizedBox.expand(),
