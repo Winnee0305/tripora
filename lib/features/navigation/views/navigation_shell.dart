@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
-import 'package:tripora/core/reusable_widgets/app_navigation_bar.dart';
+import 'package:tripora/features/navigation/views/navigation_bar.dart';
 import 'package:tripora/features/home/views/home_page.dart';
 import 'package:tripora/features/chat/views/chat_page.dart';
 import 'package:tripora/features/trip/views/trip_page.dart';

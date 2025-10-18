@@ -53,7 +53,7 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
               ),
               // ----- Title
               Text(
-                "Add Expense",
+                isEditing ? "Edit Expense" : "Add New Expense",
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

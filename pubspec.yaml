@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.20.2
   table_calendar: ^3.2.0
   lucide_icons: ^0.257.0
+  animated_background: ^2.0.0
 
 dev_dependencies:
   flutter_test:

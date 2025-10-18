@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
 import 'package:tripora/features/login/views/auth_page.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/main_screen.dart';
@@ -15,11 +17,22 @@ import 'features/expense/views/expense_page.dart';
 import 'features/home/viewmodels/home_viewmodel.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // make it transparent
+      statusBarIconBrightness: Brightness.dark, // Android
+      statusBarBrightness: Brightness.light, // iOS
+    ),
+  );
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: const TriporaApp(),
     ),
@@ -61,6 +74,8 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      navigatorObservers: [StatusBarObserver()],
+
       // home: const CreateTripPage(),
       home: const MainScreen(),
       // home: const AuthPage(),
@@ -74,5 +89,35 @@ class TriporaApp extends StatelessWidget {
       // home: const ItineraryPage(),
       // home: const ExpensePage(),
     );
+  }
+}
+
+class StatusBarObserver extends NavigatorObserver {
+  void _applyDarkStatusBar() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
+  }
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    _applyDarkStatusBar();
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    _applyDarkStatusBar();
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    _applyDarkStatusBar();
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 }
