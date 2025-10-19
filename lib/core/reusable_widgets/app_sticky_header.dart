@@ -8,6 +8,8 @@ class AppStickyHeader extends StatelessWidget {
   final bool showRightButton;
   final Icon leftButtonIcon;
   final Icon rightButtonIcon;
+  final void Function()? onRightButtonPressed;
+  final void Function()? onLeftButtonPressed;
 
   const AppStickyHeader({
     super.key,
@@ -15,6 +17,8 @@ class AppStickyHeader extends StatelessWidget {
     this.showRightButton = true,
     this.leftButtonIcon = const Icon(CupertinoIcons.back),
     this.rightButtonIcon = const Icon(CupertinoIcons.home),
+    this.onRightButtonPressed,
+    this.onLeftButtonPressed,
   });
   @override
   Widget build(BuildContext context) {
@@ -33,7 +37,7 @@ class AppStickyHeader extends StatelessWidget {
             children: [
               AppButton.iconOnly(
                 icon: leftButtonIcon.icon!,
-                onPressed: () => Navigator.pop(context),
+                onPressed: onLeftButtonPressed ?? () => Navigator.pop(context),
                 backgroundVariant: BackgroundVariant.primaryTrans,
               ),
               Text(
@@ -48,9 +52,11 @@ class AppStickyHeader extends StatelessWidget {
                 opacity: showRightButton ? 1 : 0,
                 child: AppButton.iconOnly(
                   icon: rightButtonIcon.icon!,
-                  onPressed: () {
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                  },
+                  onPressed:
+                      onRightButtonPressed ??
+                      () {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      },
                   backgroundVariant: BackgroundVariant.primaryTrans,
                 ),
               ),

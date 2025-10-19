@@ -48,43 +48,48 @@ class AppTab extends StatelessWidget {
         }
 
         final totalTextWidth = tabWidths.reduce((a, b) => a + b);
-        final double spacingValue = tabs.length > 1
-            ? (constraints.maxWidth - totalTextWidth) / (tabs.length - 1)
-            : 0;
+        const double tabSpacing = 90; // 👈 adjustable spacing between tabs
+        final totalWidth = totalTextWidth + tabSpacing * (tabs.length - 1);
+        final double startOffset =
+            (constraints.maxWidth - totalWidth) / 2; // 👈 center align
 
         // Compute underline left offset
-        double leftOffset = 0;
+        double leftOffset = startOffset;
         for (int i = 0; i < selectedIndex; i++) {
-          leftOffset += tabWidths[i] + spacingValue;
+          leftOffset += tabWidths[i] + tabSpacing;
         }
 
         return SizedBox(
           height: 60,
           child: Stack(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.topCenter,
             children: [
               // Tabs row
               Padding(
                 padding: const EdgeInsets.only(top: 2.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // 👈 center the row
                   children: List.generate(
                     tabs.length,
-                    (index) => GestureDetector(
-                      onTap: () => onTabSelected(index),
-                      child: Text(
-                        tabs[index],
-                        style:
-                            (textStyle ??
-                                    const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: ManropeFontWeight.regular,
-                                    ))
-                                .copyWith(
-                                  color: selectedIndex == index
-                                      ? activeColor
-                                      : inactiveColor,
-                                ),
+                    (index) => Padding(
+                      padding: EdgeInsets.symmetric(horizontal: tabSpacing / 2),
+                      child: GestureDetector(
+                        onTap: () => onTabSelected(index),
+                        child: Text(
+                          tabs[index],
+                          style:
+                              (textStyle ??
+                                      const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: ManropeFontWeight.regular,
+                                      ))
+                                  .copyWith(
+                                    color: selectedIndex == index
+                                        ? activeColor
+                                        : inactiveColor,
+                                  ),
+                        ),
                       ),
                     ),
                   ),

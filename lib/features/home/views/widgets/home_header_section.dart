@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
+import 'package:tripora/features/profile/views/profile_page.dart';
+import 'package:tripora/features/settings/views/settings_page.dart';
 
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({super.key});
@@ -15,11 +19,24 @@ class HomeHeaderSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // ----- Profile Picture
-          CircleAvatar(
-            radius: 32,
-            backgroundImage: AssetImage(
-              'assets/images/exp_profile_picture.png',
+          GestureDetector(
+            child: CircleAvatar(
+              radius: 32,
+              backgroundImage: AssetImage(
+                'assets/images/exp_profile_picture.png',
+              ),
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChangeNotifierProvider(
+                    create: (_) => ProfileViewModel(),
+                    child: const ProfilePage(),
+                  ),
+                ),
+              );
+            },
           ),
           // ----- Greeting Text
           const SizedBox(width: 16),

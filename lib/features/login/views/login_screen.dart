@@ -7,6 +7,7 @@ import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/home/views/home_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/navigation/views/navigation_shell.dart';
 
 class LoginScreen extends StatelessWidget {
   final VoidCallback onToggleToRegister;
@@ -100,9 +101,11 @@ class LoginScreen extends StatelessWidget {
                 : () async {
                     final success = await vm.login();
                     if (success) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => const NavigationShell(),
+                        ),
+                        (route) => false, // remove all previous routes
                       );
                     } else {
                       // Optionally show error

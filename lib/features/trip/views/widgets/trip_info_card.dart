@@ -42,7 +42,7 @@ class TripInfoCard extends StatelessWidget {
         decoration: AppWidgetStyles.cardDecoration(
           context,
         ).copyWith(borderRadius: BorderRadius.circular(18)),
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -62,35 +62,14 @@ class TripInfoCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Date Range
-                  Row(
-                    children: [
-                      Icon(
-                        CupertinoIcons.calendar,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        formatDateRange(startDate, endDate),
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: ManropeFontWeight.light,
-                            ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
                   // Trip Title
                   Text(
                     tripTitle,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
 
                   // Destination
                   Row(
@@ -105,15 +84,24 @@ class TripInfoCard extends StatelessWidget {
                       const SizedBox(width: 2),
                       Text(
                         destination,
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.6),
-                              fontWeight: ManropeFontWeight.light,
-                            ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
+                          fontWeight: ManropeFontWeight.light,
+                        ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Date Range
+                  Text(
+                    formatDateRange(startDate, endDate),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: ManropeFontWeight.light,
+                    ),
                   ),
                 ],
               ),

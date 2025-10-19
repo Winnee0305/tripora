@@ -75,10 +75,12 @@ class TriporaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       navigatorObservers: [StatusBarObserver()],
+      routes: {'/login': (context) => const AuthPage()},
 
       // home: const CreateTripPage(),
-      home: const MainScreen(),
-      // home: const AuthPage(),
+      // home: const MainScreen(),
+      home: const AuthPage(),
+
       // home: TripInfoPage(
       //   tripTitle: 'Melaka 2 days family trip',
       //   destination: 'Melacca, Malaysia',
