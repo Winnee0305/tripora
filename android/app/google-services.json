@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "998302850357",
+    "project_id": "tripora-58ac7",
+    "storage_bucket": "tripora-58ac7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998302850357:android:ba8c21a018834c6b61807c",
+        "android_client_info": {
+          "package_name": "com.example.tripora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9k62JaMSXnhD9uFo8DbfSyzCAATwFcZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

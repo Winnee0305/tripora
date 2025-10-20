@@ -15,8 +15,10 @@ import 'features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'features/trip/viewmodels/create_trip_viewmodel.dart';
 import 'features/expense/views/expense_page.dart';
 import 'features/home/viewmodels/home_viewmodel.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -26,6 +28,8 @@ void main() {
       statusBarBrightness: Brightness.light, // iOS
     ),
   );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     MultiProvider(
