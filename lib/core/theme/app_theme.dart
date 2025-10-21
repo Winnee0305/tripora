@@ -16,7 +16,7 @@ class AppTheme {
         surface: AppColors.surface,
         onSurface: AppColors.textPrimary,
         error: Colors.red,
-        onError: AppColors.surfaceBright,
+        onError: Colors.green,
       ),
       scaffoldBackgroundColor: AppColors.surface,
       appBarTheme: const AppBarTheme(

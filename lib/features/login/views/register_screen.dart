@@ -24,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 34),
 
-          // ----- Title (fixed)
+          // ----- Title -----
           SizedBox(
             width: double.infinity,
             child: Column(
@@ -47,7 +47,7 @@ class RegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: 30),
 
-          // ----- Scrollable fields
+          // ----- Scrollable Fields -----
           SizedBox(
             height: containerHeight * 0.54,
             child: SingleChildScrollView(
@@ -58,26 +58,41 @@ class RegisterScreen extends StatelessWidget {
                     label: "Username",
                     onChanged: vm.setUsername,
                     icon: CupertinoIcons.person_fill,
+                    helperText: vm.usernameMessage,
+                    isError: vm.isUsernameError,
+                    isValid: vm.isUsernameValid,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Email Address",
                     onChanged: vm.setEmail,
                     icon: CupertinoIcons.mail_solid,
+                    helperText: vm.emailMessage,
+                    isError: vm.isEmailError,
+                    isValid: vm.isEmailValid,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Password",
                     obscureText: true,
                     onChanged: vm.setPassword,
                     icon: CupertinoIcons.lock_fill,
+                    helperText: vm.passwordMessage,
+                    isError: vm.isPasswordError,
+                    isValid: vm.isPasswordValid,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Confirm Password",
                     obscureText: true,
                     onChanged: vm.setConfirmPassword,
                     icon: CupertinoIcons.lock_shield_fill,
+                    helperText: vm.confirmPasswordMessage,
+                    isError: vm.isConfirmError,
+                    isValid: vm.isConfirmValid,
                   ),
                 ],
               ),
@@ -86,19 +101,28 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // ----- Register button (fixed)
+          // ----- Authentication Error Message -----
+          if (vm.authError != null) ...[
+            Text(
+              vm.authError!,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          const SizedBox(height: 6),
+
+          // ----- Register Button -----
           AppButton.primary(
-            onPressed: vm.isLoading
-                ? null
-                : () {
-                    vm.register();
-                  },
+            onPressed: vm.isLoading ? null : vm.submitRegister,
             text: "Register",
             icon: CupertinoIcons.person_badge_plus_fill,
           ),
           const SizedBox(height: 8),
 
-          // ----- Login link (fixed)
+          // ----- Login link -----
           RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -122,7 +146,6 @@ class RegisterScreen extends StatelessWidget {
 
           const Spacer(),
 
-          // ----- Footer (fixed)
           Text(
             "Copyright © 2024 Tripora. All rights reserved.",
             textAlign: TextAlign.center,

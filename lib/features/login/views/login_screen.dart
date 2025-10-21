@@ -58,16 +58,25 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   AppTextField(
                     label: "Email Address",
-                    onChanged: vm.setEmail,
                     icon: CupertinoIcons.mail_solid,
+                    onChanged: vm.setEmail,
+                    helperText: vm.emailHelperText,
+
+                    isError: vm.showEmailErrorIcon,
+                    isValid: vm.showEmailValidIcon,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Password",
+                    icon: CupertinoIcons.lock_fill,
                     obscureText: true,
                     onChanged: vm.setPassword,
-                    icon: CupertinoIcons.lock_fill,
+                    helperText: vm.passwordHelperText,
+                    isError: vm.showPasswordErrorIcon,
+                    isValid: vm.showPasswordValidIcon,
                   ),
+
                   const SizedBox(height: 12),
                   // Forgot password stays here, inside scroll
                   Align(
