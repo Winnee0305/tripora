@@ -69,19 +69,44 @@ class SettingsPage extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (route) => false,
+                label: const Text('Log Out'),
+
+                onPressed: () async {
+                  final shouldLogout = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Confirm Logout'),
+                      content: const Text('Are you sure you want to log out?'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text(
+                            'Log Out',
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
 
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Logged out ')));
+                  if (shouldLogout == true) {
+                    await vm.logout();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('You’ve been logged out.'),
+                        ),
+                      );
+                    }
+                  }
                 },
-                icon: const Icon(Icons.logout),
-                label: const Text('Log Out'),
               ),
             ),
           ],

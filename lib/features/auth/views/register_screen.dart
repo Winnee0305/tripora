@@ -7,6 +7,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/navigation/views/navigation_shell.dart';
 
 class RegisterScreen extends StatelessWidget {
   final VoidCallback onToggleToLogin;
@@ -129,10 +130,23 @@ class RegisterScreen extends StatelessWidget {
 
           // ----- Register Button -----
           AppButton.primary(
-            onPressed: vm.isLoading ? null : vm.submitRegister,
-            text: "Register",
-            icon: CupertinoIcons.person_badge_plus_fill,
+            onPressed: vm.isLoading
+                ? null
+                : () async {
+                    final success = await vm.submitRegister();
+                    if (success) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => const NavigationShell(),
+                        ),
+                        (route) => false, // remove all previous routes
+                      );
+                    }
+                  },
+            text: vm.isLoading ? "Verifying..." : "Register",
+            icon: vm.isLoading ? null : CupertinoIcons.person_badge_plus_fill,
           ),
+
           const SizedBox(height: 8),
 
           // ----- Login link -----

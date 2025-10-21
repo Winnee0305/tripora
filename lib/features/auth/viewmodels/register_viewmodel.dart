@@ -147,6 +147,7 @@ class RegisterViewModel extends AuthFormViewModel {
       );
 
       debugPrint("✅ Registration success for user: $_username");
+      await authService.value.signIn(email: _email, password: _password);
       return true;
     } on FirebaseAuthException catch (e) {
       setAuthError(e.message ?? "Registration failed. Please try again.");

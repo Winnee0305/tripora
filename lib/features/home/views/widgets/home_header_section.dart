@@ -6,12 +6,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_page.dart';
 import 'package:tripora/features/settings/views/settings_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userVm = context.watch<UserViewModel>();
+    debugPrint("current user id: ${userVm.user?.uid}");
+    debugPrint("username: ${userVm.user?.lastname}");
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30),
 
@@ -44,7 +48,7 @@ class HomeHeaderSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Hello, Winnee!",
+                "Hello, ${userVm.user?.lastname ?? 'Guest'}",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 4),

@@ -112,17 +112,33 @@ class LoginScreen extends StatelessWidget {
           const SizedBox(height: 6),
 
           // ----- Login button
+          // AppButton.primary(
+          //   onPressed: vm.isLoading
+          //       ? null
+          //       : () async {
+          //           final success = await vm.submitLogin();
+          //           if (success) {
+          //             Navigator.of(context).pushAndRemoveUntil(
+          //               MaterialPageRoute(
+          //                 builder: (_) => const NavigationShell(),
+          //               ),
+          //               (route) => false, // remove all previous routes
+          //             );
+          //           }
+          //         },
+          //   text: vm.isLoading ? "Verifying..." : "Login",
+          //   icon: vm.isLoading ? null : CupertinoIcons.arrow_right_circle_fill,
+          // ),
           AppButton.primary(
             onPressed: vm.isLoading
                 ? null
                 : () async {
                     final success = await vm.submitLogin();
                     if (success) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => const NavigationShell(),
-                        ),
-                        (route) => false, // remove all previous routes
+                      // ✅ Don’t navigate manually
+                      // AuthLayout will automatically detect and rebuild the correct UI
+                      debugPrint(
+                        '[LoginScreen] Login successful — waiting for AuthLayout to rebuild...',
                       );
                     }
                   },

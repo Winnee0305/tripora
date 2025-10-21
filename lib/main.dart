@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/repositories/user_repository.dart';
+import 'package:tripora/core/services/auth_service.dart';
+import 'package:tripora/core/services/firestore_service.dart';
+import 'package:tripora/features/auth_layout.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
 import 'package:tripora/features/auth/views/auth_page.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/main_screen.dart';
 import 'package:tripora/features/trip/views/create_trip_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'core/theme/app_theme.dart';
 import 'features/trip/views/trip_info_page.dart';
 import 'features/packing/views/packing_page.dart';
@@ -35,38 +40,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider(create: (_) => AuthService()), // 👈 make these global
+        Provider(create: (_) => FirestoreService()), // 👈 shared globally
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: const TriporaApp(),
     ),
-
-    // ChangeNotifierProvider(
-    //   create: (_) => PackingPageViewModel(),
-    //   child: MaterialApp(
-    //     theme: AppTheme.lightTheme,
-    //     debugShowCheckedModeBanner: false,
-    //     home: PackingPage(),
-    //   ),
-    // ),
-    // MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider(create: (_) => ItineraryPageViewModel()),
-    //   ],
-    //   child: const TriporaApp(),
-    // );
-    // MultiProvider(
-    //   providers: [ChangeNotifierProvider(create: (_) => CreateTripViewModel())],
-    //   child: const TriporaApp(),
-    // ),
-    // ChangeNotifierProvider(
-    //   create: (_) => ExpensePageViewModel(
-    //     tripStartDate: DateTime(2025, 8, 13),
-    //     tripEndDate: DateTime(2025, 8, 14),
-    //   ),
-    //   child: const TriporaApp(),
-    // ),
   );
 }
 
@@ -79,22 +60,9 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      navigatorObservers: [StatusBarObserver()],
+      // navigatorObservers: [StatusBarObserver()],
       routes: {'/login': (context) => const AuthPage()},
-
-      // home: const CreateTripPage(),
-      // home: const MainScreen(),
-      home: const AuthPage(),
-
-      // home: TripInfoPage(
-      //   tripTitle: 'Melaka 2 days family trip',
-      //   destination: 'Melacca, Malaysia',
-      //   startDate: DateTime(2025, 8, 13),
-      //   endDate: DateTime(2025, 8, 14),
-      // ),
-      // home: const PackingPage(),
-      // home: const ItineraryPage(),
-      // home: const ExpensePage(),
+      home: const AuthLayout(),
     );
   }
 }
