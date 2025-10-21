@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/login/viewmodels/login_viewmodel.dart';
+import 'package:tripora/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
@@ -60,10 +60,8 @@ class LoginScreen extends StatelessWidget {
                     label: "Email Address",
                     icon: CupertinoIcons.mail_solid,
                     onChanged: vm.setEmail,
-                    helperText: vm.emailHelperText,
-
-                    isError: vm.showEmailErrorIcon,
-                    isValid: vm.showEmailValidIcon,
+                    helperText: vm.emailMessage,
+                    isValid: vm.isEmailValid,
                   ),
                   const SizedBox(height: 28),
 
@@ -72,9 +70,8 @@ class LoginScreen extends StatelessWidget {
                     icon: CupertinoIcons.lock_fill,
                     obscureText: true,
                     onChanged: vm.setPassword,
-                    helperText: vm.passwordHelperText,
-                    isError: vm.showPasswordErrorIcon,
-                    isValid: vm.showPasswordValidIcon,
+                    helperText: vm.passwordMessage,
+                    isValid: vm.isPasswordValid,
                   ),
 
                   const SizedBox(height: 12),
@@ -108,7 +105,7 @@ class LoginScreen extends StatelessWidget {
             onPressed: vm.isLoading
                 ? null
                 : () async {
-                    final success = await vm.login();
+                    final success = await vm.submitLogin();
                     if (success) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(

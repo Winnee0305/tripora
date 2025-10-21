@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
-import 'package:tripora/features/login/views/auth_page.dart';
+import 'package:tripora/features/auth/views/auth_page.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/main_screen.dart';
 import 'package:tripora/features/trip/views/create_trip_page.dart';

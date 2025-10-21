@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/login/viewmodels/register_viewmodel.dart';
+import 'package:tripora/features/auth/viewmodels/register_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
@@ -59,7 +59,6 @@ class RegisterScreen extends StatelessWidget {
                     onChanged: vm.setUsername,
                     icon: CupertinoIcons.person_fill,
                     helperText: vm.usernameMessage,
-                    isError: vm.isUsernameError,
                     isValid: vm.isUsernameValid,
                   ),
                   const SizedBox(height: 28),
@@ -69,7 +68,6 @@ class RegisterScreen extends StatelessWidget {
                     onChanged: vm.setEmail,
                     icon: CupertinoIcons.mail_solid,
                     helperText: vm.emailMessage,
-                    isError: vm.isEmailError,
                     isValid: vm.isEmailValid,
                   ),
                   const SizedBox(height: 28),
@@ -80,7 +78,6 @@ class RegisterScreen extends StatelessWidget {
                     onChanged: vm.setPassword,
                     icon: CupertinoIcons.lock_fill,
                     helperText: vm.passwordMessage,
-                    isError: vm.isPasswordError,
                     isValid: vm.isPasswordValid,
                   ),
                   const SizedBox(height: 28),
@@ -91,7 +88,6 @@ class RegisterScreen extends StatelessWidget {
                     onChanged: vm.setConfirmPassword,
                     icon: CupertinoIcons.lock_shield_fill,
                     helperText: vm.confirmPasswordMessage,
-                    isError: vm.isConfirmError,
                     isValid: vm.isConfirmValid,
                   ),
                 ],

@@ -19,7 +19,6 @@ class AppTextField extends StatelessWidget {
   final InputDecoration? decoration;
 
   /// ---- Validation + Feedback ----
-  final bool? isError;
   final bool? isValid;
   final String? helperText;
 
@@ -37,7 +36,6 @@ class AppTextField extends StatelessWidget {
     this.autofocus = false,
     this.controller,
     this.keyboardType = TextInputType.text,
-    this.isError,
     this.isValid,
     this.helperText,
     this.decoration,
@@ -86,27 +84,28 @@ class AppTextField extends StatelessWidget {
           ),
         ),
       );
-    } else if (isError == true || isValid == true) {
-      // Animated validation icons
+    } else if (isValid != null || helperText != null) {
       suffix = Padding(
         padding: const EdgeInsets.only(right: 12),
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, anim) =>
               FadeTransition(opacity: anim, child: child),
-          child: isError == true
+          child: (isValid == true)
+              ? const Icon(
+                  CupertinoIcons.check_mark_circled_solid,
+                  key: ValueKey('valid'),
+                  color: Color(0xFF2E7D32),
+                  size: 22,
+                )
+              : (isValid == false && helperText != null)
               ? const Icon(
                   CupertinoIcons.exclamationmark_circle_fill,
                   key: ValueKey('error'),
                   color: Color(0xFFD32F2F),
                   size: 22,
                 )
-              : const Icon(
-                  CupertinoIcons.check_mark_circled_solid,
-                  key: ValueKey('valid'),
-                  color: Color(0xFF2E7D32),
-                  size: 22,
-                ),
+              : const SizedBox.shrink(key: ValueKey('none')),
         ),
       );
     }
@@ -155,7 +154,7 @@ class AppTextField extends StatelessWidget {
             suffixIcon: suffix,
             helperText: (isValid == true) ? null : helperText,
             helperStyle: theme.textTheme.labelMedium?.copyWith(
-              color: isError == true
+              color: helperText != null && isValid == false
                   ? theme.colorScheme.error
                   : isValid == true
                   ? const Color(0xFF2E7D32)
