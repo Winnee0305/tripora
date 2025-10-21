@@ -98,13 +98,10 @@ class SettingsPage extends StatelessWidget {
 
                   if (shouldLogout == true) {
                     await vm.logout();
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('You’ve been logged out.'),
-                        ),
-                      );
-                    }
+                    Navigator.popUntil(
+                      context,
+                      (route) => route.isFirst,
+                    ); // go back to root, and allow AuthLayout to handle redirection
                   }
                 },
               ),

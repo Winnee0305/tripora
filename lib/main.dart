@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/repositories/user_repository.dart';
 import 'package:tripora/core/services/auth_service.dart';
 import 'package:tripora/core/services/firestore_service.dart';
-import 'package:tripora/features/auth_layout.dart';
+import 'package:tripora/core/views/auth_layout.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
 import 'package:tripora/features/auth/views/auth_page.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
-import 'package:tripora/features/main_screen.dart';
-import 'package:tripora/features/trip/views/create_trip_page.dart';
-import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'core/theme/app_theme.dart';
-import 'features/trip/views/trip_info_page.dart';
-import 'features/packing/views/packing_page.dart';
-import 'features/packing/viewmodels/packing_page_viewmodel.dart';
-import 'features/itinerary/viewmodels/itinerary_content_viewmodel.dart';
-import 'features/notes_itinerary/views/notes_itinerary_page.dart';
-import 'features/trip/viewmodels/create_trip_viewmodel.dart';
-import 'features/expense/views/expense_page.dart';
 import 'features/home/viewmodels/home_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

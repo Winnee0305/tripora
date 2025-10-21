@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:tripora/core/utils/auth_validators.dart';
 
 /// Base class for authentication-related form view models.
 /// Handles touched state, loading state, and validation structure.

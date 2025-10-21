@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 import 'package:tripora/features/home/viewmodels/home_viewmodel.dart';
-import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'widgets/home_header_section.dart';
 import 'package:tripora/features/navigation/views/navigation_bar.dart';
 import 'package:tripora/features/home/views/widgets/make_bookings_section.dart';

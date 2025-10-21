@@ -5,8 +5,7 @@ import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_page.dart';
-import 'package:tripora/features/settings/views/settings_page.dart';
-import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
+import 'package:tripora/core/viewmodels/user_viewmodel.dart';
 
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({super.key});

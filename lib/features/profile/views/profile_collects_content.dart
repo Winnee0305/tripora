@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
-import 'package:tripora/features/profile/views/profile_page.dart';
-import 'package:tripora/features/profile/views/widgets/stat_card.dart';
 import 'package:tripora/features/search/views/widgets/travel_post_card.dart';
-import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
-import 'package:tripora/features/settings/views/settings_page.dart';
 
 class ProfileCollectsContent extends StatelessWidget {
   const ProfileCollectsContent({super.key, required this.vm});
