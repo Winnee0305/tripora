@@ -30,11 +30,13 @@ class HomeHeaderSection extends StatelessWidget {
               ),
             ),
             onTap: () {
+              final vm = context.read<UserViewModel>();
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (_) => ProfileViewModel(),
+                  builder: (_) => ChangeNotifierProvider<UserViewModel>.value(
+                    value: vm,
                     child: const ProfilePage(),
                   ),
                 ),

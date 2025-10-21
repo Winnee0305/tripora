@@ -54,14 +54,14 @@ class ProfileSection extends StatelessWidget {
 
         // ----- Username
         Text(
-          vm.user.displayName,
+          "${vm.user.firstname}, ${vm.user.lastname}",
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 2),
         Text(
-          vm.user.handle,
+          "@${vm.user.username}",
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.6),
             fontWeight: ManropeFontWeight.semiBold,
@@ -76,11 +76,15 @@ class ProfileSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
-              StatCard(label: 'Following', value: '${vm.user.following}'),
-              StatCard(label: 'Followers', value: '${vm.user.followers}'),
+              // StatCard(label: 'Following', value: '${vm.user.following}'),
+              // StatCard(label: 'Followers', value: '${vm.user.followers}'),
+              StatCard(label: 'Following', value: '4'),
+              StatCard(label: 'Followers', value: '1'),
+
               StatCard(
                 label: 'Likes &\nComments',
-                value: '${vm.user.likesComments}',
+                // value: '${vm.user.likesComments}',
+                value: '12',
               ),
             ],
           ),

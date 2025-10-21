@@ -96,14 +96,14 @@ class AppTextField extends StatelessWidget {
                   CupertinoIcons.check_mark_circled_solid,
                   key: ValueKey('valid'),
                   color: Color(0xFF2E7D32),
-                  size: 22,
+                  size: 18,
                 )
               : (isValid == false && helperText != null)
               ? const Icon(
                   CupertinoIcons.exclamationmark_circle_fill,
                   key: ValueKey('error'),
                   color: Color(0xFFD32F2F),
-                  size: 22,
+                  size: 18,
                 )
               : const SizedBox.shrink(key: ValueKey('none')),
         ),
