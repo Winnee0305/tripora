@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/auth/viewmodels/register_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
@@ -55,9 +56,25 @@ class RegisterScreen extends StatelessWidget {
               child: Column(
                 children: [
                   AppTextField(
+                    label: "First Name",
+                    onChanged: vm.setFirstName,
+                    icon: CupertinoIcons.person_fill,
+                    helperText: vm.firstnameMessage,
+                    isValid: vm.isFirstNameValid,
+                  ),
+                  const SizedBox(height: 28),
+                  AppTextField(
+                    label: "Last Name",
+                    onChanged: vm.setLastName,
+                    icon: CupertinoIcons.person_2_fill,
+                    helperText: vm.lastnameMessage,
+                    isValid: vm.isLastNameValid,
+                  ),
+                  const SizedBox(height: 28),
+                  AppTextField(
                     label: "Username",
                     onChanged: vm.setUsername,
-                    icon: CupertinoIcons.person_fill,
+                    icon: LucideIcons.atSign,
                     helperText: vm.usernameMessage,
                     isValid: vm.isUsernameValid,
                   ),

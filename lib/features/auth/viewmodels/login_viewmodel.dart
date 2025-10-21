@@ -91,4 +91,8 @@ class LoginViewModel extends AuthFormViewModel {
       setAuthError("Failed to send reset email. Try again later.");
     }
   }
+
+  String get generalErrorMessage {
+    return "The email address or password you entered is incorrect. Please try again.";
+  }
 }

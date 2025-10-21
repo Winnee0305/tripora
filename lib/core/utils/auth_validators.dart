@@ -1,4 +1,38 @@
 class AuthValidators {
+  // ---- First Name ----
+  static String? validateFirstName(String? firstName) {
+    if (firstName == null || firstName.trim().isEmpty) {
+      return 'First name cannot be empty';
+    }
+    if (firstName.trim().length < 2) {
+      return 'First name must be at least 2 characters';
+    }
+    if (!RegExp(r"^[A-Za-zÀ-ÿ' -]+$").hasMatch(firstName.trim())) {
+      return 'First name contains invalid characters';
+    }
+    return null; // ✅ valid
+  }
+
+  static bool isFirstNameValid(String firstName) =>
+      validateFirstName(firstName) == null;
+
+  // ---- Last Name ----
+  static String? validateLastName(String? lastName) {
+    if (lastName == null || lastName.trim().isEmpty) {
+      return 'Last name cannot be empty';
+    }
+    if (lastName.trim().length < 2) {
+      return 'Last name must be at least 2 characters';
+    }
+    if (!RegExp(r"^[A-Za-zÀ-ÿ' -]+$").hasMatch(lastName.trim())) {
+      return 'Last name contains invalid characters';
+    }
+    return null; // ✅ valid
+  }
+
+  static bool isLastNameValid(String lastName) =>
+      validateLastName(lastName) == null;
+
   // ---- Username ----
   static String? validateUsername(String? username) {
     if (username == null || username.trim().isEmpty) {

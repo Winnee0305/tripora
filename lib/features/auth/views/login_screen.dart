@@ -98,7 +98,18 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 14),
+          // ----- Authentication Error Message -----
+          if (vm.authError != null) ...[
+            Text(
+              vm.generalErrorMessage,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          const SizedBox(height: 6),
 
           // ----- Login button
           AppButton.primary(
@@ -112,11 +123,6 @@ class LoginScreen extends StatelessWidget {
                           builder: (_) => const NavigationShell(),
                         ),
                         (route) => false, // remove all previous routes
-                      );
-                    } else {
-                      // Optionally show error
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Login failed')),
                       );
                     }
                   },
