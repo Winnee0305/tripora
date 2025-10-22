@@ -4,7 +4,7 @@ import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 import 'package:tripora/features/home/viewmodels/home_viewmodel.dart';
 import 'widgets/home_header_section.dart';
 import 'package:tripora/features/navigation/views/navigation_bar.dart';
-import 'package:tripora/features/home/views/widgets/make_bookings_section.dart';
+import 'package:tripora/features/home/views/widgets/book_now_section.dart';
 import 'package:tripora/features/home/views/widgets/continue_trip_section.dart';
 import 'package:tripora/features/home/views/widgets/for_you_section.dart';
 
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 16),
               HomeHeaderSection(),
               const SizedBox(height: 30),
-              MakeBookingsSection(),
+              BookNowSection(),
               const SizedBox(height: 30),
               ChangeNotifierProvider(
                 create: (_) => ForYouViewModel(),
