@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_partner_page.dart';
-import '../viewmodels/create_trip_viewmodel.dart';
+import '../viewmodels/trip_viewmodel.dart';
 import 'widgets/create_trip/choose_destination_page.dart';
 import 'widgets/create_trip/choose_travel_style_page.dart';
 import '../../../core/reusable_widgets/app_sticky_header.dart';
@@ -9,18 +12,29 @@ import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
 import '../../../core/reusable_widgets/calendar_range_picker.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 
-class CreateTripPage extends StatelessWidget {
+class CreateTripPage extends StatefulWidget {
   const CreateTripPage({super.key});
 
   @override
+  State<CreateTripPage> createState() => _CreateTripPageState();
+}
+
+class _CreateTripPageState extends State<CreateTripPage> {
+  // local form state (temporary)
+  TripData draftTrip = TripData.empty();
+
+  DateTime? startDate;
+  DateTime? endDate;
+  DateTime focusedDay = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<CreateTripViewModel>(context);
+    final tripVm = context.read<TripViewModel>();
 
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // ---------- Sticky Header ----------
             SliverPersistentHeader(
               pinned: true,
               delegate: AppStickyHeaderDelegate(
@@ -32,136 +46,153 @@ class CreateTripPage extends StatelessWidget {
                 ),
               ),
             ),
-
-            // ----- The rest of the form -----
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        // ----- Calendar Range Picker -----
-                        CalendarRangePicker(
-                          focusedDay: vm.focusedDay,
-                          startDate: vm.startDate,
-                          endDate: vm.endDate,
-                          onDateRangeChanged: vm.setDateRange,
-                          onFocusedDayChanged: vm.setFocusedDay,
-                        ),
+                    const SizedBox(height: 10),
 
-                        const SizedBox(height: 10),
-                        Text(
-                          vm.startDate != null && vm.endDate != null
-                              ? "Selected: ${vm.startDate!.toLocal().toString().split(' ')[0]} → ${vm.endDate!.toLocal().toString().split(' ')[0]}"
-                              : "Select your trip range",
-                        ),
-                      ],
+                    // ----- Date range picker
+                    CalendarRangePicker(
+                      focusedDay: focusedDay,
+                      startDate: startDate,
+                      endDate: endDate,
+                      onDateRangeChanged: (start, end) {
+                        setState(() {
+                          startDate = start;
+                          endDate = end;
+                          draftTrip = draftTrip.copyWith(
+                            startDate: start,
+                            endDate: end,
+                          );
+                        });
+                      },
+                      onFocusedDayChanged: (day) => setState(() {
+                        focusedDay = day;
+                      }),
                     ),
 
                     const SizedBox(height: 30),
-                    AppTextField(label: "Trip Name", onChanged: vm.setTripName),
+
+                    AppTextField(
+                      label: "Trip Name",
+                      onChanged: (v) => setState(() {
+                        draftTrip = draftTrip.copyWith(tripName: v);
+                      }),
+                    ),
+
                     const SizedBox(height: 30),
 
                     AppTextField(
                       label: "Destination",
-                      text: vm.trip.destination, // reactive from ViewModel
+                      text: draftTrip.destination,
                       readOnly: true,
                       chooseButton: true,
                       onTap: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: context.read<CreateTripViewModel>(),
-                              child: const ChooseDestinationPage(),
-                            ),
-                          ),
-                        );
+                        final selectedDestination =
+                            await Navigator.push<String>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ChooseDestinationPage(),
+                              ),
+                            );
 
-                        if (result != null && result is String) {
-                          vm.setDestination(
-                            result,
-                          ); // 👈 directly update CreateTripViewModel
+                        if (selectedDestination != null) {
+                          setState(() {
+                            draftTrip = draftTrip.copyWith(
+                              destination: selectedDestination,
+                            );
+                          });
                         }
                       },
                     ),
+
                     const SizedBox(height: 30),
+
                     AppTextField(
                       label: "Travel Style (Optional)",
-                      text: vm.trip.travelStyle, // reactive from ViewModel
+                      text: draftTrip.travelStyle,
                       readOnly: true,
                       chooseButton: true,
                       onTap: () async {
-                        final result = await Navigator.push(
+                        final selectedStyle = await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: context.read<CreateTripViewModel>(),
-                              child: const ChooseTravelStylePage(),
-                            ),
+                            builder: (_) => const ChooseTravelStylePage(),
                           ),
                         );
 
-                        if (result != null && result is String) {
-                          vm.setTravelStyle(
-                            result,
-                          ); // 👈 directly update CreateTripViewModel
+                        if (selectedStyle != null) {
+                          setState(() {
+                            draftTrip = draftTrip.copyWith(
+                              travelStyle: selectedStyle,
+                            );
+                          });
                         }
                       },
                     ),
+
                     const SizedBox(height: 30),
+
                     AppTextField(
-                      label: "Type of Travel Partner (Optional)",
-                      text: vm.trip.travelPartner, // reactive from ViewModel
+                      label: "Travel Partner (Optional)",
+                      text: draftTrip.travelPartnerType,
                       readOnly: true,
                       chooseButton: true,
                       onTap: () async {
-                        final result = await Navigator.push(
+                        final selectedPartner = await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: context.read<CreateTripViewModel>(),
-                              child: const ChooseTravelPartnerPage(),
-                            ),
+                            builder: (_) => const ChooseTravelPartnerPage(),
                           ),
                         );
 
-                        if (result != null && result is String) {
-                          vm.setTravelPartner(
-                            result,
-                          ); // 👈 directly update CreateTripViewModel
+                        if (selectedPartner != null) {
+                          setState(() {
+                            draftTrip = draftTrip.copyWith(
+                              travelPartnerType: selectedPartner,
+                            );
+                          });
                         }
                       },
                     ),
+
                     const SizedBox(height: 30),
 
                     AppTextField(
                       label: "Number of Travelers (Optional)",
                       isNumber: true,
-                      onChanged: (value) {
-                        final intValue =
-                            int.tryParse(value) ?? 0; // safely parse
-                        vm.setNumTravellers(intValue);
-                      },
+
+                      onChanged: (v) => setState(() {
+                        final count = int.tryParse(v) ?? 0;
+                        draftTrip = draftTrip.copyWith(travelersCount: count);
+                      }),
                     ),
 
                     const SizedBox(height: 50),
 
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 80,
-                          vertical: 12,
-                        ),
-                        child: Text("Done", style: TextStyle(fontSize: 16)),
-                      ),
+                    AppButton.primary(
+                      text: 'Done',
+                      onPressed: () async {
+                        // validate required fields
+                        if (draftTrip.tripName.isEmpty ||
+                            draftTrip.destination.isEmpty ||
+                            draftTrip.startDate == null ||
+                            draftTrip.endDate == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please complete all required fields.',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        tripVm.createTrip(draftTrip);
+                        Navigator.pop(context);
+                      },
                     ),
                   ],
                 ),

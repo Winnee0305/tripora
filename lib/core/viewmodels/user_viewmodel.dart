@@ -7,12 +7,10 @@ class UserViewModel extends ChangeNotifier {
   UserData? _user;
   bool isLoading = false;
 
-  UserViewModel(this._userRepo) {
-    debugPrint('[UserViewModel] Constructed with uid: ${_userRepo.uid}');
-  }
+  UserViewModel(this._userRepo);
 
   Future<void> loadUser() async {
-    if (_userRepo.uid.isEmpty) return;
+    if (_userRepo.idUidEmpty) return;
 
     isLoading = true;
     notifyListeners();

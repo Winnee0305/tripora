@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import '../../../viewmodels/create_trip_viewmodel.dart';
+import '../../../viewmodels/trip_viewmodel.dart';
 
-class ChooseTravelPartnerPage extends StatelessWidget {
+class ChooseTravelPartnerPage extends StatefulWidget {
   const ChooseTravelPartnerPage({super.key});
 
   @override
+  State<ChooseTravelPartnerPage> createState() =>
+      _ChooseTravelPartnerPageState();
+}
+
+class _ChooseTravelPartnerPageState extends State<ChooseTravelPartnerPage> {
+  String? selectedTravelPartner;
+
+  @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<CreateTripViewModel>(context);
     final theme = Theme.of(context);
 
     final travelPartner = [
@@ -56,21 +63,18 @@ class ChooseTravelPartnerPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final name = travelPartner[index]['name'];
                     final image = travelPartner[index]['image'];
-                    final selected = vm.trip.travelPartner == name;
+                    final selected = selectedTravelPartner == name;
                     return GestureDetector(
                       onTap: () {
-                        vm.setTravelPartner(name ?? '');
+                        setState(() {
+                          selectedTravelPartner = name ?? '';
+                        });
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(30),
-                          // border: Border.all(
-                          //   color: selected
-                          //       ? theme.colorScheme.primary
-                          //       : Colors.transparent,
-                          //   width: 3,
-                          // ),
+
                           image: DecorationImage(
                             image: AssetImage(
                               'assets/images/travel_partner/${image}.png',
@@ -123,7 +127,7 @@ class ChooseTravelPartnerPage extends StatelessWidget {
           text: "Done",
           minHeight: 40,
           minWidth: 20,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, selectedTravelPartner),
         ),
       ),
     );

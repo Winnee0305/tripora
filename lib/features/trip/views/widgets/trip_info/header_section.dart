@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/utils/format_utils.dart';
@@ -7,11 +8,11 @@ import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class HeaderSection extends StatelessWidget {
-  final TripViewModel vm;
-  const HeaderSection({super.key, required this.vm});
+  const HeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<TripViewModel>();
     return Stack(
       children: [
         // --- Background Image ---
@@ -20,7 +21,8 @@ class HeaderSection extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(58),
             child: Image.asset(
-              vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
+              // vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
+              'assets/images/exp_melaka_trip.png',
               height: 300,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -64,7 +66,8 @@ class HeaderSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      "${vm.trip.destination}, ${vm.trip.country}",
+                      // "${vm.trip!.destination}, ${vm.trip!.country}",
+                      "${vm.trip?.destination}, Malaysia",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: ManropeFontWeight.light,
                       ),
@@ -73,7 +76,7 @@ class HeaderSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  vm.trip.name ?? '',
+                  vm.trip?.tripName ?? '',
                   style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -84,8 +87,8 @@ class HeaderSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _DateRange(
-                      start: vm.trip.start ?? DateTime.now(),
-                      end: vm.trip.end ?? DateTime.now(),
+                      start: vm.trip?.startDate ?? DateTime.now(),
+                      end: vm.trip?.endDate ?? DateTime.now(),
                     ),
                     AppButton.iconOnly(
                       icon: CupertinoIcons.settings,

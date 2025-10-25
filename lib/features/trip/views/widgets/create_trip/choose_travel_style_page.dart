@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import '../../../viewmodels/create_trip_viewmodel.dart';
+import '../../../viewmodels/trip_viewmodel.dart';
 
-class ChooseTravelStylePage extends StatelessWidget {
+class ChooseTravelStylePage extends StatefulWidget {
   const ChooseTravelStylePage({super.key});
 
   @override
+  State<ChooseTravelStylePage> createState() => _ChooseTravelStylePageState();
+}
+
+class _ChooseTravelStylePageState extends State<ChooseTravelStylePage> {
+  String? selectedTravelStyle;
+
+  @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<CreateTripViewModel>(context);
     final theme = Theme.of(context);
 
     final travelStyles = [
@@ -56,11 +62,14 @@ class ChooseTravelStylePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final name = travelStyles[index]['name'];
                     final image = travelStyles[index]['image'];
-                    final selected = vm.trip.travelStyle == name;
+                    final selected = selectedTravelStyle == name;
                     return GestureDetector(
                       onTap: () {
-                        vm.setTravelStyle(name ?? '');
+                        setState(() {
+                          selectedTravelStyle = name ?? '';
+                        });
                       },
+
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -118,7 +127,7 @@ class ChooseTravelStylePage extends StatelessWidget {
           text: "Done",
           minHeight: 40,
           minWidth: 20,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, selectedTravelStyle),
         ),
       ),
     );

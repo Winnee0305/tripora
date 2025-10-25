@@ -2,44 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import '../../../viewmodels/create_trip_viewmodel.dart';
+import '../../../viewmodels/trip_viewmodel.dart';
 
-class ChooseDestinationPage extends StatelessWidget {
+class ChooseDestinationPage extends StatefulWidget {
   const ChooseDestinationPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final vm = Provider.of<CreateTripViewModel>(context);
-    final theme = Theme.of(context);
+  State<ChooseDestinationPage> createState() => _ChooseDestinationPageState();
+}
 
-    final destinations = [
-      {"name": "Selangor", "image": "selangor"},
-      {"name": "Kuala Lumpur", "image": "kl"},
-      {"name": "Penang", "image": "penang"},
-      {"name": "Sabah", "image": "sabah"},
-      {"name": "Sarawak", "image": "sarawak"},
-      {"name": "Melaka", "image": "melaka"},
-      {"name": "Pahang", "image": "pahang"},
-      {"name": "Kedah", "image": "kedah"},
-      {"name": "Johor", "image": "johor"},
-      {"name": "Perak", "image": "perak"},
-      {"name": "Terengganu", "image": "terengganu"},
-      {"name": "Kelantan", "image": "kelantan"},
-      {"name": "Negeri Sembilan", "image": "negeri_sembilan"},
-      {"name": "Putrajaya", "image": "putrajaya"},
-      {"name": "Labuan", "image": "labuan"},
-      {"name": "Perlis", "image": "perlis"},
-    ];
+class _ChooseDestinationPageState extends State<ChooseDestinationPage> {
+  String? selectedDestination;
+
+  final destinations = [
+    {"name": "Selangor", "image": "selangor"},
+    {"name": "Kuala Lumpur", "image": "kl"},
+    {"name": "Penang", "image": "penang"},
+    {"name": "Sabah", "image": "sabah"},
+    {"name": "Sarawak", "image": "sarawak"},
+    {"name": "Melaka", "image": "melaka"},
+    {"name": "Pahang", "image": "pahang"},
+    {"name": "Kedah", "image": "kedah"},
+    {"name": "Johor", "image": "johor"},
+    {"name": "Perak", "image": "perak"},
+    {"name": "Terengganu", "image": "terengganu"},
+    {"name": "Kelantan", "image": "kelantan"},
+    {"name": "Negeri Sembilan", "image": "negeri_sembilan"},
+    {"name": "Putrajaya", "image": "putrajaya"},
+    {"name": "Labuan", "image": "labuan"},
+    {"name": "Perlis", "image": "perlis"},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
           child: Column(
-            // ----- Header
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ✅ Custom "AppBar" Section
               Text(
                 "Choose your destination",
                 style: theme.textTheme.headlineMedium?.weight(
@@ -53,7 +57,6 @@ class ChooseDestinationPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Grid section
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -65,21 +68,24 @@ class ChooseDestinationPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final name = destinations[index]['name'];
                     final image = destinations[index]['image'];
-                    final selected = vm.trip.destination == name;
+                    final isSelected = selectedDestination == name;
+
                     return GestureDetector(
                       onTap: () {
-                        vm.setDestination(name ?? '');
+                        setState(() {
+                          selectedDestination = name;
+                        });
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/destination_selection/${image}.png',
+                              'assets/images/destination_selection/$image.png',
                             ),
                             fit: BoxFit.cover,
-                            colorFilter: selected
-                                ? null // ✅ No dark overlay when selected
+                            colorFilter: isSelected
+                                ? null
                                 : ColorFilter.mode(
                                     Colors.black.withOpacity(0.5),
                                     BlendMode.darken,
@@ -95,18 +101,14 @@ class ChooseDestinationPage extends StatelessWidget {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          name ?? '',
+                          name!,
                           textAlign: TextAlign.center,
-                          style: selected
-                              ? theme.textTheme.headlineMedium?.copyWith(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontWeight: ManropeFontWeight.extraBold,
-                                )
-                              : theme.textTheme.headlineSmall?.copyWith(
-                                  color: theme.colorScheme.onPrimary
-                                      .withOpacity(0.7),
-                                  fontWeight: ManropeFontWeight.semiBold,
-                                ),
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: isSelected
+                                ? ManropeFontWeight.extraBold
+                                : ManropeFontWeight.semiBold,
+                          ),
                         ),
                       ),
                     );
@@ -117,15 +119,11 @@ class ChooseDestinationPage extends StatelessWidget {
           ),
         ),
       ),
-
-      // ✅ Bottom Button
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(right: 90, left: 90, bottom: 30),
         child: AppButton.primary(
           text: "Done",
-          minHeight: 40,
-          minWidth: 20,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, selectedDestination),
         ),
       ),
     );
