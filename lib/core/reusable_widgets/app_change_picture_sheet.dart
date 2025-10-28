@@ -130,7 +130,6 @@ class AppChangePictureSheet {
                     AppButton.primary(
                       onPressed: () {
                         Navigator.pop(context, imagePath);
-                        AppToast(context, 'Profile picture updated');
                       },
                       icon: CupertinoIcons.check_mark,
                       minWidth: 140,

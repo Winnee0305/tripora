@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
-import 'package:tripora/core/reusable_widgets/app_toast.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
@@ -30,17 +28,32 @@ class ProfileSection extends StatelessWidget {
           onTap: () async {
             final imagePath = await AppChangePictureSheet.show(context);
             if (imagePath != null) {
-              // ✅ User confirmed an image
-              // userVm.updateProfilePicture(imagePath);
+              userVm.updateProfilePicture(imagePath, context);
             }
           },
 
           child: Stack(
             alignment: Alignment.bottomRight,
             children: [
-              CircleAvatar(
-                radius: 54,
-                backgroundImage: AssetImage("assets/logo/tripora.JPG"),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 54,
+                    backgroundImage: userVm.profileImage,
+                  ),
+
+                  if (userVm.isImageLoading)
+                    const CircleAvatar(
+                      radius: 54,
+                      backgroundColor: Colors.white70,
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CupertinoActivityIndicator(radius: 14),
+                      ),
+                    ),
+                ],
               ),
               Positioned(
                 right: 0,

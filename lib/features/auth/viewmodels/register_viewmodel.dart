@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tripora/core/services/auth_service.dart';
+import 'package:tripora/core/services/firebase_auth_service.dart';
 import 'package:tripora/core/utils/auth_validators.dart';
 import 'package:tripora/features/auth/viewmodels/auth_form_viewmodel.dart';
 

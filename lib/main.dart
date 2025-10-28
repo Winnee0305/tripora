@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/services/auth_service.dart';
-import 'package:tripora/core/services/firestore_service.dart';
+import 'package:tripora/core/services/firebase_auth_service.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
+import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/core/views/auth_layout.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
 import 'package:tripora/features/auth/views/auth_page.dart';
@@ -30,6 +31,7 @@ void main() async {
       providers: [
         Provider(create: (_) => AuthService()),
         Provider(create: (_) => FirestoreService()),
+        Provider(create: (_) => FirebaseStorageService()),
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => ChatViewModel()),

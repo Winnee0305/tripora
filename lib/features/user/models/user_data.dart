@@ -8,9 +8,10 @@ class UserData {
   final String firstname;
   final String lastname;
   final String username;
-  final String? avatarUrl;
-  // final String? bio;
+  final String? profileImageUrl;
+  final String? profileStoragePath;
   final DateTime createdAt;
+  final DateTime? lastUpdated;
   // final Map<String, dynamic>? preferences;
 
   UserData({
@@ -19,9 +20,10 @@ class UserData {
     required this.lastname,
     required this.email,
     required this.username,
-    this.avatarUrl,
-    // this.bio,
+    this.profileImageUrl,
+    this.profileStoragePath,
     required this.createdAt,
+    this.lastUpdated,
     // this.preferences,
   });
 
@@ -35,7 +37,9 @@ class UserData {
       lastname: data['lastname'] ?? '',
       username: data['username'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      avatarUrl: data['avatarUrl'] ?? ' ',
+      profileImageUrl: data['profileImageUrl'] ?? ' ',
+      profileStoragePath: data['profileStoragePath'] ?? ' ',
+      lastUpdated: (data['lastUpdated'] as Timestamp?)?.toDate(),
       // bio: data['bio'],
       // joinedAt: (data['joinedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       // preferences: data['preferences'] != null
@@ -52,6 +56,9 @@ class UserData {
       'lastname': lastname,
       'username': username,
       'createdAt': Timestamp.fromDate(createdAt),
+      'profileImageUrl': profileImageUrl,
+      'profileStoragePath': profileStoragePath,
+      'lastUpdated': Timestamp.fromDate(lastUpdated ?? DateTime.now()),
       // 'avatarUrl': avatarUrl,
       // 'bio': bio,
       // 'joinedAt': Timestamp.fromDate(joinedAt),
@@ -63,7 +70,9 @@ class UserData {
   UserData copyWith({
     String? name,
     String? email,
-    String? avatarUrl,
+    String? profileImageUrl,
+    String? profileStoragePath,
+
     String? bio,
     DateTime? joinedAt,
     Map<String, dynamic>? preferences,
@@ -75,7 +84,9 @@ class UserData {
       email: email ?? this.email,
       username: username,
       createdAt: createdAt,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      profileStoragePath: profileStoragePath ?? this.profileStoragePath,
+
       // bio: bio ?? this.bio,
       // joinedAt: joinedAt ?? this.joinedAt,
       // preferences: preferences ?? this.preferences,

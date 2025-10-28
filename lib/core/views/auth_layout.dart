@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 import 'package:tripora/core/repositories/user_repository.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_page.dart';
-import 'package:tripora/core/services/auth_service.dart';
-import 'package:tripora/core/services/firestore_service.dart';
+import 'package:tripora/core/services/firebase_auth_service.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
+import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/features/auth/views/auth_page.dart';
 import 'package:tripora/features/navigation/views/navigation_shell.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -18,6 +19,7 @@ class AuthLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firestore = context.read<FirestoreService>();
+    final storage = context.read<FirebaseStorageService>();
 
     return ValueListenableBuilder(
       valueListenable: authService,
@@ -34,7 +36,7 @@ class AuthLayout extends StatelessWidget {
             // --- User logged in ---
             else if (snapshot.hasData) {
               final user = snapshot.data!;
-              final userRepo = UserRepository(firestore, user.uid);
+              final userRepo = UserRepository(firestore, user.uid, storage);
               final tripRepo = TripRepository(firestore, user.uid);
 
               widget = MultiProvider(
@@ -42,7 +44,7 @@ class AuthLayout extends StatelessWidget {
                   ChangeNotifierProvider<UserViewModel>(
                     create: (_) {
                       final vm = UserViewModel(userRepo);
-                      vm.loadUser();
+                      vm.loadUser(context);
                       return vm;
                     },
                   ),
