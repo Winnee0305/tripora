@@ -1,4 +1,4 @@
-import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/services/firestore_service.dart';
 import 'package:tripora/core/services/auth_service.dart'; // or your AuthState class
 

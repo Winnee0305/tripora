@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/models/itinerary_item_data.dart';
-import 'package:tripora/core/models/trip_data.dart';
-import 'package:tripora/core/models/user_data.dart';
+import 'package:tripora/features/trip/models/trip_data.dart';
+import 'package:tripora/features/user/models/user_data.dart';
 
 class FirestoreService {
   final _firestore = FirebaseFirestore.instance;

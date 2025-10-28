@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_page.dart';
-import 'package:tripora/core/viewmodels/user_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/navigation/views/navigation_bar.dart';
 import 'package:tripora/features/home/views/home_page.dart';

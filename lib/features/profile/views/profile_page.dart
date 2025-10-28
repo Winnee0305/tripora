@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_tab.dart';
-import 'package:tripora/core/viewmodels/user_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_collects_content.dart';
 import 'package:tripora/features/profile/views/profile_shared_trips_content.dart';

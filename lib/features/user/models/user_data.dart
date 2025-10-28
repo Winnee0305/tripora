@@ -8,7 +8,7 @@ class UserData {
   final String firstname;
   final String lastname;
   final String username;
-  // final String? avatarUrl;
+  final String? avatarUrl;
   // final String? bio;
   final DateTime createdAt;
   // final Map<String, dynamic>? preferences;
@@ -19,7 +19,7 @@ class UserData {
     required this.lastname,
     required this.email,
     required this.username,
-    // this.avatarUrl,
+    this.avatarUrl,
     // this.bio,
     required this.createdAt,
     // this.preferences,
@@ -35,7 +35,7 @@ class UserData {
       lastname: data['lastname'] ?? '',
       username: data['username'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      // avatarUrl: data['avatarUrl'],
+      avatarUrl: data['avatarUrl'] ?? ' ',
       // bio: data['bio'],
       // joinedAt: (data['joinedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       // preferences: data['preferences'] != null
@@ -75,7 +75,7 @@ class UserData {
       email: email ?? this.email,
       username: username,
       createdAt: createdAt,
-      // avatarUrl: avatarUrl ?? this.avatarUrl,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
       // bio: bio ?? this.bio,
       // joinedAt: joinedAt ?? this.joinedAt,
       // preferences: preferences ?? this.preferences,

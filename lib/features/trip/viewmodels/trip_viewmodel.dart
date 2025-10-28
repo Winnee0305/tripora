@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 
 class TripViewModel extends ChangeNotifier {

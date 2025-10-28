@@ -53,6 +53,7 @@ class _BookingItem extends StatelessWidget {
 
     return InkWell(
       onTap: () => vm.onBookingItemTapped(label),
+      borderRadius: BorderRadius.circular(10),
       child: Column(
         children: [
           Container(

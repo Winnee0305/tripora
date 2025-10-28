@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tripora/core/models/user_data.dart';
+import 'package:tripora/features/user/models/user_data.dart';
 import 'package:tripora/features/search/models/travel_post.dart';
 
 class ProfileViewModel extends ChangeNotifier {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_partner_page.dart';

@@ -7,7 +7,7 @@ import 'package:tripora/core/services/auth_service.dart';
 import 'package:tripora/core/services/firestore_service.dart';
 import 'package:tripora/features/auth/views/auth_page.dart';
 import 'package:tripora/features/navigation/views/navigation_shell.dart';
-import 'package:tripora/core/viewmodels/user_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class AuthLayout extends StatelessWidget {

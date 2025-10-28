@@ -28,8 +28,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider(create: (_) => AuthService()), // 👈 make these global
-        Provider(create: (_) => FirestoreService()), // 👈 shared globally
+        Provider(create: (_) => AuthService()),
+        Provider(create: (_) => FirestoreService()),
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
@@ -48,7 +48,6 @@ class TriporaApp extends StatelessWidget {
       title: 'Tripora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      // navigatorObservers: [StatusBarObserver()],
       routes: {'/login': (context) => const AuthPage()},
       home: const AuthLayout(),
     );
