@@ -7,6 +7,7 @@ import 'package:tripora/core/repositories/user_repository.dart';
 class UserViewModel extends ChangeNotifier {
   final UserRepository _userRepo;
   UserData? _user;
+  String? toastMessage;
 
   bool isLoading = false; // for full profile data
   bool isImageLoading = false; // for image fetch/precache
@@ -74,7 +75,7 @@ class UserViewModel extends ChangeNotifier {
     isImageLoading = true;
     notifyListeners();
 
-    AppToast(context, "Uploading image...");
+    toastMessage = "Uploading image...";
 
     try {
       final file = File(imagePath);
@@ -94,12 +95,12 @@ class UserViewModel extends ChangeNotifier {
         _profileImage = NetworkImage(downloadUrl);
         await precacheImage(_profileImage, context);
 
-        AppToast(context, "Profile picture updated!");
+        toastMessage = "Profile picture updated!";
       }
     } catch (e) {
       debugPrint("sFailed to update profile image: $e");
 
-      AppToast(context, "Failed to update profile picture.");
+      toastMessage = "Failed to update profile picture.";
     }
 
     isImageLoading = false;

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
+import 'package:tripora/core/reusable_widgets/app_toast.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
@@ -18,6 +19,13 @@ class ProfileSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final userVm = context.watch<UserViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (userVm.toastMessage != null) {
+        AppToast(context, userVm.toastMessage!);
+        userVm.toastMessage = null; // reset after showing
+      }
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

@@ -55,37 +55,6 @@ class TripPage extends StatelessWidget {
               ),
               const SizedBox(height: 32),
 
-              // SingleChildScrollView(
-              //   scrollDirection: Axis.vertical,
-
-              //   child: Column(
-              //     children: [
-              //       GestureDetector(
-              //         onTap: () {
-              //           Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //               builder: (context) => TripInfoPage(
-              //                 tripTitle: "Melaka Trip",
-              //                 destination: "Melaka, Malaysia",
-              //                 startDate: DateTime(2025, 8, 13),
-              //                 endDate: DateTime(2025, 8, 14),
-              //               ),
-              //             ),
-              //           );
-              //         },
-
-              //         child: TripInfoCard(
-              //           image: AssetImage("assets/images/exp_melaka_trip.png"),
-              //           startDate: DateTime(2025, 8, 13),
-              //           endDate: DateTime(2025, 8, 14),
-              //           tripTitle: "Melaka Trip",
-              //           destination: "Melaka, Malaysia",
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
