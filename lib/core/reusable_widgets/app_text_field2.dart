@@ -23,8 +23,10 @@ class AppTextField2 extends StatelessWidget {
   final bool showSearchIcon;
 
   final IconData icon;
+  final FocusNode? focusNode;
 
   const AppTextField2({
+    this.focusNode,
     super.key,
     this.controller,
     required this.hintText,
@@ -50,12 +52,13 @@ class AppTextField2 extends StatelessWidget {
             /// Text Input
             Expanded(
               child: TextField(
+                focusNode: focusNode,
                 controller: controller,
                 onChanged: onChanged,
                 onSubmitted: onSubmitted,
                 decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: theme.textTheme.titleLarge?.copyWith(
+                  hintStyle: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.5),
                     fontWeight: ManropeFontWeight.light,
                   ),

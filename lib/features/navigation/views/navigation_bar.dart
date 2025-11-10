@@ -36,7 +36,7 @@ class AppNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildItem(CupertinoIcons.home, "Home", 0, theme),
-            _buildItem(LucideIcons.search, "Search", 1, theme),
+            _buildItem(LucideIcons.search, "Exploration", 1, theme),
             _buildItem(CupertinoIcons.map, "Trip", 2, theme),
             _buildItem(CupertinoIcons.chat_bubble_text, "Chat", 3, theme),
           ],
@@ -63,7 +63,7 @@ class AppNavigationBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: theme.colorScheme.onPrimary, size: 28),
+            Icon(icon, color: theme.colorScheme.onPrimary, size: 24),
             AnimatedSize(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeInOut,
@@ -72,7 +72,7 @@ class AppNavigationBar extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8),
                       child: Text(
                         label,
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onPrimary,
                           fontWeight: ManropeFontWeight.medium,
                         ),

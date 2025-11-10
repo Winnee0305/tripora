@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
-import 'package:tripora/features/search/views/widgets/travel_post_card.dart';
+import 'package:tripora/features/exploration/views/widgets/travel_post_card.dart';
 
 class ProfileCollectsContent extends StatelessWidget {
   const ProfileCollectsContent({super.key, required this.vm});
