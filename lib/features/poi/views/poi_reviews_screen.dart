@@ -31,7 +31,7 @@ class PoiReviewsScreen extends StatelessWidget {
                 children: [
                   AppButton.iconTextSmall(
                     icon: CupertinoIcons.star_fill,
-                    text: "${vm.place.rating}",
+                    text: "${vm.poi!.rating}",
                     onPressed: () {},
                     iconSize: 14,
                     radius: 10,
@@ -42,7 +42,7 @@ class PoiReviewsScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   AppButton.iconTextSmall(
                     icon: CupertinoIcons.ellipses_bubble_fill,
-                    text: "${vm.reviews.length}",
+                    text: "${vm.poi!.reviews.length}",
                     onPressed: () {},
                     iconSize: 14,
                     radius: 10,
@@ -56,7 +56,7 @@ class PoiReviewsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           // ------ Reviews
-          ...vm.reviews.map((review) => _buildReviewTile(review, context)),
+          ...vm.poi!.reviews.map((review) => _buildReviewTile(review, context)),
           TextButton(
             onPressed: () {},
             child: const Text("See more reviews..."),

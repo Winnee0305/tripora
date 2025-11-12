@@ -31,71 +31,71 @@ class NotesContentViewModel extends ChangeNotifier {
       AttachmentNote: attachments,
     };
 
-    _loadMockData();
+    // _loadMockData();
   }
 
-  void _loadMockData() {
-    attractions.addAll([AttractionNote(poi: PoiPageViewmodel().place)]);
+  // void _loadMockData() {
+  //   attractions.addAll([AttractionNote(poi: PoiPageViewmodel().place)]);
 
-    attractions.addAll([
-      AttractionNote(
-        poi: PoiPageViewmodel().place,
-        userMessage: 'Great place!',
-      ),
-    ]);
+  //   attractions.addAll([
+  //     AttractionNote(
+  //       poi: PoiPageViewmodel().place,
+  //       userMessage: 'Great place!',
+  //     ),
+  //   ]);
 
-    lodgings.addAll([
-      LodgingNote(
-        poi: Poi(
-          name: 'Ames Hotel',
-          description: 'A nice hotel in the city center.',
-          location: '123 Main St, Cityville',
-          image: 'assets/images/hotel.png',
-          rating: 4.5,
-          operatingHours: [
-            OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
-          ],
-          address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
-          tags: ["Historical", "Museum", "Architecture"],
-        ),
-        checkIn: DateTime(2025, 8, 13, 14, 0),
-        checkOut: DateTime(2025, 8, 14, 12, 0),
-      ),
-    ]);
+  //   lodgings.addAll([
+  //     LodgingNote(
+  //       poi: Poi(
+  //         name: 'Ames Hotel',
+  //         description: 'A nice hotel in the city center.',
+  //         location: '123 Main St, Cityville',
+  //         image: 'assets/images/hotel.png',
+  //         rating: 4.5,
+  //         operatingHours: [
+  //           OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
+  //         ],
+  //         address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
+  //         tags: ["Historical", "Museum", "Architecture"],
+  //       ),
+  //       checkIn: DateTime(2025, 8, 13, 14, 0),
+  //       checkOut: DateTime(2025, 8, 14, 12, 0),
+  //     ),
+  //   ]);
 
-    restaurants.add(
-      RestaurantNote(
-        poi: Poi(
-          name: 'Peranakan Place',
-          description: '',
-          location: '123 Main St, Cityville',
-          image: 'assets/images/hotel.png',
-          rating: 4.5,
-          operatingHours: [
-            OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
-            OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
-          ],
-          address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
-          tags: ["Historical", "Museum", "Architecture"],
-        ),
-      ),
-    );
+  //   restaurants.add(
+  //     RestaurantNote(
+  //       poi: Poi(
+  //         name: 'Peranakan Place',
+  //         description: '',
+  //         location: '123 Main St, Cityville',
+  //         image: 'assets/images/hotel.png',
+  //         rating: 4.5,
+  //         operatingHours: [
+  //           OperatingHours(day: "Monday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Tuesday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Wednesday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Thursday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Friday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Saturday", open: "09:00", close: "17:30"),
+  //           OperatingHours(day: "Sunday", open: "09:00", close: "17:30"),
+  //         ],
+  //         address: "31, Jalan Laksamana, Banda Hilir, 75000 Melaka",
+  //         tags: ["Historical", "Museum", "Architecture"],
+  //       ),
+  //     ),
+  //   );
 
-    transportations.add(TransportationNote(type: TransportType.flight));
+  //   transportations.add(TransportationNote(type: TransportType.flight));
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   void addNote(NoteBase note) {
     final list = _noteMap[note.runtimeType];

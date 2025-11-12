@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
+import 'package:tripora/features/poi/models/poi.dart';
 import 'destination_card.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
 
@@ -65,7 +66,11 @@ class ForYouSection extends StatelessWidget {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => PoiPage()),
+                                  MaterialPageRoute(
+                                    builder: (_) => PoiPage(
+                                      placeId: "ChIJo6WcDR7u0TERGv9VNkNQRDo",
+                                    ),
+                                  ),
                                 );
                               },
                               child: DestinationCard(destination: destination),

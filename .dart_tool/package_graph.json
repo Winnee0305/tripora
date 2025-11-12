@@ -14,6 +14,7 @@
         "firebase_core",
         "firebase_storage",
         "flutter",
+        "flutter_dotenv",
         "flutter_image_compress",
         "flutter_launcher_icons",
         "flutter_native_splash",
@@ -68,6 +69,13 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "flutter_dotenv",
+      "version": "6.0.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

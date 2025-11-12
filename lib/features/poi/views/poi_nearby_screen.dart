@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/poi/viewmodels/poi_page_viewmodel.dart';
-import '../models/attraction.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 
 class PoiNearbyScreen extends StatelessWidget {
@@ -30,9 +29,9 @@ class PoiNearbyScreen extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
-            itemCount: vm.nearbyAttractions.length,
+            itemCount: vm.poi!.nearbyAttractions.length,
             itemBuilder: (context, index) {
-              final attraction = vm.nearbyAttractions[index];
+              final attraction = vm.poi!.nearbyAttractions[index];
               return _buildAttractionCard(attraction, context);
             },
           ),
@@ -42,7 +41,7 @@ class PoiNearbyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAttractionCard(Attraction attraction, BuildContext context) {
+  Widget _buildAttractionCard(dynamic attraction, BuildContext context) {
     return Container(
       height: 110,
       width: 230, // ✅ Finite width (ListView needs this)

@@ -14,7 +14,7 @@ class PoiDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hoursVM = PoiOperatingHoursViewModel(vm.place.operatingHours);
+    final hoursVM = PoiOperatingHoursViewModel(vm.poi!.operatingHours);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
@@ -24,7 +24,7 @@ class PoiDetailsScreen extends StatelessWidget {
 
           // ----- Description
           AppExpandableText(
-            vm.place.description,
+            vm.poi!.description,
             trimLines: 4,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: ManropeFontWeight.light,
@@ -45,7 +45,7 @@ class PoiDetailsScreen extends StatelessWidget {
 
           // ------ Address
           Text(
-            vm.place.address,
+            vm.poi!.address,
             textAlign: TextAlign.justify,
             maxLines: 4,
             overflow:
@@ -151,7 +151,7 @@ class PoiDetailsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: vm.place.operatingHours.map((h) {
+            children: vm.poi!.operatingHours.map((h) {
               final isClosed = h.open.toLowerCase() == "closed";
               final isToday = h.day.toLowerCase() == todayName;
 

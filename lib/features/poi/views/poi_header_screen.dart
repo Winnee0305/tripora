@@ -19,7 +19,7 @@ class PoiHeaderScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(58), // adjust radius
             child: Image.asset(
-              vm.place.image,
+              vm.poi!.image,
               height: 400,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -81,7 +81,7 @@ class PoiHeaderScreen extends StatelessWidget {
                             spacing: 4, // horizontal spacing between tags
                             runSpacing:
                                 4, // vertical spacing if wrapped to next line
-                            children: vm.place.tags
+                            children: vm.poi!.tags
                                 .map(
                                   (tag) => AppButton.textOnly(
                                     text: tag,
@@ -103,7 +103,7 @@ class PoiHeaderScreen extends StatelessWidget {
                           AppButton.iconTextSmall(
                             icon: CupertinoIcons.star_fill,
                             onPressed: () {},
-                            text: " ${vm.place.rating}",
+                            text: " ${vm.poi!.rating}",
                             textStyleOverride: Theme.of(context)
                                 .textTheme
                                 .labelMedium
@@ -126,7 +126,7 @@ class PoiHeaderScreen extends StatelessWidget {
                       ), // spacing between the title and the tags
                       // Title and Location
                       Text(
-                        vm.place.name,
+                        vm.poi!.name,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: 6),
@@ -142,7 +142,7 @@ class PoiHeaderScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            vm.place.location,
+                            vm.poi!.location,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(fontWeight: ManropeFontWeight.light),
                           ),

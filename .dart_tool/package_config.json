@@ -218,6 +218,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_dotenv",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/flutter_dotenv-6.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_image_compress",
       "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/flutter_image_compress-2.4.0",
       "packageUri": "lib/",

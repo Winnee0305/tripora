@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/services/ai_agents_service.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 import 'package:tripora/features/home/viewmodels/home_viewmodel.dart';
 import 'widgets/home_header_section.dart';
