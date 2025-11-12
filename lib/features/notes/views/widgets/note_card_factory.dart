@@ -30,8 +30,8 @@ class NoteCardFactory extends StatelessWidget {
           ? '${n.checkOut!.hour}:${n.checkOut!.minute.toString().padLeft(2, '0')}'
           : 'N/A';
       return ListTile(
-        leading: n.poi.image != null
-            ? Image.network(n.poi.image, width: 60, fit: BoxFit.cover)
+        leading: n.poi.imageUrl != null
+            ? Image.network(n.poi.imageUrl, width: 60, fit: BoxFit.cover)
             : null,
         title: Text(n.poi.name),
         subtitle: Text('Check In: $checkIn\nCheck Out: $checkOut'),
@@ -42,8 +42,8 @@ class NoteCardFactory extends StatelessWidget {
           ? '${n.reservationDateTime!.hour}:00'
           : 'Not set';
       return ListTile(
-        leading: n.poi.image != null
-            ? Image.network(n.poi.image, width: 60, fit: BoxFit.cover)
+        leading: n.poi.imageUrl != null
+            ? Image.network(n.poi.imageUrl, width: 60, fit: BoxFit.cover)
             : null,
         title: Text(n.poi.name),
         subtitle: Text('Reservation: $reservation'),

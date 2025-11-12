@@ -23,6 +23,7 @@
         "image_picker",
         "intl",
         "lucide_icons",
+        "marquee",
         "path",
         "path_provider",
         "permission_handler",
@@ -69,6 +70,14 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "marquee",
+      "version": "2.3.0",
+      "dependencies": [
+        "fading_edge_scrollview",
+        "flutter"
       ]
     },
     {
@@ -465,6 +474,13 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "fading_edge_scrollview",
+      "version": "4.1.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

@@ -8,13 +8,13 @@ import 'package:tripora/core/utils/constants.dart';
 class PlaceDetailsService {
   final String apiKey;
 
-  PlaceDetailsService({this.apiKey = MAP_API_KEY});
+  PlaceDetailsService({this.apiKey = mapApiKey});
 
   Future<Map<String, dynamic>?> fetchPlaceDetails(String placeId) async {
     if (placeId.isEmpty) return null;
 
     final fields =
-        'name,geometry,formatted_address,formatted_phone_number,website,rating,opening_hours,photos,reviews';
+        'name,geometry,formatted_address,formatted_phone_number,website,rating,opening_hours,photos,reviews,user_ratings_total,international_phone_number,types';
     final url =
         'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey&fields=$fields';
 
@@ -64,7 +64,7 @@ class PlaceDetailsService {
     return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=$maxWidth&photoreference=$photoReference&key=$apiKey';
   }
 
-  Future<List<dynamic>> fetchNearbyAttractions(
+  Future<List<Map<String, String>>> fetchNearbyAttractions(
     double lat,
     double lng, {
     int radius = 1000,
@@ -74,10 +74,42 @@ class PlaceDetailsService {
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$radius&type=$type&key=$apiKey';
     try {
       final response = await http.get(Uri.parse(url));
-      if (kDebugMode) print("Nearby Response: ${response.body}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['results'] ?? [];
+        final results = data['results'] ?? [];
+
+        // Take only the first 5 results (or fewer if not enough)
+        final limitedResults = results.take(5).toList();
+
+        // Extract only the required fields
+        final simplified = limitedResults.map<Map<String, String>>((item) {
+          return {
+            'place_id': (item['place_id'] ?? '').toString(),
+            'name': (item['name'] ?? '').toString(),
+          };
+        }).toList();
+
+        if (kDebugMode) {
+          print('Fetched ${simplified.length} nearby attractions');
+
+          // Save JSON for debugging
+          final debugJson = jsonEncode({
+            'timestamp': DateTime.now().toIso8601String(),
+            'count': simplified.length,
+            'results': simplified,
+          });
+
+          try {
+            final dir = await getApplicationDocumentsDirectory();
+            final file = File('${dir.path}/nearby_places_debug.json');
+            await file.writeAsString(debugJson, mode: FileMode.write);
+            print('✅ Debug JSON saved at: ${file.path}');
+          } catch (e) {
+            print('⚠️ Failed to save debug JSON: $e');
+          }
+        }
+
+        return simplified;
       }
     } catch (e) {
       if (kDebugMode) print("Nearby search error: $e");

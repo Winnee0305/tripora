@@ -6,12 +6,23 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_expandable_text.dart';
 import 'package:flutter/cupertino.dart';
 
-class PoiReviewsScreen extends StatelessWidget {
+class PoiReviewsScreen extends StatefulWidget {
   final PoiPageViewmodel vm;
   const PoiReviewsScreen({super.key, required this.vm});
 
   @override
+  State<PoiReviewsScreen> createState() => _PoiReviewsScreenState();
+}
+
+class _PoiReviewsScreenState extends State<PoiReviewsScreen> {
+  int _visibleCount = 2; // start with 2 reviews
+
+  @override
   Widget build(BuildContext context) {
+    final reviews = widget.vm.poi!.reviews;
+    final displayedReviews = reviews.take(_visibleCount).toList();
+    final allVisible = _visibleCount >= reviews.length;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
@@ -27,61 +38,87 @@ class PoiReviewsScreen extends StatelessWidget {
                 ),
               ),
               Row(
-                // ----- Rating and Reviews Count
                 children: [
                   AppButton.iconTextSmall(
                     icon: CupertinoIcons.star_fill,
-                    text: "${vm.poi!.rating}",
+                    text: "${widget.vm.poi!.rating}",
+                    textStyleOverride: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(fontWeight: ManropeFontWeight.semiBold),
                     onPressed: () {},
                     iconSize: 14,
                     radius: 10,
-                    minHeight: 32,
-                    minWidth: 64,
+                    minHeight: 36,
+                    minWidth: 74,
                     backgroundVariant: BackgroundVariant.primaryTrans,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 14),
                   AppButton.iconTextSmall(
                     icon: CupertinoIcons.ellipses_bubble_fill,
-                    text: "${vm.poi!.reviews.length}",
+                    text: "${widget.vm.poi!.userRatingsTotal}",
+                    textStyleOverride: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(fontWeight: ManropeFontWeight.semiBold),
+
                     onPressed: () {},
                     iconSize: 14,
                     radius: 10,
-                    minHeight: 32,
-                    minWidth: 64,
+                    minHeight: 34,
+                    minWidth: 74,
                     backgroundVariant: BackgroundVariant.primaryTrans,
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          // ------ Reviews
-          ...vm.poi!.reviews.map((review) => _buildReviewTile(review, context)),
-          TextButton(
-            onPressed: () {},
-            child: const Text("See more reviews..."),
+          const SizedBox(height: 20),
+
+          // --- Display reviews ---
+          ...displayedReviews.map(
+            (review) => _buildReviewTile(review, context),
           ),
+
+          // --- See more button ---
+          if (reviews.length > 2)
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  if (allVisible) {
+                    // reset to 2
+                    _visibleCount = 2;
+                  } else {
+                    // show 2 more
+                    _visibleCount = (_visibleCount + 2).clamp(
+                      0,
+                      reviews.length,
+                    );
+                  }
+                });
+              },
+              child: Text(
+                allVisible ? "Show less reviews..." : "Show more reviews...",
+              ),
+            ),
+
           const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildReviewTile(Review review, context) {
+  Widget _buildReviewTile(Review review, BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(
-              8,
-            ), // adjust corner radius as needed
-            child: Image.asset(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
               review.userAvatar,
-              width: 50, // set size same as your CircleAvatar radius * 2
+              width: 50,
               height: 50,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.person, size: 50);
+              },
             ),
           ),
           const SizedBox(width: 12),
@@ -103,8 +140,10 @@ class PoiReviewsScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
                         5,
-                        (index) => const Icon(
-                          Icons.star,
+                        (index) => Icon(
+                          index < review.rating
+                              ? Icons.star
+                              : Icons.star_border,
                           color: Colors.amber,
                           size: 20,
                         ),
@@ -124,7 +163,7 @@ class PoiReviewsScreen extends StatelessWidget {
                     fontWeight: ManropeFontWeight.light,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
               ],
             ),
           ),

@@ -8,7 +8,7 @@ class AutocompleteService {
   final String sessionToken;
 
   AutocompleteService({
-    this.apiKey = MAP_API_KEY,
+    this.apiKey = mapApiKey,
     this.sessionToken = "1234567890",
   });
 

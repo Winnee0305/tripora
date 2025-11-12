@@ -1,6 +1,7 @@
 // views/place_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_page.dart';
 import 'package:tripora/features/poi/models/poi.dart';
 import 'package:tripora/features/poi/views/poi_details_screen.dart';
 import '../viewmodels/poi_page_viewmodel.dart';
@@ -18,30 +19,34 @@ class PoiPage extends StatelessWidget {
       create: (_) => PoiPageViewmodel(placeId),
       child: Consumer<PoiPageViewmodel>(
         builder: (context, vm, child) {
-          return Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Top Image + Title Section
-                  SizedBox(
-                    height: 450,
-                    width: double.infinity,
-                    child: PoiHeaderScreen(vm: vm),
-                  ),
+          if (vm.isLoading) {
+            return const Center(child: AppLoadingPage());
+          } else {
+            return Scaffold(
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Top Image + Title Section
+                    SizedBox(
+                      height: 450,
+                      width: double.infinity,
+                      child: PoiHeaderScreen(vm: vm),
+                    ),
 
-                  // Details section (description, location, operating hours)
-                  PoiDetailsScreen(vm: vm),
-                  const SizedBox(height: 20),
-                  // Reviews section
-                  PoiReviewsScreen(vm: vm),
+                    // Details section (description, location, operating hours)
+                    PoiDetailsScreen(vm: vm),
+                    const SizedBox(height: 30),
+                    // Reviews section
+                    PoiReviewsScreen(vm: vm),
 
-                  // Nearby Attractions section
-                  PoiNearbyScreen(vm: vm),
-                ],
+                    // Nearby Attractions section
+                    PoiNearbyScreen(vm: vm),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     );
