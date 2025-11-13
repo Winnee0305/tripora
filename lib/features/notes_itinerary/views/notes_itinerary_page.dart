@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
+import 'package:tripora/features/itinerary/views/widgets/map_screen.dart';
 import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
@@ -19,6 +21,17 @@ class NotesItineraryPage extends StatelessWidget {
       GlobalKey<MultiDayItineraryListState>();
 
   final int currentTab;
+
+  final List<LatLng> melaccaAttractions = [
+    // 1. A Famosa Fort
+    LatLng(2.1896, 102.2501),
+
+    // 2. St. Paul's Church
+    LatLng(2.1893, 102.2505),
+
+    // 3. Jonker Street
+    LatLng(2.1920, 102.2495),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +51,13 @@ class NotesItineraryPage extends StatelessWidget {
         body: Stack(
           children: [
             // ----- Map Background -----
-            Positioned.fill(
-              child: Image.asset(
-                "assets/images/exp_map.png",
-                fit: BoxFit.cover,
-              ),
-            ),
+            // Positioned.fill(
+            //   child: Image.asset(
+            //     "assets/images/exp_map.png",
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
+            Positioned.fill(child: MapScreen(destinations: melaccaAttractions)),
 
             // ----- Header (Back, Home, etc.)
             const NotesItineraryPageHeaderSection(),

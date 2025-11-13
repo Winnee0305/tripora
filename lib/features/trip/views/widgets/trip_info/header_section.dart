@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/utils/format_utils.dart';
@@ -17,16 +18,32 @@ class HeaderSection extends StatelessWidget {
     return Stack(
       children: [
         // --- Background Image ---
+        // Container(
+        //   margin: const EdgeInsets.all(10),
+        //   child: ClipRRect(
+        //     borderRadius: BorderRadius.circular(58),
+        //     child: Image.asset(
+        //       // vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
+        //       'assets/images/exp_melaka_trip.png',
+        //       height: 300,
+        //       width: double.infinity,
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
+        // ),
         Container(
           margin: const EdgeInsets.all(10),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(58),
-            child: Image.asset(
-              // vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
-              'assets/images/exp_melaka_trip.png',
+            child: SizedBox(
               height: 300,
               width: double.infinity,
-              fit: BoxFit.cover,
+              child: AppLoadingNetworkImage(
+                imageUrl:
+                    vm.trip!.tripImageUrl ??
+                    'https://your-fallback-image-url.com/exp_melaka_trip.png',
+                radius: 14, // optional, controls the loading indicator size
+              ),
             ),
           ),
         ),

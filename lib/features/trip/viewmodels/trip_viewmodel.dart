@@ -112,11 +112,6 @@ class TripViewModel extends ChangeNotifier {
     }
   }
 
-  void newTrip() {
-    _selectedTrip = TripData.empty();
-    notifyListeners();
-  }
-
   void createTrip(TripData trip) {
     loadTrips();
     notifyListeners();
@@ -131,12 +126,6 @@ class TripViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  // Future<void> saveTrip() async {
-  //   if (_selectedTrip == null) return;
-  //   await _tripRepo.addTrip(_selectedTrip!);
-  //   await loadTrips(); // reload list after saving
-  // }
 
   // ==========================
   //  Trip field setters
