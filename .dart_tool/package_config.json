@@ -290,6 +290,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_polyline_points",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/flutter_polyline_points-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_staggered_grid_view",
       "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/flutter_staggered_grid_view-0.7.0",
       "packageUri": "lib/",
@@ -304,6 +310,42 @@
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/winnee/development/flutter/packages/flutter_web_plugins",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "google_maps",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps-8.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "google_maps_flutter",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps_flutter-2.14.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "google_maps_flutter_android",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps_flutter_android-2.18.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "google_maps_flutter_ios",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps_flutter_ios-2.15.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "google_maps_flutter_platform_interface",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps_flutter_platform_interface-2.14.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "google_maps_flutter_web",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.14+3",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -566,6 +608,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "sanitize_html",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/sanitize_html-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "simple_gesture_detector",
       "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/simple_gesture_detector-0.2.1",
       "packageUri": "lib/",
@@ -594,6 +642,12 @@
       "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/stream_channel-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "stream_transform",
+      "rootUri": "file:///Users/winnee/.pub-cache/hosted/pub.dev/stream_transform-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
     },
     {
       "name": "string_scanner",
