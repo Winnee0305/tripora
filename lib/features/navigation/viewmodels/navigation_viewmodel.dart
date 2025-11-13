@@ -26,4 +26,11 @@ class NavigationViewModel extends ChangeNotifier {
         return '/home';
     }
   }
+
+  void goToTripPage() {
+    if (_currentIndex != 2) {
+      _currentIndex = 2;
+      notifyListeners();
+    }
+  }
 }

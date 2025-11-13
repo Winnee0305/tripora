@@ -11,7 +11,7 @@ class ProfileSharedTripsContent extends StatelessWidget {
       child: Column(
         children: [
           TripInfoCard(
-            image: const AssetImage("assets/images/exp_melaka_trip.png"),
+            imageUrl: "https://example.com/trip1.jpg",
             startDate: DateTime(2025, 8, 13),
             endDate: DateTime(2025, 8, 14),
             tripTitle: "Melaka Trip",

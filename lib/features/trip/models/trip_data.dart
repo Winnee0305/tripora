@@ -101,7 +101,7 @@ class TripData {
       destination: '',
       travelStyle: '',
       travelPartnerType: '',
-      travelersCount: 0,
+      travelersCount: 1,
       tripImageUrl: '',
       tripStoragePath: '',
       lastUpdated: DateTime.now(),

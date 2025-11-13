@@ -71,9 +71,7 @@ class TripPage extends StatelessWidget {
                             );
                           },
                           child: TripInfoCard(
-                            image: const AssetImage(
-                              "assets/images/exp_melaka_trip.png",
-                            ),
+                            imageUrl: trip.tripImageUrl,
                             startDate: trip.startDate!,
                             endDate: trip.endDate!,
                             tripTitle: trip.tripName,

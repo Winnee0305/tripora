@@ -37,7 +37,7 @@ class AuthLayout extends StatelessWidget {
             else if (snapshot.hasData) {
               final user = snapshot.data!;
               final userRepo = UserRepository(firestore, user.uid, storage);
-              final tripRepo = TripRepository(firestore, user.uid);
+              final tripRepo = TripRepository(firestore, user.uid, storage);
 
               widget = MultiProvider(
                 providers: [

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
+import 'package:tripora/core/reusable_widgets/app_toast.dart';
 import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_partner_page.dart';
@@ -29,6 +29,7 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
   DateTime? endDate;
   DateTime focusedDay = DateTime.now();
   bool showOptionalFields = false;
+  bool changedImage = false;
 
   bool get isEditing => draftTrip.tripId.isNotEmpty;
 
@@ -44,7 +45,13 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tripVm = context.read<TripViewModel>();
+    final tripVm = context.watch<TripViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (tripVm.isUploading) {
+        AppToast(context, "Uploading trip...");
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -140,6 +147,7 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                             draftTrip = draftTrip.copyWith(
                               tripImageUrl: imagePath,
                             );
+                            changedImage = true;
                           });
                         }
                       },
@@ -154,9 +162,9 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                               draftTrip.tripImageUrl != null &&
                                   draftTrip.tripImageUrl!.isNotEmpty
                               ? DecorationImage(
-                                  image: FileImage(
-                                    File(draftTrip.tripImageUrl!),
-                                  ),
+                                  image: changedImage
+                                      ? FileImage(File(draftTrip.tripImageUrl!))
+                                      : NetworkImage(draftTrip.tripImageUrl!),
                                   fit: BoxFit.cover,
                                 )
                               : null,
@@ -281,8 +289,10 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                       children: [
                         if (isEditing)
                           Expanded(
-                            child: AppButton(
+                            child: AppButton.primary(
                               text: 'Delete Trip',
+                              textStyleVariant: TextStyleVariant.medium,
+                              backgroundVariant: BackgroundVariant.danger,
                               onPressed: () async {
                                 final confirm = await showDialog<bool>(
                                   context: context,
@@ -321,6 +331,7 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                         Expanded(
                           child: Center(
                             child: AppButton.primary(
+                              textStyleVariant: TextStyleVariant.medium,
                               text: isEditing ? 'Save Changes' : 'Create Trip',
                               onPressed: () async {
                                 if (draftTrip.tripName.trim().isEmpty ||
@@ -338,9 +349,10 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                                 }
 
                                 if (isEditing) {
-                                  await tripVm.updateTrip(draftTrip);
+                                  await tripVm.writeTrip(draftTrip, false);
                                 } else {
-                                  tripVm.createTrip(draftTrip);
+                                  print("Creating trip: $draftTrip");
+                                  await tripVm.writeTrip(draftTrip, true);
                                 }
                                 Navigator.pop(context);
                               },

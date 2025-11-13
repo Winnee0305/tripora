@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/services/ai_agents_service.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 import 'package:tripora/features/home/viewmodels/home_viewmodel.dart';
+import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
+import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'widgets/home_header_section.dart';
 import 'package:tripora/features/navigation/views/navigation_bar.dart';
 import 'package:tripora/features/home/views/widgets/book_now_section.dart';

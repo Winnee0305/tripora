@@ -39,6 +39,13 @@ class FirestoreService {
   }
 
   // ----- User - Trips
+  Future<DocumentSnapshot<Map<String, dynamic>>> getTripDoc(
+    String uid,
+    String tripId,
+  ) {
+    return usersCollection.doc(uid).collection('trips').doc(tripId).get();
+  }
+
   Future<void> addTrip(String uid, TripData trip) async {
     final tripId = trip.tripId.isNotEmpty == true
         ? trip.tripId
@@ -69,11 +76,14 @@ class FirestoreService {
   }
 
   Future<void> updateTrip(String uid, TripData trip) async {
+    // Update the trip document in Firestore
     await usersCollection
         .doc(uid)
         .collection('trips')
         .doc(trip.tripId)
         .update(trip.toMap());
+
+    // Additional step: remove the trip image in firestore
   }
 
   // User - Trips - Itinerary

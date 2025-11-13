@@ -7,6 +7,7 @@ enum BackgroundVariant {
   primaryTrans,
   secondaryFilled,
   secondaryTrans,
+  danger,
 } // -- define the variants of background
 
 enum TextStyleVariant { small, medium, large } // -- define text style variants
@@ -213,6 +214,9 @@ class AppButton extends StatelessWidget {
             backgroundColorOverride ??
             colorScheme.surface.withValues(alpha: 0.7);
         textColor = textColorOverride ?? colorScheme.secondary;
+      case BackgroundVariant.danger:
+        backgroundColor = backgroundColorOverride ?? Colors.red;
+        textColor = textColorOverride ?? Colors.white;
         break;
     }
 

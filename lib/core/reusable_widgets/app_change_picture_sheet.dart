@@ -101,7 +101,7 @@ class AppChangePictureSheet {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Confirm Profile Picture',
+                  'Confirm Upload Picture',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 16),

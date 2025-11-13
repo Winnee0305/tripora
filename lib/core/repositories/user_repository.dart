@@ -20,13 +20,7 @@ class UserRepository {
 
   // ----- User Profile -----
   Future<UserData?> getUserProfile() => _firestoreService.getUser(_uid);
-  // Future<void> updateUserProfile(UserData user) =>
-  //     _firestoreService.updateUser(user);
-  // Future<void> createUserProfile(UserData user) =>
-  //     _firestoreService.updateUser(user);
-  // ----- Trip -----
-  // Future<List<TripData>> getUserTrips() => _firestore.getTrips(_uid);
-  // Future<void> addUserTrip(TripData trip) => _firestore.addTrip(_uid, trip);
+
   Future<String?> uploadProfileImage({
     required File file,
     required void Function(double progress)? onProgress,

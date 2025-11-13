@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 
 class TripInfoCard extends StatelessWidget {
-  final AssetImage image;
+  final String? imageUrl; // can be null
   final DateTime startDate;
   final DateTime endDate;
   final String tripTitle;
@@ -13,7 +14,7 @@ class TripInfoCard extends StatelessWidget {
 
   const TripInfoCard({
     super.key,
-    required this.image,
+    required this.imageUrl,
     required this.startDate,
     required this.endDate,
     required this.tripTitle,
@@ -30,14 +31,23 @@ class TripInfoCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Image
+          // Image or Icon
           Container(
             width: 118,
             height: 94,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(image: image, fit: BoxFit.cover),
+              color: Colors.grey[200],
             ),
+            child: imageUrl != null && imageUrl!.isNotEmpty
+                ? AppLoadingNetworkImage(imageUrl: imageUrl!, radius: 10)
+                : const Center(
+                    child: Icon(
+                      Icons.add_a_photo,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  ),
           ),
           const SizedBox(width: 14),
 

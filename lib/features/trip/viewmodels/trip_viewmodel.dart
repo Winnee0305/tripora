@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
@@ -11,15 +13,15 @@ class TripViewModel extends ChangeNotifier {
   List<TripData> _trips = [];
   TripData? _selectedTrip;
   bool _isLoading = false;
+  bool _isUploading = false;
   String? _error;
 
   // --- Getters ---
   List<TripData> get trips => _trips;
   TripData? get trip => _selectedTrip;
   bool get isLoading => _isLoading;
+  bool get isUploading => _isUploading;
   String? get error => _error;
-
-  String get debugCheck => _tripRepo.uid;
 
   // ==========================
   // 🔹 LIST OPERATIONS
@@ -61,40 +63,54 @@ class TripViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateTrip(TripData trip) async {
-    _isLoading = true;
-    _error = null;
+  Future<void> writeTrip(TripData trip, bool isCreate) async {
+    TripData updatedTrip = trip;
+    _isUploading = true;
     notifyListeners();
 
     try {
-      await _tripRepo.updateTrip(trip);
-      await loadTrips(); // reload list
-      // Update currently selected trip if editing
-      setSelectedTrip(trip);
-    } catch (e) {
-      _error = 'Failed to update trip: $e';
+      // ✅ Only run upload logic if trip image path is not null and not same as selected trip
+      if (trip.tripImageUrl != "" &&
+          trip.tripImageUrl != _selectedTrip?.tripImageUrl) {
+        final file = File(trip.tripImageUrl!);
+
+        debugPrint("📸 Uploading new trip image for trip: ${trip.tripId}");
+
+        final result = await _tripRepo.uploadTripImage(
+          tripId: trip.tripId,
+          file: file,
+          onProgress: (progress) {
+            debugPrint(
+              '📤 Upload progress: ${(progress * 100).toStringAsFixed(1)}%',
+            );
+          },
+        );
+
+        if (result['downloadUrl'] != null && result['storagePath'] != null) {
+          updatedTrip = trip.copyWith(
+            tripImageUrl: result['downloadUrl'],
+            tripStoragePath: result['storagePath'],
+          );
+        }
+      } else {
+        debugPrint("ℹ️ No trip image provided — skipping upload.");
+      }
+
+      // ✅ Update trip data in Firestore
+      await (isCreate
+          ? _tripRepo.createTrip(updatedTrip)
+          : _tripRepo.updateTrip(updatedTrip));
+      debugPrint("✅ Trip updated successfully: ${trip.tripId}");
+    } catch (e, stack) {
+      debugPrint("❌ Failed to update trip: $e");
+      debugPrint(stack.toString());
     } finally {
-      _isLoading = false;
+      await loadTrips();
+      selectLastestTrip();
+      _isUploading = false;
       notifyListeners();
     }
   }
-
-  // ==========================
-  // 🔹 SINGLE TRIP OPERATIONS
-  // ==========================
-  // Future<void> loadTrip(String tripId) async {
-  //   _isLoading = true;
-  //   notifyListeners();
-
-  //   try {
-  //     _selectedTrip = await _tripRepo.getTrip(tripId);
-  //   } catch (e) {
-  //     _error = 'Failed to load trip: $e';
-  //   }
-
-  //   _isLoading = false;
-  //   notifyListeners();
-  // }
 
   void newTrip() {
     _selectedTrip = TripData.empty();
@@ -102,7 +118,17 @@ class TripViewModel extends ChangeNotifier {
   }
 
   void createTrip(TripData trip) {
-    _tripRepo.createTrip(trip);
+    loadTrips();
+    notifyListeners();
+  }
+
+  void selectLastestTrip() {
+    if (_trips.isNotEmpty) {
+      _selectedTrip = _trips.first;
+      print("Selected latest trip: ${_selectedTrip!.tripName}");
+    } else {
+      _selectedTrip = null;
+    }
     notifyListeners();
   }
 
