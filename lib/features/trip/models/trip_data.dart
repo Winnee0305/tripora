@@ -9,6 +9,9 @@ class TripData {
   final String travelStyle;
   final String travelPartnerType;
   final int travelersCount;
+  final String? tripImageUrl;
+  final String? tripStoragePath;
+  final DateTime? lastUpdated;
 
   TripData({
     required this.tripId,
@@ -19,6 +22,9 @@ class TripData {
     required this.travelStyle,
     required this.travelPartnerType,
     required this.travelersCount,
+    this.tripImageUrl,
+    this.tripStoragePath,
+    this.lastUpdated,
   });
 
   // -----  Factory from Firestore -----
@@ -33,6 +39,11 @@ class TripData {
       travelStyle: data['travelStyle'],
       travelPartnerType: data['travelPartnerType'],
       travelersCount: data['travelersCount'],
+      tripImageUrl: data['tripImageUrl'],
+      tripStoragePath: data['tripStoragePath'],
+      lastUpdated: data['lastUpdated'] != null
+          ? DateTime.parse(data['lastUpdated'])
+          : null,
     );
   }
 
@@ -46,6 +57,9 @@ class TripData {
     'travelStyle': travelStyle,
     'travelPartnerType': travelPartnerType,
     'travelersCount': travelersCount,
+    'tripImageUrl': tripImageUrl,
+    'tripStoragePath': tripStoragePath,
+    'lastUpdated': DateTime.now().toIso8601String(),
   };
 
   // ----- Copy With -----
@@ -58,6 +72,9 @@ class TripData {
     String? travelStyle,
     String? travelPartnerType,
     int? travelersCount,
+    String? tripImageUrl,
+    String? tripStoragePath,
+    DateTime? lastUpdated,
   }) {
     return TripData(
       tripId: tripId ?? this.tripId,
@@ -68,6 +85,9 @@ class TripData {
       travelStyle: travelStyle ?? this.travelStyle,
       travelPartnerType: travelPartnerType ?? this.travelPartnerType,
       travelersCount: travelersCount ?? this.travelersCount,
+      tripImageUrl: tripImageUrl ?? this.tripImageUrl,
+      tripStoragePath: tripStoragePath ?? this.tripStoragePath,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 
@@ -82,6 +102,9 @@ class TripData {
       travelStyle: '',
       travelPartnerType: '',
       travelersCount: 0,
+      tripImageUrl: '',
+      tripStoragePath: '',
+      lastUpdated: DateTime.now(),
     );
   }
 }

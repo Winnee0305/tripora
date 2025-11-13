@@ -12,14 +12,14 @@ import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
 import '../../../core/reusable_widgets/calendar_range_picker.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 
-class CreateTripPage extends StatefulWidget {
-  const CreateTripPage({super.key});
+class CreateEditTripPage extends StatefulWidget {
+  const CreateEditTripPage({super.key});
 
   @override
-  State<CreateTripPage> createState() => _CreateTripPageState();
+  State<CreateEditTripPage> createState() => _CreateEditTripPageState();
 }
 
-class _CreateTripPageState extends State<CreateTripPage> {
+class _CreateEditTripPageState extends State<CreateEditTripPage> {
   // local form state (temporary)
   TripData draftTrip = TripData.empty();
 

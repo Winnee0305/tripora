@@ -31,6 +31,12 @@ class TripViewModel extends ChangeNotifier {
 
     try {
       _trips = await _tripRepo.getTrips();
+      // Sort trips by latest lastUpdated first
+      _trips.sort((a, b) {
+        final aDate = a.lastUpdated != null ? a.lastUpdated! : DateTime(1970);
+        final bDate = b.lastUpdated != null ? b.lastUpdated! : DateTime(1970);
+        return bDate.compareTo(aDate);
+      });
     } catch (e) {
       _error = 'Failed to load trips: $e';
     }
@@ -89,7 +95,7 @@ class TripViewModel extends ChangeNotifier {
   // }
 
   // ==========================
-  // 🔹 Trip field setters
+  //  Trip field setters
   // ==========================
   void setTripName(String name) {
     _selectedTrip = _selectedTrip?.copyWith(tripName: name);

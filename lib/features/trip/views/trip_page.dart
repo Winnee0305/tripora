@@ -6,7 +6,7 @@ import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 import 'package:provider/provider.dart';
 import 'trip_info_page.dart';
-import 'create_trip_page.dart';
+import 'create_edit_trip_page.dart';
 
 class TripPage extends StatelessWidget {
   const TripPage({super.key});
@@ -37,15 +37,11 @@ class TripPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => ChangeNotifierProvider.value(
                             value: tripVm,
-                            child: const CreateTripPage(),
+                            child: const CreateEditTripPage(),
                           ),
                         ),
-                      ).then((_) {
-                        // Refresh trip list after returning
-                        tripVm.loadTrips();
-                      });
+                      ).then((_) => tripVm.loadTrips());
                     },
-
                     minWidth: 140,
                     radius: 10,
                     textStyleOverride: Theme.of(context).textTheme.titleLarge
@@ -55,35 +51,38 @@ class TripPage extends StatelessWidget {
               ),
               const SizedBox(height: 32),
 
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  spacing: 20,
-                  children: tripVm.trips.map((trip) {
-                    return GestureDetector(
-                      onTap: () {
-                        tripVm.setSelectedTrip(trip);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: tripVm,
-                              child: TripInfoPage(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: tripVm.trips.map((trip) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            tripVm.setSelectedTrip(trip);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChangeNotifierProvider.value(
+                                  value: tripVm,
+                                  child: TripInfoPage(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: TripInfoCard(
+                            image: const AssetImage(
+                              "assets/images/exp_melaka_trip.png",
                             ),
+                            startDate: trip.startDate,
+                            endDate: trip.endDate,
+                            tripTitle: trip.tripName,
+                            destination: trip.destination,
                           ),
-                        );
-                      },
-                      child: TripInfoCard(
-                        image: AssetImage(
-                          "assets/images/exp_melaka_trip.png",
-                        ), // ✅ You can later replace with trip.imagePath if dynamic
-                        startDate: trip.startDate,
-                        endDate: trip.endDate,
-                        tripTitle: trip.tripName,
-                        destination: trip.destination,
-                      ),
-                    );
-                  }).toList(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ],
