@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   final String label;
   final String? text;
   final bool obscureText;
@@ -13,6 +13,7 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool chooseButton;
   final bool isNumber;
+  final bool isCurrency;
   final bool autofocus;
   final TextEditingController? controller;
   final TextInputType keyboardType;
@@ -33,6 +34,7 @@ class AppTextField extends StatelessWidget {
     this.onChanged,
     this.chooseButton = false,
     this.isNumber = false,
+    this.isCurrency = false,
     this.autofocus = false,
     this.controller,
     this.keyboardType = TextInputType.text,
@@ -42,21 +44,49 @@ class AppTextField extends StatelessWidget {
   });
 
   @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        widget.controller ?? TextEditingController(text: widget.text ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant AppTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update controller text only if the parent text changed
+    if (widget.text != oldWidget.text && widget.text != _controller.text) {
+      _controller.text = widget.text ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      // Only dispose the controller if it was created internally
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final effectiveController =
-        controller ??
-        (readOnly ? TextEditingController(text: text ?? '') : null);
-
     // ---- Determine suffix icon ----
     Widget? suffix;
-    if (chooseButton) {
+    if (widget.chooseButton) {
       // “Choose” button mode
       suffix = Padding(
         padding: const EdgeInsets.only(right: 6),
         child: ElevatedButton(
-          onPressed: onTap,
+          onPressed: widget.onTap,
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.6),
             shape: RoundedRectangleBorder(
@@ -84,21 +114,21 @@ class AppTextField extends StatelessWidget {
           ),
         ),
       );
-    } else if (isValid != null || helperText != null) {
+    } else if (widget.isValid != null || widget.helperText != null) {
       suffix = Padding(
         padding: const EdgeInsets.only(right: 12),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, anim) =>
               FadeTransition(opacity: anim, child: child),
-          child: (isValid == true)
+          child: (widget.isValid == true)
               ? const Icon(
                   CupertinoIcons.check_mark_circled_solid,
                   key: ValueKey('valid'),
                   color: Color(0xFF2E7D32),
                   size: 18,
                 )
-              : (isValid == false && helperText != null)
+              : (widget.isValid == false && widget.helperText != null)
               ? const Icon(
                   CupertinoIcons.exclamationmark_circle_fill,
                   key: ValueKey('error'),
@@ -111,20 +141,20 @@ class AppTextField extends StatelessWidget {
     }
 
     return TextField(
-      controller: effectiveController,
-      readOnly: readOnly,
-      onTap: onTap,
-      onChanged: onChanged,
-      obscureText: obscureText,
+      controller: _controller,
+      readOnly: widget.readOnly,
+      onTap: widget.onTap,
+      onChanged: widget.onChanged,
+      obscureText: widget.obscureText,
       style: theme.textTheme.bodyLarge,
-      keyboardType: isNumber
+      keyboardType: widget.isNumber
           ? const TextInputType.numberWithOptions(decimal: true)
-          : keyboardType,
-      inputFormatters: isNumber
+          : widget.keyboardType,
+      inputFormatters: widget.isNumber
           ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))]
           : null,
       decoration:
-          decoration ??
+          widget.decoration ??
           InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               vertical: 10,
@@ -136,15 +166,15 @@ class AppTextField extends StatelessWidget {
             ),
             filled: true,
             fillColor: theme.colorScheme.primary.withValues(alpha: 0.05),
-            prefixIcon: icon != null
-                ? Icon(icon, color: theme.colorScheme.primary, size: 20)
+            prefixIcon: widget.icon != null
+                ? Icon(widget.icon, color: theme.colorScheme.primary, size: 20)
                 : null,
-            prefixText: isNumber ? "RM " : null,
-            labelText: label,
+            prefixText: widget.isCurrency ? "RM " : null,
+            labelText: widget.label,
             labelStyle: theme.textTheme.titleLarge
                 ?.alpha(0.7)
                 .weight(ManropeFontWeight.light),
-            floatingLabelBehavior: (text?.isNotEmpty ?? false)
+            floatingLabelBehavior: (widget.text?.isNotEmpty ?? false)
                 ? FloatingLabelBehavior.always
                 : FloatingLabelBehavior.auto,
             border: OutlineInputBorder(
@@ -152,11 +182,11 @@ class AppTextField extends StatelessWidget {
               borderSide: BorderSide.none,
             ),
             suffixIcon: suffix,
-            helperText: (isValid == true) ? null : helperText,
+            helperText: (widget.isValid == true) ? null : widget.helperText,
             helperStyle: theme.textTheme.labelMedium?.copyWith(
-              color: helperText != null && isValid == false
+              color: widget.helperText != null && widget.isValid == false
                   ? theme.colorScheme.error
-                  : isValid == true
+                  : widget.isValid == true
                   ? const Color(0xFF2E7D32)
                   : theme.colorScheme.outline,
               fontWeight: FontWeight.w500,

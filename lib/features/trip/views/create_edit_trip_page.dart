@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
 import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_partner_page.dart';
 import '../viewmodels/trip_viewmodel.dart';
 import 'widgets/create_trip/choose_destination_page.dart';
@@ -13,19 +15,32 @@ import '../../../core/reusable_widgets/calendar_range_picker.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 
 class CreateEditTripPage extends StatefulWidget {
-  const CreateEditTripPage({super.key});
+  final TripData? tripToEdit;
+
+  const CreateEditTripPage({super.key, this.tripToEdit});
 
   @override
   State<CreateEditTripPage> createState() => _CreateEditTripPageState();
 }
 
 class _CreateEditTripPageState extends State<CreateEditTripPage> {
-  // local form state (temporary)
-  TripData draftTrip = TripData.empty();
-
+  late TripData draftTrip;
   DateTime? startDate;
   DateTime? endDate;
   DateTime focusedDay = DateTime.now();
+  bool showOptionalFields = false;
+
+  bool get isEditing => draftTrip.tripId.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    draftTrip = widget.tripToEdit != null
+        ? widget.tripToEdit!.copyWith()
+        : TripData.empty();
+    startDate = draftTrip.startDate;
+    endDate = draftTrip.endDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,27 +50,30 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
+            // Sticky Header
             SliverPersistentHeader(
               pinned: true,
               delegate: AppStickyHeaderDelegate(
                 minHeight: 80,
                 maxHeight: 80,
                 child: AppStickyHeader(
-                  title: 'Create New Trip',
+                  title: isEditing ? 'Edit Trip' : 'Create New Trip',
                   showRightButton: false,
                 ),
               ),
             ),
+
+            // Main Content
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
 
-                    // ----- Date range picker
+                    //  1️⃣ Date Range
                     CalendarRangePicker(
-                      focusedDay: focusedDay,
                       startDate: startDate,
                       endDate: endDate,
                       onDateRangeChanged: (start, end) {
@@ -68,22 +86,20 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                           );
                         });
                       },
-                      onFocusedDayChanged: (day) => setState(() {
-                        focusedDay = day;
-                      }),
                     ),
-
                     const SizedBox(height: 30),
 
+                    //  2️⃣ Trip Name
                     AppTextField(
                       label: "Trip Name",
+                      text: draftTrip.tripName,
                       onChanged: (v) => setState(() {
                         draftTrip = draftTrip.copyWith(tripName: v);
                       }),
                     ),
-
                     const SizedBox(height: 30),
 
+                    // 3️⃣ Destination
                     AppTextField(
                       label: "Destination",
                       text: draftTrip.destination,
@@ -97,7 +113,6 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                                 builder: (_) => const ChooseDestinationPage(),
                               ),
                             );
-
                         if (selectedDestination != null) {
                           setState(() {
                             draftTrip = draftTrip.copyWith(
@@ -107,93 +122,234 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                         }
                       },
                     ),
-
                     const SizedBox(height: 30),
 
-                    AppTextField(
-                      label: "Travel Style (Optional)",
-                      text: draftTrip.travelStyle,
-                      readOnly: true,
-                      chooseButton: true,
+                    // 4️⃣ Trip Image
+                    Text(
+                      "Pick an image for your trip",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 10),
+                    GestureDetector(
                       onTap: () async {
-                        final selectedStyle = await Navigator.push<String>(
+                        final imagePath = await AppChangePictureSheet.show(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChooseTravelStylePage(),
-                          ),
                         );
-
-                        if (selectedStyle != null) {
+                        if (imagePath != null) {
                           setState(() {
                             draftTrip = draftTrip.copyWith(
-                              travelStyle: selectedStyle,
+                              tripImageUrl: imagePath,
                             );
                           });
                         }
                       },
+
+                      child: Container(
+                        height: 180,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.grey[200],
+                          image:
+                              draftTrip.tripImageUrl != null &&
+                                  draftTrip.tripImageUrl!.isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(
+                                    File(draftTrip.tripImageUrl!),
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child:
+                            draftTrip.tripImageUrl == null ||
+                                draftTrip.tripImageUrl!.isEmpty
+                            ? const Center(
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : null,
+                      ),
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
 
-                    AppTextField(
-                      label: "Travel Partner (Optional)",
-                      text: draftTrip.travelPartnerType,
-                      readOnly: true,
-                      chooseButton: true,
-                      onTap: () async {
-                        final selectedPartner = await Navigator.push<String>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChooseTravelPartnerPage(),
+                    // 5️⃣ Optional Fields Toggle
+                    GestureDetector(
+                      onTap: () => setState(
+                        () => showOptionalFields = !showOptionalFields,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            showOptionalFields
+                                ? "Hide Optional Info"
+                                : "Show Optional Info",
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
-                        );
+                          Icon(
+                            showOptionalFields
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-                        if (selectedPartner != null) {
-                          setState(() {
-                            draftTrip = draftTrip.copyWith(
-                              travelPartnerType: selectedPartner,
-                            );
-                          });
-                        }
-                      },
+                    // Optional Fields
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: showOptionalFields
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppTextField(
+                                  label: "Travel Style",
+                                  text: draftTrip.travelStyle,
+                                  readOnly: true,
+                                  chooseButton: true,
+                                  onTap: () async {
+                                    final selectedStyle =
+                                        await Navigator.push<String>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const ChooseTravelStylePage(),
+                                          ),
+                                        );
+                                    if (selectedStyle != null) {
+                                      setState(() {
+                                        draftTrip = draftTrip.copyWith(
+                                          travelStyle: selectedStyle,
+                                        );
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                AppTextField(
+                                  label: "Travel Partner",
+                                  text: draftTrip.travelPartnerType,
+                                  readOnly: true,
+                                  chooseButton: true,
+                                  onTap: () async {
+                                    final selectedPartner =
+                                        await Navigator.push<String>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const ChooseTravelPartnerPage(),
+                                          ),
+                                        );
+                                    if (selectedPartner != null) {
+                                      setState(() {
+                                        draftTrip = draftTrip.copyWith(
+                                          travelPartnerType: selectedPartner,
+                                        );
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                AppTextField(
+                                  label: "Number of Travelers",
+                                  text: draftTrip.travelersCount.toString(),
+                                  isNumber: true,
+                                  onChanged: (v) => setState(() {
+                                    draftTrip = draftTrip.copyWith(
+                                      travelersCount: int.tryParse(v) ?? 0,
+                                    );
+                                  }),
+                                ),
+                                const SizedBox(height: 30),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
                     ),
 
-                    const SizedBox(height: 30),
+                    // 6️⃣ Action Buttons
+                    Row(
+                      children: [
+                        if (isEditing)
+                          Expanded(
+                            child: AppButton(
+                              text: 'Delete Trip',
+                              onPressed: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: const Text('Delete Trip'),
+                                    content: const Text(
+                                      'Are you sure you want to delete this trip?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(
+                                          context,
+                                          true,
+                                        ), // pass true here
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
 
-                    AppTextField(
-                      label: "Number of Travelers (Optional)",
-                      isNumber: true,
-
-                      onChanged: (v) => setState(() {
-                        final count = int.tryParse(v) ?? 0;
-                        draftTrip = draftTrip.copyWith(travelersCount: count);
-                      }),
-                    ),
-
-                    const SizedBox(height: 50),
-
-                    AppButton.primary(
-                      text: 'Done',
-                      onPressed: () async {
-                        // validate required fields
-                        if (draftTrip.tripName.isEmpty ||
-                            draftTrip.destination.isEmpty ||
-                            draftTrip.startDate == null ||
-                            draftTrip.endDate == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Please complete all required fields.',
-                              ),
+                                if (confirm == true) {
+                                  await tripVm.deleteTrip(draftTrip.tripId);
+                                  Navigator.of(
+                                    context,
+                                  ).popUntil((route) => route.isFirst);
+                                }
+                              },
                             ),
-                          );
-                          return;
-                        }
+                          ),
+                        if (isEditing) const SizedBox(width: 20),
+                        Expanded(
+                          child: Center(
+                            child: AppButton.primary(
+                              text: isEditing ? 'Save Changes' : 'Create Trip',
+                              onPressed: () async {
+                                if (draftTrip.tripName.trim().isEmpty ||
+                                    draftTrip.destination.trim().isEmpty ||
+                                    draftTrip.startDate == null ||
+                                    draftTrip.endDate == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please complete all required fields.',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                        tripVm.createTrip(draftTrip);
-                        Navigator.pop(context);
-                      },
+                                if (isEditing) {
+                                  await tripVm.updateTrip(draftTrip);
+                                } else {
+                                  tripVm.createTrip(draftTrip);
+                                }
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

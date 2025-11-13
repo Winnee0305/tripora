@@ -6,6 +6,7 @@ import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'package:tripora/features/trip/views/create_edit_trip_page.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
@@ -92,7 +93,18 @@ class HeaderSection extends StatelessWidget {
                     ),
                     AppButton.iconOnly(
                       icon: CupertinoIcons.settings,
-                      onPressed: () {},
+                      onPressed: () {
+                        // Example: open in edit mode from TripInfoPage or trip list
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChangeNotifierProvider.value(
+                              value: vm,
+                              child: CreateEditTripPage(tripToEdit: vm.trip),
+                            ),
+                          ),
+                        );
+                      },
                       iconSize: 22,
                       minWidth: 30,
                       minHeight: 30,

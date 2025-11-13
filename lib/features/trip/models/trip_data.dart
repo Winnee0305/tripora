@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class TripData {
   final String tripId;
   final String tripName;
-  final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final String destination;
   final String travelStyle;
   final String travelPartnerType;
@@ -16,8 +16,8 @@ class TripData {
   TripData({
     required this.tripId,
     required this.tripName,
-    required this.startDate,
-    required this.endDate,
+    this.startDate,
+    this.endDate,
     required this.destination,
     required this.travelStyle,
     required this.travelPartnerType,
@@ -51,8 +51,8 @@ class TripData {
   Map<String, dynamic> toMap() => {
     'tripId': tripId,
     'tripName': tripName,
-    'startDate': startDate.toIso8601String(),
-    'endDate': endDate.toIso8601String(),
+    'startDate': startDate?.toIso8601String(),
+    'endDate': endDate?.toIso8601String(),
     'destination': destination,
     'travelStyle': travelStyle,
     'travelPartnerType': travelPartnerType,
@@ -96,8 +96,8 @@ class TripData {
     return TripData(
       tripId: '',
       tripName: '',
-      startDate: DateTime.now(),
-      endDate: DateTime.now(),
+      startDate: null,
+      endDate: null,
       destination: '',
       travelStyle: '',
       travelPartnerType: '',

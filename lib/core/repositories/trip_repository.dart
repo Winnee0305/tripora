@@ -23,13 +23,13 @@ class TripRepository {
     return await _firestore.getTrips(uid);
   }
 
-  // // ---- UPDATE ----
-  // Future<void> updateTrip(TripData trip) async {
-  //   await _firestore.updateTrip(uid, trip);
-  // }
+  // ---- UPDATE ----
+  Future<void> updateTrip(TripData trip) async {
+    await _firestore.updateTrip(uid, trip);
+  }
 
-  // // ---- DELETE ----
-  // Future<void> deleteTrip(String tripId) async {
-  //   await _firestore.deleteTrip(uid, tripId);
-  // }
+  // ---- DELETE ----
+  Future<void> deleteTrip(String tripId) async {
+    await _firestore.deleteTrip(uid, tripId);
+  }
 }

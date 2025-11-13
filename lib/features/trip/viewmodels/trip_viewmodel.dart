@@ -50,16 +50,34 @@ class TripViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> deleteTrip(String tripId) async {
-  //   try {
-  //     await _tripRepo.deleteTrip(tripId);
-  //     _trips.removeWhere((t) => t.tripId == tripId);
-  //     notifyListeners();
-  //   } catch (e) {
-  //     _error = 'Failed to delete trip: $e';
-  //     notifyListeners();
-  //   }
-  // }
+  Future<void> deleteTrip(String tripId) async {
+    try {
+      await _tripRepo.deleteTrip(tripId);
+      await loadTrips(); // reload list
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to delete trip: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateTrip(TripData trip) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _tripRepo.updateTrip(trip);
+      await loadTrips(); // reload list
+      // Update currently selected trip if editing
+      setSelectedTrip(trip);
+    } catch (e) {
+      _error = 'Failed to update trip: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   // ==========================
   // 🔹 SINGLE TRIP OPERATIONS

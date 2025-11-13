@@ -56,6 +56,26 @@ class FirestoreService {
     return snapshot.docs.map(TripData.fromFirestore).toList();
   }
 
+  // Future<void> deleteTrip(String uid, String tripId) async {
+  //   await usersCollection.doc(uid).collection('trips').doc(tripId).delete();
+  // }
+  Future<void> deleteTrip(String uid, String tripId) async {
+    try {
+      await usersCollection.doc(uid).collection('trips').doc(tripId).delete();
+      print('Trip deleted: $tripId');
+    } catch (e) {
+      print('Failed to delete trip: $e');
+    }
+  }
+
+  Future<void> updateTrip(String uid, TripData trip) async {
+    await usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(trip.tripId)
+        .update(trip.toMap());
+  }
+
   // User - Trips - Itinerary
   Future<void> addItineraryItem(
     String uid,

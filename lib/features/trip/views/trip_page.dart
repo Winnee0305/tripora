@@ -74,8 +74,8 @@ class TripPage extends StatelessWidget {
                             image: const AssetImage(
                               "assets/images/exp_melaka_trip.png",
                             ),
-                            startDate: trip.startDate,
-                            endDate: trip.endDate,
+                            startDate: trip.startDate!,
+                            endDate: trip.endDate!,
                             tripTitle: trip.tripName,
                             destination: trip.destination,
                           ),
