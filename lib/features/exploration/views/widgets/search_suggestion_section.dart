@@ -7,7 +7,10 @@ import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmo
 import 'package:tripora/features/poi/views/poi_page.dart';
 
 class SearchSuggestionSection extends StatelessWidget {
-  const SearchSuggestionSection({super.key});
+  final void Function(String description, Map<String, dynamic> suggestion)?
+  onItemSelected;
+
+  const SearchSuggestionSection({super.key, this.onItemSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +28,18 @@ class SearchSuggestionSection extends StatelessWidget {
         itemCount: viewModel.suggestions.length,
         itemBuilder: (context, index) {
           final suggestion = viewModel.suggestions[index];
+          final description = suggestion['description'] ?? "Unknown";
           return AppInkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PoiPage(placeId: suggestion['place_id']),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (_) => PoiPage(placeId: suggestion['place_id']),
+              //   ),
+              // );
+              if (onItemSelected != null) {
+                onItemSelected!(description, suggestion);
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

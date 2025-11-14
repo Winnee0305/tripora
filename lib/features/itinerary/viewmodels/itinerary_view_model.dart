@@ -24,22 +24,21 @@ class ItineraryViewModel extends ChangeNotifier {
   final ItineraryRepository _itineraryRepo;
   final destinationController = TextEditingController();
   final notesController = TextEditingController();
+  String? selectedPlaceId;
 
   bool isEditingInitialized = false;
 
   ItineraryViewModel(this._itineraryRepo);
 
   // --- Local states ---
-  List<ItineraryData> _itineraries = [];
-  Map<int, List<ItineraryData>> _itinerariesMap = {};
+  List<ItineraryData> itineraries = [];
+  Map<int, List<ItineraryData>> itinerariesMap = {};
   bool _isLoading = false;
   bool _isUploading = false;
   String? _error;
   TripData? trip;
 
   // --- Getters ---
-  List<ItineraryData> get itineraries => _itineraries;
-  Map<int, List<ItineraryData>> get itinerariesMap => _itinerariesMap;
   bool get isLoading => _isLoading;
   bool get isUploading => _isUploading;
   String? get error => _error;
@@ -50,12 +49,12 @@ class ItineraryViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _itineraries = await _itineraryRepo.getItineraries(trip!.tripId);
+      itineraries = await _itineraryRepo.getItineraries(trip!.tripId);
     } catch (e) {
       _error = 'Failed to load trips: $e';
     }
 
-    listToMap(_itineraries, trip!.startDate!, trip!.endDate!);
+    listToMap(itineraries, trip!.startDate!, trip!.endDate!);
     _isLoading = false;
     notifyListeners();
   }
@@ -92,7 +91,7 @@ class ItineraryViewModel extends ChangeNotifier {
       dailyMap[day]!.sort((a, b) => a.date.compareTo(b.date));
     }
 
-    _itinerariesMap = dailyMap;
+    itinerariesMap = dailyMap;
     notifyListeners();
   }
 
@@ -192,7 +191,7 @@ class ItineraryViewModel extends ChangeNotifier {
 
   /// Reorder within the same day
   void reorderWithinDay(int day, int oldIndex, int newIndex) {
-    final list = _itineraries;
+    final list = itineraries;
     if (newIndex > oldIndex) newIndex -= 1;
 
     final item = list.removeAt(oldIndex);
@@ -239,36 +238,31 @@ class ItineraryViewModel extends ChangeNotifier {
 
   bool validateForm() => destinationController.text.trim().isNotEmpty;
 
-  // ----- Cleanup
-  // @override
-  // void dispose() {
-  //   destinationController.dispose();
-  //   notesController.dispose();
-  //   super.dispose();
-  // }
-
-  ItineraryData getNewItinerary() {
-    return ItineraryData(
+  Future<ItineraryData> getNewItinerary(ItineraryData draftItinerary) async {
+    print('Creating new itinerary with placeId: ${selectedPlaceId ?? ""}');
+    final updatedItinerary = ItineraryData(
       id: "",
-      placeId: "cecec",
+      placeId: selectedPlaceId ?? "",
       userNotes: notesController.text.trim(),
-      date: DateTime.now(),
-      sequence: 0,
+      date: draftItinerary.date,
+      sequence: draftItinerary.sequence,
       lastUpdated: DateTime.now(),
     );
+    await updatedItinerary.loadPlaceDetails();
+    return updatedItinerary;
   }
 
-  void updateItinerary(ItineraryData oldItinerary) {
-    final index = _itineraries.indexOf(oldItinerary);
+  void updateItinerary(ItineraryData oldItinerary) async {
+    final index = itineraries.indexOf(oldItinerary);
     if (index != -1) {
-      _itineraries[index] = getNewItinerary();
+      itineraries[index] = await getNewItinerary(oldItinerary); // TODO
       notifyListeners();
     }
   }
 
-  void addItinerary() {
-    final newItinerary = getNewItinerary();
-    _itineraries.add(newItinerary);
+  void addItinerary(ItineraryData draftItinerary) async {
+    final newItinerary = await getNewItinerary(draftItinerary);
+    addToMap(newItinerary);
     notifyListeners();
   }
 
@@ -280,5 +274,18 @@ class ItineraryViewModel extends ChangeNotifier {
   int getLastSequence(int day) {
     int count = itinerariesMap[day]?.length ?? 0;
     return count;
+  }
+
+  void addToMap(ItineraryData itinerary) {
+    final day = getDayNumber(itinerary.date, trip!.startDate!);
+
+    // Create a new list for this day
+    final updatedDayList = List<ItineraryData>.from(itinerariesMap[day]!);
+    updatedDayList.add(itinerary);
+
+    // Replace the map with a new map including the updated list
+    itinerariesMap = {...itinerariesMap, day: updatedDayList};
+
+    notifyListeners(); // now the UI will rebuild
   }
 }

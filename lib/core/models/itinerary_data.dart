@@ -68,6 +68,7 @@ class ItineraryData {
     // In a real implementation, you would fetch the data based on placeId
     place = Poi(id: placeId);
     place = await Poi.fromPlaceId(placeId);
+    print("Current place intance address: ${place?.address}");
   }
 
   factory ItineraryData.empty(DateTime date, int sequence) {

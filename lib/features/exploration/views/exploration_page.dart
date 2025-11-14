@@ -5,6 +5,7 @@ import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmo
 import 'package:tripora/features/exploration/views/widgets/post_section.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';
 import 'package:tripora/features/exploration/views/widgets/search_suggestion_section.dart';
+import 'package:tripora/features/poi/views/poi_page.dart';
 
 class ExplorationPage extends StatefulWidget {
   const ExplorationPage({super.key});
@@ -47,7 +48,19 @@ class _ExplorationPageState extends State<ExplorationPage>
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   child: _isSearching
-                      ? const SearchSuggestionSection(key: ValueKey('search'))
+                      // ? const SearchSuggestionSection(key: ValueKey('search'))
+                      ? SearchSuggestionSection(
+                          key: ValueKey('search'),
+                          onItemSelected: (description, suggestion) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    PoiPage(placeId: suggestion['place_id']),
+                              ),
+                            );
+                          },
+                        )
                       : const PostSection(key: ValueKey('posts')),
                 ),
               ),
