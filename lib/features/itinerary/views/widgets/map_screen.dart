@@ -76,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
         _polylines.add(
           Polyline(
             polylineId: const PolylineId('route'),
-            color: Colors.blue,
+            color: Theme.of(context).primaryColor,
             width: 5,
             points: polylineCoordinates,
           ),
