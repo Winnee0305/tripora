@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 import 'package:provider/provider.dart';
@@ -60,12 +61,23 @@ class TripPage extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             tripVm.setSelectedTrip(trip);
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => ChangeNotifierProvider.value(
+                            //       value: tripVm,
+                            //       child: TripDashboardPage(),
+                            //     ),
+                            //   ),
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => ChangeNotifierProvider.value(
-                                  value: tripVm,
-                                  child: TripInfoPage(),
+                                builder: (context) => MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider.value(value: tripVm),
+                                  ],
+                                  child: TripDashboardPage(),
                                 ),
                               ),
                             );

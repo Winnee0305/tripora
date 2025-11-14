@@ -9,7 +9,7 @@ import 'package:tripora/features/expense/views/expense_page.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_content_viewmodel.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -17,6 +17,7 @@ class StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final itineraryVm = context.watch<ItineraryPageViewModel>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
@@ -38,10 +39,7 @@ class StatsSection extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ItineraryContentViewModel(),
-                      child: NotesItineraryPage(currentTab: 0),
-                    ),
+                    builder: (context) => NotesItineraryPage(currentTab: 0),
                   ),
                 );
               }, // Dummy tap
@@ -92,7 +90,7 @@ class StatsSection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ExpenseViewModel(
+                      create: (context) => ExpenseViewModel(
                         tripStartDate: DateTime(2025, 8, 13),
                         tripEndDate: DateTime(2025, 8, 14),
                       ),
@@ -160,10 +158,7 @@ class StatsSection extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                      create: (_) => ItineraryContentViewModel(),
-                      child: NotesItineraryPage(currentTab: 1),
-                    ),
+                    builder: (context) => NotesItineraryPage(currentTab: 1),
                   ),
                 );
               },
@@ -212,7 +207,7 @@ class StatsSection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => PackingPageViewModel(),
+                      create: (context) => PackingPageViewModel(),
                       child: const PackingPage(),
                     ),
                   ),

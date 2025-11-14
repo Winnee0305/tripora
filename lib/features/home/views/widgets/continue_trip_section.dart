@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
 import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart'
@@ -65,9 +66,11 @@ class ContinueTripSection extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ChangeNotifierProvider.value(
-                          value: tripVm,
-                          child: TripInfoPage(),
+                        builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider.value(value: tripVm),
+                          ],
+                          child: TripDashboardPage(),
                         ),
                       ),
                     );
