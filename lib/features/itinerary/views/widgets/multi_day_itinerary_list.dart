@@ -209,7 +209,12 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   minHeight: 36,
                   backgroundVariant: BackgroundVariant.primaryTrans,
                   onPressed: () {
-                    _openEditItinerarySheet(context, null);
+                    final draftItinerary = ItineraryData.empty(
+                      vm.getDate(day),
+                      vm.getLastSequence(day),
+                    );
+
+                    _openEditItinerarySheet(context, draftItinerary);
                   },
                 ),
                 const SizedBox(height: 24),

@@ -23,7 +23,7 @@ class ItineraryCard extends StatelessWidget {
               height: 80,
               width: 80,
               child: AppLoadingNetworkImage(
-                imageUrl: itinerary.place.imageUrl,
+                imageUrl: itinerary.place?.imageUrl ?? '',
                 radius: 14, // optional, controls the loading indicator size
               ),
             ),
@@ -34,7 +34,7 @@ class ItineraryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  itinerary.place.name,
+                  itinerary.place?.name ?? '',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -42,24 +42,24 @@ class ItineraryCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: itinerary.place.tags.map((tag) {
-                    return AppButton.textOnly(
-                      text: tag,
-                      onPressed: () {},
-                      minHeight: 10,
-                      minWidth: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      backgroundVariant: BackgroundVariant.primaryTrans,
-                      textStyleOverride: theme.textTheme.labelMedium,
-                    );
-                  }).toList(),
-                ),
+                // Wrap(
+                //   spacing: 6,
+                //   runSpacing: 6,
+                //   children: itinerary.place?.tags.map((tag) {
+                //     return AppButton.textOnly(
+                //       text: tag,
+                //       onPressed: () {},
+                //       minHeight: 10,
+                //       minWidth: 0,
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //         vertical: 4,
+                //       ),
+                //       backgroundVariant: BackgroundVariant.primaryTrans,
+                //       textStyleOverride: theme.textTheme.labelMedium,
+                //     );
+                //   }).toList(),
+                // ),
                 const SizedBox(height: 8),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.start,

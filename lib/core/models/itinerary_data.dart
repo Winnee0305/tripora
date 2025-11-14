@@ -9,7 +9,7 @@ class ItineraryData {
   final int sequence;
 
   final DateTime? lastUpdated;
-  late final Poi place;
+  Poi? place;
 
   ItineraryData({
     required this.id,
@@ -70,13 +70,13 @@ class ItineraryData {
     place = await Poi.fromPlaceId(placeId);
   }
 
-  factory ItineraryData.empty() {
+  factory ItineraryData.empty(DateTime date, int sequence) {
     return ItineraryData(
       id: '',
       placeId: '',
-      date: DateTime.now(),
+      date: date,
       userNotes: '',
-      sequence: 0,
+      sequence: sequence,
       lastUpdated: DateTime.now(),
     );
   }

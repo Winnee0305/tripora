@@ -72,7 +72,7 @@ class AddEditItineraryBottomSheet extends StatelessWidget {
 
               // --- Expense Name
               AppTextField(
-                label: "Destination *",
+                label: "Destination",
                 controller: vm.destinationController,
               ),
 

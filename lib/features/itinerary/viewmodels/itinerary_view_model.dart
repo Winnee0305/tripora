@@ -224,7 +224,7 @@ class ItineraryViewModel extends ChangeNotifier {
   }
 
   void populateFromItinerary(ItineraryData itinerary) {
-    destinationController.text = itinerary.place.name;
+    destinationController.text = itinerary.place?.name ?? '';
     notesController.text = itinerary.userNotes;
     isEditingInitialized = true;
     notifyListeners();
@@ -270,5 +270,15 @@ class ItineraryViewModel extends ChangeNotifier {
     final newItinerary = getNewItinerary();
     _itineraries.add(newItinerary);
     notifyListeners();
+  }
+
+  DateTime getDate(int day) {
+    final startDate = trip!.startDate!;
+    return startDate.add(Duration(days: day - 1));
+  }
+
+  int getLastSequence(int day) {
+    int count = itinerariesMap[day]?.length ?? 0;
+    return count;
   }
 }
