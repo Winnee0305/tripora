@@ -56,3 +56,28 @@ String formatDistance(double distanceMeters) {
     return "${km.toStringAsFixed(2)} km";
   }
 }
+
+/// Converts a DateTime to a day number relative to the trip start date
+int getDayNumber(DateTime itineraryDate, DateTime tripStartDate) {
+  return itineraryDate.difference(tripStartDate).inDays + 1;
+}
+
+/// Get the actual DateTime of a given day index
+DateTime getDateForDay(int dayIndex, int totalDays, DateTime startDate) {
+  if (dayIndex < 1 || dayIndex > totalDays) {
+    throw ArgumentError("Invalid day index: $dayIndex");
+  }
+  return startDate.add(Duration(days: dayIndex - 1));
+}
+
+/// Get formatted label like "Mon, 7 Oct"
+String getFormattedDayLabel(int dayIndex, int totalDays, DateTime startDate) {
+  final date = getDateForDay(dayIndex, totalDays, startDate);
+  return DateFormat('EEE, d MMM').format(date);
+}
+
+/// Get formatted range for the trip like "6 Oct - 9 Oct"
+String getTripDateRange(DateTime startDate, DateTime endDate) {
+  final formatter = DateFormat('d MMM');
+  return "${formatter.format(startDate)} - ${formatter.format(endDate)}";
+}

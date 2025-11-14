@@ -76,6 +76,6 @@ class ItineraryData {
     // Simulate fetching POI details from Firestore or another source
     // In a real implementation, you would fetch the data based on placeId
     place = Poi(id: placeId);
-    await place.fromPlaceId(placeId);
+    place = await Poi.fromPlaceId(placeId);
   }
 }

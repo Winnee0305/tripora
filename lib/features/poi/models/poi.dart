@@ -50,7 +50,7 @@ class Poi {
   static final PlaceDetailsService _service = PlaceDetailsService();
 
   /// Factory constructor to fetch all details from a placeId
-  Future<Poi> fromPlaceId(placeId) async {
+  static Future<Poi> fromPlaceId(placeId) async {
     try {
       final data = await _service.fetchPlaceDetails(placeId);
 

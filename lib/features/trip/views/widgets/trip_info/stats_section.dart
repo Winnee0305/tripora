@@ -13,8 +13,27 @@ import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
-class StatsSection extends StatelessWidget {
+class StatsSection extends StatefulWidget {
   const StatsSection({super.key});
+
+  @override
+  State<StatsSection> createState() => _StatsSectionState();
+}
+
+class _StatsSectionState extends State<StatsSection> {
+  @override
+  void initState() {
+    super.initState();
+    // Schedule the load after first build to avoid "setState during build" errors
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final itineraryVm = context.read<ItineraryViewModel>();
+      final tripVm = context.read<TripViewModel>();
+      if (tripVm.trip != null) {
+        itineraryVm.setTrip(tripVm.trip!);
+        itineraryVm.loadItineraries();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -26,24 +26,4 @@ class DaySelectionViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  /// Get the actual DateTime of a given day index
-  DateTime getDateForDay(int dayIndex) {
-    if (dayIndex < 1 || dayIndex > totalDays) {
-      throw ArgumentError("Invalid day index: $dayIndex");
-    }
-    return startDate.add(Duration(days: dayIndex - 1));
-  }
-
-  /// Get formatted label like "Mon, 7 Oct"
-  String getFormattedDayLabel(int dayIndex) {
-    final date = getDateForDay(dayIndex);
-    return DateFormat('EEE, d MMM').format(date);
-  }
-
-  /// Get formatted range for the trip like "6 Oct - 9 Oct"
-  String get tripDateRange {
-    final formatter = DateFormat('d MMM');
-    return "${formatter.format(startDate)} - ${formatter.format(endDate)}";
-  }
 }

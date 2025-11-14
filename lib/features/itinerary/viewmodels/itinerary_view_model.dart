@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
 import 'package:tripora/core/services/map_service.dart';
+import 'package:tripora/core/utils/format_utils.dart';
 
 /// Simple mock RouteInfo model (for testing only)
 class RouteInfo {
@@ -23,18 +25,20 @@ class ItineraryViewModel extends ChangeNotifier {
   //   2: "Motel Riverside",
   // };
   final ItineraryRepository _itineraryRepo;
-  final String tripId;
 
-  ItineraryViewModel(this._itineraryRepo, {required this.tripId});
+  ItineraryViewModel(this._itineraryRepo);
 
   // --- Local states ---
   List<ItineraryData> _itineraries = [];
+  Map<int, List<ItineraryData>> _itinerariesMap = {};
   bool _isLoading = false;
   bool _isUploading = false;
   String? _error;
+  TripData? trip;
 
   // --- Getters ---
   List<ItineraryData> get itineraries => _itineraries;
+  Map<int, List<ItineraryData>> get itinerariesMap => _itinerariesMap;
   bool get isLoading => _isLoading;
   bool get isUploading => _isUploading;
   String? get error => _error;
@@ -45,13 +49,67 @@ class ItineraryViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _itineraries = await _itineraryRepo.getItineraries(tripId);
+      _itineraries = await _itineraryRepo.getItineraries(trip!.tripId);
     } catch (e) {
       _error = 'Failed to load trips: $e';
     }
 
+    listToMap(_itineraries, trip!.startDate!, trip!.endDate!);
     _isLoading = false;
     notifyListeners();
+  }
+
+  setTrip(TripData tripData) {
+    trip = tripData;
+  }
+
+  /// Convert flat list of itineraries to a per-day map,
+  /// ensuring every day in the trip range exists
+  void listToMap(
+    List<ItineraryData> itineraries,
+    DateTime tripStartDate,
+    DateTime tripEndDate,
+  ) {
+    final Map<int, List<ItineraryData>> dailyMap = {};
+
+    // 1. Initialize all days with empty lists
+    final totalDays = tripEndDate.difference(tripStartDate).inDays + 1;
+    for (int i = 1; i <= totalDays; i++) {
+      dailyMap[i] = [];
+    }
+
+    // 2. Assign itineraries to the correct day
+    for (final item in itineraries) {
+      final day = getDayNumber(item.date, tripStartDate); // Day 1, Day 2, etc.
+      if (dailyMap.containsKey(day)) {
+        dailyMap[day]!.add(item);
+      }
+    }
+
+    // 3. Sort each day's items by date/time
+    for (final day in dailyMap.keys) {
+      dailyMap[day]!.sort((a, b) => a.date.compareTo(b.date));
+    }
+
+    _itinerariesMap = dailyMap;
+    notifyListeners();
+  }
+
+  /// Helper: compute day number starting from 1
+  int getDayNumber(DateTime itemDate, DateTime tripStartDate) {
+    return itemDate.difference(tripStartDate).inDays + 1;
+  }
+
+  /// Flatten a per-day map of itineraries back into a list
+  List<ItineraryData> mapByDayToList(Map<int, List<ItineraryData>> dailyMap) {
+    final List<ItineraryData> flatList = [];
+
+    final sortedDays = dailyMap.keys.toList()..sort();
+    for (final day in sortedDays) {
+      flatList.addAll(dailyMap[day]!);
+    }
+
+    return flatList;
   }
 
   // final Map<int, List<ItineraryData>> _dailyItineraries = {
@@ -131,30 +189,31 @@ class ItineraryViewModel extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  // /// Reorder within the same day
-  // void reorderWithinDay(int day, int oldIndex, int newIndex) {
-  //   final list = _dailyItineraries[day]!;
-  //   if (newIndex > oldIndex) newIndex -= 1;
+  /// Reorder within the same day
+  void reorderWithinDay(int day, int oldIndex, int newIndex) {
+    final list = _itineraries;
+    if (newIndex > oldIndex) newIndex -= 1;
 
-  //   final item = list.removeAt(oldIndex);
-  //   list.insert(newIndex, item);
+    final item = list.removeAt(oldIndex);
+    list.insert(newIndex, item);
 
-  //   notifyListeners();
-  //   loadAllDayRoutes();
-  // }
+    notifyListeners();
+    // loadAllDayRoutes();
+  }
 
-  // /// Move itinerary item between different days
-  // void moveItemBetweenDays(
-  //   int fromDay,
-  //   int toDay,
-  //   Itinerary item,
-  //   int newIndex,
-  // ) {
-  //   _dailyItineraries[fromDay]?.remove(item);
-  //   _dailyItineraries[toDay]?.insert(newIndex, item);
-  //   notifyListeners();
-  //   loadAllDayRoutes();
-  // }
+  /// Move itinerary item between different days
+  void moveItemBetweenDays(
+    int fromDay,
+    int toDay,
+    ItineraryData itinerary,
+    int newIndex,
+  ) {
+    // itineraries?.remove(itinerary);
+    // itineraries[fromDay]?.remove(itinerary);
+    // itineraries[toDay]?.insert(newIndex, itinerary);
+    notifyListeners();
+    // loadAllDayRoutes();
+  }
 
   // /// Get formatted date label for each day (e.g. "Mon, 6 Oct")
   // String getDateLabelForDay(int day) {

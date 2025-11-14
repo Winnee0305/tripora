@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
+import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
@@ -10,8 +11,8 @@ import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 
 @immutable
 class _DraggedItinerary {
-  const _DraggedItinerary({required this.itineraries, required this.fromDay});
-  final List<ItineraryData> itineraries;
+  const _DraggedItinerary({required this.itinerary, required this.fromDay});
+  final ItineraryData itinerary;
   final int fromDay;
 }
 
@@ -27,13 +28,13 @@ class MultiDayItineraryList extends StatefulWidget {
 class MultiDayItineraryListState extends State<MultiDayItineraryList> {
   final Map<int, GlobalKey> _dayKeys = {}; // For scroll linking
 
-  @override
-  void initState() {
-    super.initState();
-    // Future.microtask(
-    //   () => context.read<ItineraryViewModel>().loadAllDayRoutes(),
-    // );
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(
+  //     () => context.read<Itinerar>().loadAllDayRoutes(),
+  //   );
+  // }
 
   void scrollToDay(int day) {
     final keyContext = _dayKeys[day]?.currentContext;
@@ -51,9 +52,9 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
     final vm = context.watch<ItineraryViewModel>();
 
     return Column(
-      children: List.generate(itineraries.keys.length, (dayIndex) {
-        final day = vm.dailyItineraries.keys.elementAt(dayIndex);
-        final items = vm.dailyItineraries[day]!;
+      children: List.generate(vm.itinerariesMap.keys.length, (dayIndex) {
+        final day = vm.itinerariesMap.keys.elementAt(dayIndex);
+        final items = vm.itinerariesMap[day]!;
 
         _dayKeys[day] = GlobalKey();
 
@@ -66,7 +67,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Text(
-                    "Day $day • ${vm.getDateLabelForDay(day)}",
+                    "Day $day • ${getFormattedDayLabel(day, vm.itinerariesMap.keys.length, vm.trip!.startDate!)}",
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: ManropeFontWeight.semiBold,
                     ),
@@ -124,7 +125,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                               children: [
                                 // The itinerary item card
                                 ItineraryItem(
-                                  item: item,
+                                  itinerary: item,
                                   isFirst: index == 0,
                                   isLast: index == items.length - 1,
                                   index: index,
@@ -136,7 +137,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                   // Using LongPressDraggable for better UX
                                   child: LongPressDraggable<_DraggedItinerary>(
                                     data: _DraggedItinerary(
-                                      item: item,
+                                      itinerary: item,
                                       fromDay: day,
                                     ),
                                     feedback: Material(
@@ -149,7 +150,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                         child: Opacity(
                                           opacity: 0.95,
                                           child: ItineraryItem(
-                                            item: item,
+                                            itinerary: item,
                                             isFirst: true,
                                             isLast: true,
                                             index: index,
@@ -189,7 +190,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         vm.moveItemBetweenDays(
                           dragged.fromDay,
                           day,
-                          dragged.item,
+                          dragged.itinerary,
                           index,
                         );
                       },
@@ -221,11 +222,11 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   },
                   onAcceptWithDetails: (details) {
                     final dragged = details.data;
-                    final insertIndex = vm.dailyItineraries[day]?.length ?? 0;
+                    final insertIndex = vm.itinerariesMap[day]?.length ?? 0;
                     vm.moveItemBetweenDays(
                       dragged.fromDay,
                       day,
-                      dragged.item,
+                      dragged.itinerary,
                       insertIndex,
                     );
                   },
@@ -240,11 +241,11 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
           onAcceptWithDetails: (details) {
             final dragged = details.data;
             // Append to end of the target day for simplicity. Users can reorder within day afterwards.
-            final insertIndex = vm.dailyItineraries[day]?.length ?? 0;
+            final insertIndex = vm.itinerariesMap[day]?.length ?? 0;
             vm.moveItemBetweenDays(
               dragged.fromDay,
               day,
-              dragged.item,
+              dragged.itinerary,
               insertIndex,
             );
           },
