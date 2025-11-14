@@ -63,13 +63,12 @@ class ContinueTripSection extends StatelessWidget {
               ? GestureDetector(
                   onTap: () {
                     tripVm.setSelectedTrip(firstTrip);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MultiProvider(
-                          providers: [
-                            ChangeNotifierProvider.value(value: tripVm),
-                          ],
+                        builder: (context) => ChangeNotifierProvider.value(
+                          value: tripVm, // reuse the existing TripViewModel
                           child: TripDashboardPage(),
                         ),
                       ),

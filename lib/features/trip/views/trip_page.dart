@@ -61,22 +61,12 @@ class TripPage extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             tripVm.setSelectedTrip(trip);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => ChangeNotifierProvider.value(
-                            //       value: tripVm,
-                            //       child: TripDashboardPage(),
-                            //     ),
-                            //   ),
-                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider.value(value: tripVm),
-                                  ],
+                                builder: (context) => ChangeNotifierProvider.value(
+                                  value:
+                                      tripVm, // reuse the existing TripViewModel
                                   child: TripDashboardPage(),
                                 ),
                               ),

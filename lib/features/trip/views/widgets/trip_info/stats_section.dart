@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/theme/app_colors.dart';
@@ -39,7 +40,20 @@ class StatsSection extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NotesItineraryPage(currentTab: 0),
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        // Reuse the existing ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: itineraryVm),
+                        // DaySelectionViewModel specific to this page
+                        ChangeNotifierProvider(
+                          create: (_) => DaySelectionViewModel(
+                            startDate: DateTime(2025, 10, 6),
+                            endDate: DateTime(2025, 10, 12),
+                          )..selectDay(0),
+                        ),
+                      ],
+                      child: NotesItineraryPage(currentTab: 0),
+                    ),
                   ),
                 );
               }, // Dummy tap
@@ -158,7 +172,20 @@ class StatsSection extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NotesItineraryPage(currentTab: 1),
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        // Reuse the existing ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: itineraryVm),
+                        // DaySelectionViewModel specific to this page
+                        ChangeNotifierProvider(
+                          create: (_) => DaySelectionViewModel(
+                            startDate: DateTime(2025, 10, 6),
+                            endDate: DateTime(2025, 10, 12),
+                          )..selectDay(1),
+                        ),
+                      ],
+                      child: NotesItineraryPage(currentTab: 1),
+                    ),
                   ),
                 );
               },
