@@ -51,13 +51,13 @@ class NotesItineraryPage extends StatelessWidget {
         body: Stack(
           children: [
             // ----- Map Background -----
-            // Positioned.fill(
-            //   child: Image.asset(
-            //     "assets/images/exp_map.png",
-            //     fit: BoxFit.cover,
-            //   ),
-            // ),
-            Positioned.fill(child: MapScreen(destinations: melaccaAttractions)),
+            Positioned.fill(
+              child: Image.asset(
+                "assets/images/exp_map.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Positioned.fill(child: MapScreen(destinations: melaccaAttractions)),
 
             // ----- Header (Back, Home, etc.)
             const NotesItineraryPageHeaderSection(),
