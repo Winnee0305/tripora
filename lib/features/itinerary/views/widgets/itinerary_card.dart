@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import 'package:tripora/features/itinerary/models/itinerary.dart';
 
 class ItineraryCard extends StatelessWidget {
-  const ItineraryCard({super.key, required this.item});
+  const ItineraryCard({super.key, required this.itinerary});
 
-  final Itinerary item;
+  final ItineraryData itinerary;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -18,11 +19,13 @@ class ItineraryCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
-            child: Image.asset(
-              item.image,
-              width: 80,
+            child: SizedBox(
               height: 80,
-              fit: BoxFit.cover,
+              width: 80,
+              child: AppLoadingNetworkImage(
+                imageUrl: itinerary.place.imageUrl,
+                radius: 14, // optional, controls the loading indicator size
+              ),
             ),
           ),
           const SizedBox(width: 14),
@@ -31,7 +34,7 @@ class ItineraryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.destination,
+                  itinerary.place.name,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -42,7 +45,7 @@ class ItineraryCard extends StatelessWidget {
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: item.tags.map((tag) {
+                  children: itinerary.place.tags.map((tag) {
                     return AppButton.textOnly(
                       text: tag,
                       onPressed: () {},
@@ -61,7 +64,7 @@ class ItineraryCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    if (item.estimatedCost.isEmpty == false) ...[
+                    if (itinerary.estimatedPrice != null) ...[
                       const SizedBox(height: 8),
                       Row(
                         children: [
@@ -72,14 +75,14 @@ class ItineraryCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            item.estimatedCost,
+                            itinerary.estimatedPrice.toString(),
                             style: theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
                     ],
                     const SizedBox(width: 22),
-                    if (item.estimatedDuration.isEmpty == false) ...[
+                    if (itinerary.estimatedVisitTime != null) ...[
                       Row(
                         children: [
                           Icon(
@@ -89,7 +92,7 @@ class ItineraryCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            item.estimatedDuration,
+                            itinerary.estimatedVisitTime.toString(),
                             style: theme.textTheme.bodyMedium,
                           ),
                         ],

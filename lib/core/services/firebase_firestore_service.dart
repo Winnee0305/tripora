@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tripora/core/models/itinerary_item_data.dart';
-import 'package:tripora/features/trip/models/trip_data.dart';
-import 'package:tripora/features/user/models/user_data.dart';
+import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/core/models/user_data.dart';
 
 class FirestoreService {
   final _firestore = FirebaseFirestore.instance;
@@ -86,31 +86,84 @@ class FirestoreService {
     // Additional step: remove the trip image in firestore
   }
 
-  // User - Trips - Itinerary
-  Future<void> addItineraryItem(
+  // ----- User - Trip - Itineraries -----
+  Future<DocumentSnapshot<Map<String, dynamic>>> getItineraryDoc(
     String uid,
     String tripId,
-    ItineraryItemData itineraryItemData,
+    String itineraryId,
+  ) {
+    return usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('itineraries')
+        .doc(itineraryId)
+        .get();
+  }
+
+  Future<void> addItinerary(
+    String uid,
+    ItineraryData itinerary,
+    String tripId,
   ) async {
+    final itineraryId = itinerary.placeId.isNotEmpty == true
+        ? itinerary.id
+        : usersCollection
+              .doc(uid)
+              .collection('trips')
+              .doc(tripId)
+              .collection('itineraries')
+              .doc()
+              .id;
+
     await usersCollection
         .doc(uid)
         .collection('trips')
         .doc(tripId)
-        .collection('itinerary')
-        .doc(itineraryItemData.id)
-        .set(itineraryItemData.toMap());
+        .collection('itineraries')
+        .doc(itineraryId)
+        .set(itinerary.copyWith(id: itineraryId).toMap());
   }
 
-  Future<List<ItineraryItemData>> getItineraryItems(
-    String uid,
-    String tripId,
-  ) async {
+  Future<List<ItineraryData>> getItineraries(String uid, String tripId) async {
     final snapshot = await usersCollection
         .doc(uid)
         .collection('trips')
         .doc(tripId)
-        .collection('itinerary')
+        .collection('itineraries')
         .get();
-    return snapshot.docs.map(ItineraryItemData.fromFirestore).toList();
+    return snapshot.docs.map(ItineraryData.fromFirestore).toList();
   }
+
+  // Future<void> deleteTrip(String uid, String tripId) async {
+  //   await usersCollection.doc(uid).collection('trips').doc(tripId).delete();
+  // }
+  Future<void> deleteItinerary(
+    String uid,
+    String itineraryId,
+    String tripId,
+  ) async {
+    try {
+      await usersCollection
+          .doc(uid)
+          .collection('trips')
+          .doc(tripId)
+          .collection('itineraries')
+          .doc(itineraryId)
+          .delete();
+      print('Itinerary deleted: $itineraryId');
+    } catch (e) {
+      print('Failed to delete itinerary: $e');
+    }
+  }
+
+  // Future<void> updateTrip(String uid, TripData trip) async {
+  //   // Update the trip document in Firestore
+  //   await usersCollection
+  //       .doc(uid)
+  //       .collection('trips')
+  //       .doc(trip.tripId)
+  //       .update(trip.toMap());
+
+  // Additional step: remove the trip image in firestore
 }

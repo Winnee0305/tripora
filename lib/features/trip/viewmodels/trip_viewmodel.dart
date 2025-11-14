@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:tripora/features/trip/models/trip_data.dart';
+import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 
 class TripViewModel extends ChangeNotifier {
@@ -93,7 +93,7 @@ class TripViewModel extends ChangeNotifier {
           );
         }
       } else {
-        debugPrint("ℹ️ No trip image provided — skipping upload.");
+        debugPrint("No trip image provided — skipping upload.");
       }
 
       // ✅ Update trip data in Firestore
@@ -120,7 +120,6 @@ class TripViewModel extends ChangeNotifier {
   void selectLastestTrip() {
     if (_trips.isNotEmpty) {
       _selectedTrip = _trips.first;
-      print("Selected latest trip: ${_selectedTrip!.tripName}");
     } else {
       _selectedTrip = null;
     }

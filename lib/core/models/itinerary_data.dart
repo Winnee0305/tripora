@@ -1,0 +1,81 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tripora/features/poi/models/poi.dart';
+
+class ItineraryData {
+  final String id;
+  final String placeId;
+  final DateTime date;
+  final String userNotes;
+  final int sequence;
+  final double? estimatedPrice;
+  final double? estimatedVisitTime;
+  final DateTime? lastUpdated;
+  late final Poi place;
+
+  ItineraryData({
+    required this.id,
+    required this.placeId,
+    required this.date,
+    required this.userNotes,
+    required this.sequence,
+    required this.lastUpdated,
+    this.estimatedPrice,
+    this.estimatedVisitTime,
+  });
+
+  // ----- Factory from Firestore -----
+  factory ItineraryData.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return ItineraryData(
+      id: doc.id,
+      placeId: data['placeId'],
+      date: DateTime.parse(data['date']),
+      userNotes: data['userNotes'],
+      sequence: int.tryParse(data['sequence'].toString()) ?? 0,
+      lastUpdated: DateTime.parse(data['lastUpdated']),
+      estimatedPrice: data['estimatedPrice'],
+      estimatedVisitTime: data['estimatedVisitTime'],
+    );
+  }
+
+  // ----- To Firestore -----
+  Map<String, dynamic> toMap() => {
+    'placeId': placeId,
+    'date': date.toIso8601String(),
+    'userNotes': userNotes,
+    'sequence': sequence.toString(),
+    'estimatedPrice': estimatedPrice,
+    'estimatedVisitTime': estimatedVisitTime,
+    'lastUpdated': lastUpdated?.toIso8601String(),
+  };
+
+  // ----- Copy With -----
+  ItineraryData copyWith({
+    String? id,
+    String? placeId,
+    DateTime? date,
+    String? userNotes,
+    int? sequence,
+    double? estimatedPrice,
+    double? estimatedVisitTime,
+    DateTime? lastUpdated,
+  }) {
+    return ItineraryData(
+      id: id ?? this.id,
+      placeId: placeId ?? this.placeId,
+      date: date ?? this.date,
+      userNotes: userNotes ?? this.userNotes,
+      sequence: sequence ?? this.sequence,
+      estimatedPrice: estimatedPrice ?? this.estimatedPrice,
+      estimatedVisitTime: estimatedVisitTime ?? this.estimatedVisitTime,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
+  Future<void> loadPlaceDetails() async {
+    // Simulate fetching POI details from Firestore or another source
+    // In a real implementation, you would fetch the data based on placeId
+    place = Poi(id: placeId);
+    await place.fromPlaceId(placeId);
+  }
+}

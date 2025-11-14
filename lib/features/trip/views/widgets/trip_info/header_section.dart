@@ -15,6 +15,7 @@ class HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TripViewModel>();
+
     return Stack(
       children: [
         // --- Background Image ---
@@ -39,9 +40,7 @@ class HeaderSection extends StatelessWidget {
               height: 300,
               width: double.infinity,
               child: AppLoadingNetworkImage(
-                imageUrl:
-                    vm.trip!.tripImageUrl ??
-                    'https://your-fallback-image-url.com/exp_melaka_trip.png',
+                imageUrl: vm.trip!.tripImageUrl ?? 'assets/logo/tripora.JPG',
                 radius: 14, // optional, controls the loading indicator size
               ),
             ),

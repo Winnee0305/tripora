@@ -10,7 +10,7 @@ import 'package:tripora/features/expense/views/expense_page.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
@@ -19,7 +19,7 @@ class StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final itineraryVm = context.watch<ItineraryPageViewModel>();
+    final itineraryVm = context.watch<ItineraryViewModel>();
     final tripVm = context.watch<TripViewModel>();
 
     return Padding(

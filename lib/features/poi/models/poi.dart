@@ -50,7 +50,7 @@ class Poi {
   static final PlaceDetailsService _service = PlaceDetailsService();
 
   /// Factory constructor to fetch all details from a placeId
-  static Future<Poi> fromPlaceId(String placeId) async {
+  Future<Poi> fromPlaceId(placeId) async {
     try {
       final data = await _service.fetchPlaceDetails(placeId);
 
@@ -174,7 +174,7 @@ class Poi {
       if (placeId == null || placeId.isEmpty) return null;
 
       try {
-        final poi = await Poi.fromPlaceId(placeId);
+        final poi = await fromPlaceId(placeId);
         final distance = calculateDistance(lat, lng, poi.lat, poi.lng) * 1000;
         return NearbyAttraction(poi: poi, distanceMeters: distance);
       } catch (e) {

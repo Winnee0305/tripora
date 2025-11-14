@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
@@ -14,6 +16,7 @@ class TripPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tripVm = context.watch<TripViewModel>();
+    final firestore = context.read<FirebaseFirestore>();
     return SafeArea(
       child: Scaffold(
         body: Padding(

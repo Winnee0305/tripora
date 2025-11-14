@@ -4,10 +4,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/core/utils/image_utils.dart';
-import 'package:tripora/features/trip/models/trip_data.dart';
-import 'package:tripora/features/user/models/user_data.dart';
+import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
-import 'package:tripora/features/trip/models/trip.dart';
 
 class UserRepository {
   final FirestoreService _firestoreService;

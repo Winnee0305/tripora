@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
 import 'package:tripora/core/reusable_widgets/app_toast.dart';
-import 'package:tripora/features/trip/models/trip_data.dart';
+import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/trip/views/widgets/create_trip/choose_travel_partner_page.dart';
 import '../viewmodels/trip_viewmodel.dart';
