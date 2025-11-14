@@ -18,20 +18,6 @@ class HeaderSection extends StatelessWidget {
 
     return Stack(
       children: [
-        // --- Background Image ---
-        // Container(
-        //   margin: const EdgeInsets.all(10),
-        //   child: ClipRRect(
-        //     borderRadius: BorderRadius.circular(58),
-        //     child: Image.asset(
-        //       // vm.trip.image ?? 'assets/images/exp_melaka_trip.png',
-        //       'assets/images/exp_melaka_trip.png',
-        //       height: 300,
-        //       width: double.infinity,
-        //       fit: BoxFit.cover,
-        //     ),
-        //   ),
-        // ),
         Container(
           margin: const EdgeInsets.all(10),
           child: ClipRRect(

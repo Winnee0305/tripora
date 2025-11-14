@@ -13,6 +13,9 @@ class AppLoadingNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl == "") {
+      return Image.asset('assets/logo/tripora.JPG', fit: BoxFit.cover);
+    }
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       // child: Image.network(imageUrl!, fit: BoxFit.cover),

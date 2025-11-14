@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 String formatDateRange(DateTime start, DateTime end) {
@@ -80,4 +82,40 @@ String getFormattedDayLabel(int dayIndex, int totalDays, DateTime startDate) {
 String getTripDateRange(DateTime startDate, DateTime endDate) {
   final formatter = DateFormat('d MMM');
   return "${formatter.format(startDate)} - ${formatter.format(endDate)}";
+}
+
+IconData getWeatherConditionIcon(String condition) {
+  switch (condition.toLowerCase()) {
+    case "clear":
+      return CupertinoIcons.brightness_solid;
+    case "partly cloudy":
+      return CupertinoIcons.cloud_sun;
+    case "cloudy":
+      return CupertinoIcons.cloud;
+    case "fog":
+      return CupertinoIcons.cloud_fog;
+    case "drizzle":
+      return CupertinoIcons.cloud_drizzle_fill;
+    case "rain":
+      return CupertinoIcons.cloud_rain_fill;
+    case "freezing rain":
+      return CupertinoIcons.cloud_sleet_fill;
+    case "snow":
+      return CupertinoIcons.snow;
+    case "snow grains":
+      return CupertinoIcons.snow;
+    case "rain showers":
+      return CupertinoIcons.cloud_heavyrain_fill;
+    case "snow showers":
+      return CupertinoIcons.cloud_snow_fill;
+    case "thunderstorm":
+      return CupertinoIcons.cloud_bolt_fill;
+    default:
+      return Icons.wb_sunny;
+  }
+}
+
+DateTime dateFromIndex(DateTime startDate, int index) {
+  final date = DateTime(startDate.year, startDate.month, startDate.day + index);
+  return DateTime(date.year, date.month, date.day); // normalize to midnight
 }

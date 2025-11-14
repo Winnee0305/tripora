@@ -26,7 +26,11 @@ class ExpenseViewModel extends ChangeNotifier {
   }) {
     loadMockData();
   }
-  bool validateForm() => nameController.text.trim().isNotEmpty;
+  bool validateForm() => {
+    nameController.text.trim().isNotEmpty &&
+        amountController.text.trim().isNotEmpty &&
+        selectedCategory != null,
+  }.every((element) => element == true);
 
   // ----- Expense List Management
   List<Expense> getExpensesForDate(DateTime date) =>

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/utils/format_utils.dart';
+import 'package:tripora/features/itinerary/viewmodels/add_edit_itinerary_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
-import 'package:tripora/features/itinerary/viewmodels/weather_card_viewmodel.dart';
+import 'package:tripora/features/itinerary/viewmodels/weather_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
 import 'package:tripora/features/itinerary/views/widgets/lodging_card.dart';
 import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
@@ -28,14 +30,6 @@ class MultiDayItineraryList extends StatefulWidget {
 class MultiDayItineraryListState extends State<MultiDayItineraryList> {
   final Map<int, GlobalKey> _dayKeys = {}; // For scroll linking
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Future.microtask(
-  //     () => context.read<Itinerar>().loadAllDayRoutes(),
-  //   );
-  // }
-
   void scrollToDay(int day) {
     final keyContext = _dayKeys[day]?.currentContext;
     if (keyContext != null) {
@@ -50,6 +44,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ItineraryViewModel>();
+    final weatherVm = context.watch<WeatherViewModel>();
 
     return Column(
       children: List.generate(vm.itinerariesMap.keys.length, (dayIndex) {
@@ -61,6 +56,9 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
         return DragTarget<_DraggedItinerary>(
           key: _dayKeys[day],
           builder: (context, candidateData, rejectedData) {
+            final dayWeatherForecast = (weatherVm.dailyForecasts.length >= day)
+                ? weatherVm.dailyForecasts[day - 1]
+                : null;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,12 +72,18 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 // ----- Weather card
-                ChangeNotifierProvider(
-                  create: (_) => WeatherCardViewModel(),
-                  child: const WeatherCard(),
-                ),
+                if (dayWeatherForecast == null)
+                  WeatherCard(condition: "", temperature: 0.0, lastUpdated: "")
+                else if (dayWeatherForecast.condition != "Unknown" &&
+                    dayWeatherForecast.temperature != 0.0)
+                  WeatherCard(
+                    condition: dayWeatherForecast.condition,
+                    temperature: dayWeatherForecast.temperature,
+                    lastUpdated: "Updated just now",
+                  )
+                else
+                  const SizedBox(height: 0),
                 const SizedBox(height: 16),
                 // ----- Lodging info (if any)
                 const LodgingCard(),
@@ -197,6 +201,18 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                     );
                   },
                 ),
+                const SizedBox(height: 16),
+                AppButton.textOnly(
+                  text: 'Add Activity',
+                  radius: 10,
+                  minWidth: double.infinity,
+                  minHeight: 36,
+                  backgroundVariant: BackgroundVariant.primaryTrans,
+                  onPressed: () {
+                    _openEditItinerarySheet(context, null);
+                  },
+                ),
+                const SizedBox(height: 24),
                 // Trailing drop target to append at end of day
                 DragTarget<_DraggedItinerary>(
                   builder: (context, candidateData, rejectedData) {
@@ -251,6 +267,29 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
           },
         );
       }),
+    );
+  }
+
+  void _openEditItinerarySheet(
+    BuildContext context, [
+    ItineraryData? itinerary,
+  ]) {
+    final vm = context.read<ItineraryViewModel>();
+
+    // Reset and populate if editing
+    vm.clearForm();
+    if (itinerary != null) {
+      vm.populateFromItinerary(itinerary);
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: vm,
+        child: AddEditItineraryBottomSheet(itinerary: itinerary),
+      ),
     );
   }
 }

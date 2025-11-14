@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
-import 'package:tripora/core/services/map_service.dart';
-import 'package:tripora/core/utils/format_utils.dart';
 
 /// Simple mock RouteInfo model (for testing only)
 class RouteInfo {
@@ -25,6 +22,10 @@ class ItineraryViewModel extends ChangeNotifier {
   //   2: "Motel Riverside",
   // };
   final ItineraryRepository _itineraryRepo;
+  final destinationController = TextEditingController();
+  final notesController = TextEditingController();
+
+  bool isEditingInitialized = false;
 
   ItineraryViewModel(this._itineraryRepo);
 
@@ -215,10 +216,59 @@ class ItineraryViewModel extends ChangeNotifier {
     // loadAllDayRoutes();
   }
 
+  void clearForm() {
+    destinationController.clear();
+    notesController.clear();
+    isEditingInitialized = false;
+    notifyListeners();
+  }
+
+  void populateFromItinerary(ItineraryData itinerary) {
+    destinationController.text = itinerary.place.name;
+    notesController.text = itinerary.userNotes;
+    isEditingInitialized = true;
+    notifyListeners();
+  }
+
   // /// Get formatted date label for each day (e.g. "Mon, 6 Oct")
   // String getDateLabelForDay(int day) {
   //   final startDate = DateTime(2025, 10, 6);
   //   final date = startDate.add(Duration(days: day - 1));
   //   return DateFormat('EEE, d MMM').format(date);
   // }
+
+  bool validateForm() => destinationController.text.trim().isNotEmpty;
+
+  // ----- Cleanup
+  // @override
+  // void dispose() {
+  //   destinationController.dispose();
+  //   notesController.dispose();
+  //   super.dispose();
+  // }
+
+  ItineraryData getNewItinerary() {
+    return ItineraryData(
+      id: "",
+      placeId: "cecec",
+      userNotes: notesController.text.trim(),
+      date: DateTime.now(),
+      sequence: 0,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  void updateItinerary(ItineraryData oldItinerary) {
+    final index = _itineraries.indexOf(oldItinerary);
+    if (index != -1) {
+      _itineraries[index] = getNewItinerary();
+      notifyListeners();
+    }
+  }
+
+  void addItinerary() {
+    final newItinerary = getNewItinerary();
+    _itineraries.add(newItinerary);
+    notifyListeners();
+  }
 }

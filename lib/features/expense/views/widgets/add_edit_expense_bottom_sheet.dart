@@ -136,7 +136,7 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
                     if (!vm.validateForm()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Please enter an expense name."),
+                          content: Text("Please fill in all required fileds."),
                         ),
                       );
                       return;

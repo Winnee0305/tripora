@@ -7,8 +7,7 @@ class ItineraryData {
   final DateTime date;
   final String userNotes;
   final int sequence;
-  final double? estimatedPrice;
-  final double? estimatedVisitTime;
+
   final DateTime? lastUpdated;
   late final Poi place;
 
@@ -19,8 +18,6 @@ class ItineraryData {
     required this.userNotes,
     required this.sequence,
     required this.lastUpdated,
-    this.estimatedPrice,
-    this.estimatedVisitTime,
   });
 
   // ----- Factory from Firestore -----
@@ -33,8 +30,6 @@ class ItineraryData {
       userNotes: data['userNotes'],
       sequence: int.tryParse(data['sequence'].toString()) ?? 0,
       lastUpdated: DateTime.parse(data['lastUpdated']),
-      estimatedPrice: data['estimatedPrice'],
-      estimatedVisitTime: data['estimatedVisitTime'],
     );
   }
 
@@ -44,8 +39,6 @@ class ItineraryData {
     'date': date.toIso8601String(),
     'userNotes': userNotes,
     'sequence': sequence.toString(),
-    'estimatedPrice': estimatedPrice,
-    'estimatedVisitTime': estimatedVisitTime,
     'lastUpdated': lastUpdated?.toIso8601String(),
   };
 
@@ -66,8 +59,6 @@ class ItineraryData {
       date: date ?? this.date,
       userNotes: userNotes ?? this.userNotes,
       sequence: sequence ?? this.sequence,
-      estimatedPrice: estimatedPrice ?? this.estimatedPrice,
-      estimatedVisitTime: estimatedVisitTime ?? this.estimatedVisitTime,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
@@ -77,5 +68,16 @@ class ItineraryData {
     // In a real implementation, you would fetch the data based on placeId
     place = Poi(id: placeId);
     place = await Poi.fromPlaceId(placeId);
+  }
+
+  factory ItineraryData.empty() {
+    return ItineraryData(
+      id: '',
+      placeId: '',
+      date: DateTime.now(),
+      userNotes: '',
+      sequence: 0,
+      lastUpdated: DateTime.now(),
+    );
   }
 }

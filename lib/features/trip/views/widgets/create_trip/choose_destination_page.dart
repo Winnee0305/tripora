@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/core/utils/constants.dart';
 import '../../../viewmodels/trip_viewmodel.dart';
 
 class ChooseDestinationPage extends StatefulWidget {
@@ -13,25 +14,6 @@ class ChooseDestinationPage extends StatefulWidget {
 
 class _ChooseDestinationPageState extends State<ChooseDestinationPage> {
   String? selectedDestination;
-
-  final destinations = [
-    {"name": "Selangor", "image": "selangor"},
-    {"name": "Kuala Lumpur", "image": "kl"},
-    {"name": "Penang", "image": "penang"},
-    {"name": "Sabah", "image": "sabah"},
-    {"name": "Sarawak", "image": "sarawak"},
-    {"name": "Melaka", "image": "melaka"},
-    {"name": "Pahang", "image": "pahang"},
-    {"name": "Kedah", "image": "kedah"},
-    {"name": "Johor", "image": "johor"},
-    {"name": "Perak", "image": "perak"},
-    {"name": "Terengganu", "image": "terengganu"},
-    {"name": "Kelantan", "image": "kelantan"},
-    {"name": "Negeri Sembilan", "image": "negeri_sembilan"},
-    {"name": "Putrajaya", "image": "putrajaya"},
-    {"name": "Labuan", "image": "labuan"},
-    {"name": "Perlis", "image": "perlis"},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +46,14 @@ class _ChooseDestinationPageState extends State<ChooseDestinationPage> {
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
                   ),
-                  itemCount: destinations.length,
+                  itemCount: destinationsImageCoordinates.length,
                   itemBuilder: (context, index) {
-                    final name = destinations[index]['name'];
-                    final image = destinations[index]['image'];
+                    final name =
+                        destinationsImageCoordinates[index]['destination']
+                            as String;
+                    final image =
+                        destinationsImageCoordinates[index]['imageName']
+                            as String;
                     final isSelected = selectedDestination == name;
 
                     return GestureDetector(
