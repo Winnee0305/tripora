@@ -6,6 +6,10 @@ String formatDateRange(DateTime start, DateTime end) {
   return "$startStr - $endStr";
 }
 
+String formatDateRangeWords(DateTime startDate, DateTime endDate) {
+  return '${DateFormat('d MMM yyyy').format(startDate)} - ${DateFormat('d MMM yyyy').format(endDate)}';
+}
+
 String getDayName(DateTime date) {
   return DateFormat('EEEE').format(date);
 }
@@ -24,6 +28,13 @@ final Map<int, String> dayMap = {
   5: "Friday",
   6: "Saturday",
 };
+
+String calculateTripDuration(DateTime startDate, DateTime endDate) {
+  final totalDays =
+      endDate.difference(startDate).inDays + 1; // include start day
+  final totalNights = totalDays - 1;
+  return '$totalDays Days, $totalNights Nights';
+}
 
 // Helper to format "HHMM" → "HH:MM"
 String formatTime(String time) {

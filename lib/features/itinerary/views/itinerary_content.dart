@@ -14,14 +14,14 @@ class ItineraryContent extends StatelessWidget {
       children: [
         MultiDayItineraryList(key: listKey, scrollController: scrollController),
         const SizedBox(height: 40),
-        Center(
-          child: AppButton.primary(
-            onPressed: () {},
-            text: "Add Activity",
-            icon: Icons.add,
-          ),
-        ),
-        const SizedBox(height: 60),
+        // Center(
+        //   child: AppButton.primary(
+        //     onPressed: () {},
+        //     text: "Add Activity",
+        //     icon: Icons.add,
+        //   ),
+        // ),
+        // const SizedBox(height: 60),
       ],
     );
   }

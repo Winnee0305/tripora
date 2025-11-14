@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
-import 'package:tripora/features/trip/models/trip_data.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart'
     show TripViewModel;
-import 'package:tripora/features/trip/views/trip_info_page.dart';
+import 'package:tripora/features/trip/views/trip_dashboard_page.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 
 class ContinueTripSection extends StatelessWidget {

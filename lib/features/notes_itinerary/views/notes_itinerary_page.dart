@@ -6,6 +6,7 @@ import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
+import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/map_screen.dart';
 import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
@@ -13,6 +14,7 @@ import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_ba
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/notes/views/notes_content.dart';
+import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class NotesItineraryPage extends StatelessWidget {
   NotesItineraryPage({super.key, required this.currentTab});
@@ -37,17 +39,7 @@ class NotesItineraryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final itineraryVm = context.watch<ItineraryPageViewModel>();
-
-    // return ChangeNotifierProvider(
-    //   create: (_) {
-    //     final vm = DaySelectionViewModel(
-    //       startDate: DateTime(2025, 10, 6),
-    //       endDate: DateTime(2025, 10, 12),
-    //     );
-    //     vm.selectDay(currentTab); // 👈 preselect the tab
-    //     return vm;
-    //   },
+    final tripVm = context.watch<TripViewModel>();
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -64,7 +56,7 @@ class NotesItineraryPage extends StatelessWidget {
           // ----- Draggable Sheet -----
           DraggableScrollableSheet(
             initialChildSize: 0.5,
-            minChildSize: 0.10,
+            minChildSize: 0.12,
             maxChildSize: 0.85,
             builder: (context, scrollController) {
               return Container(
@@ -109,23 +101,28 @@ class NotesItineraryPage extends StatelessWidget {
                           // ---------- Title ----------
                           SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 4,
+                              padding: const EdgeInsets.only(
+                                left: 30,
+                                right: 30,
+                                top: 4,
+                                bottom: 20,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Melaka 2 Days Family Trip",
+                                    tripVm.trip!.tripName,
                                     style: theme.textTheme.headlineMedium
-                                        ?.weight(ManropeFontWeight.semiBold),
+                                        ?.weight(ManropeFontWeight.bold),
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: 10),
                                   Row(
                                     children: [
                                       Text(
-                                        "6 - 12 October 2025",
+                                        formatDateRangeWords(
+                                          tripVm.trip!.startDate!,
+                                          tripVm.trip!.endDate!,
+                                        ),
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               color: theme.colorScheme.onSurface
@@ -133,20 +130,23 @@ class NotesItineraryPage extends StatelessWidget {
                                             ),
                                       ),
                                       const SizedBox(width: 10),
+                                      Icon(
+                                        CupertinoIcons.circle_fill,
+                                        size: 4,
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.6),
+                                      ),
+                                      const SizedBox(width: 10),
                                       Text(
-                                        "6 Days, 5 Nights",
+                                        calculateTripDuration(
+                                          tripVm.trip!.startDate!,
+                                          tripVm.trip!.endDate!,
+                                        ),
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               color: theme.colorScheme.onSurface
                                                   .withOpacity(0.6),
                                             ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(
-                                        CupertinoIcons.chevron_right,
-                                        size: 12,
-                                        color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
                                       ),
                                     ],
                                   ),

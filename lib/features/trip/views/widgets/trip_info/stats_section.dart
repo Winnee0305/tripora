@@ -11,6 +11,7 @@ import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
+import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -19,6 +20,7 @@ class StatsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final itineraryVm = context.watch<ItineraryPageViewModel>();
+    final tripVm = context.watch<TripViewModel>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
@@ -42,13 +44,14 @@ class StatsSection extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => MultiProvider(
                       providers: [
-                        // Reuse the existing ItineraryPageViewModel
+                        // Reuse the existing TripViewModel and ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: tripVm),
                         ChangeNotifierProvider.value(value: itineraryVm),
                         // DaySelectionViewModel specific to this page
                         ChangeNotifierProvider(
                           create: (_) => DaySelectionViewModel(
-                            startDate: DateTime(2025, 10, 6),
-                            endDate: DateTime(2025, 10, 12),
+                            startDate: tripVm.trip!.startDate!,
+                            endDate: tripVm.trip!.endDate!,
                           )..selectDay(0),
                         ),
                       ],
@@ -174,13 +177,14 @@ class StatsSection extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => MultiProvider(
                       providers: [
-                        // Reuse the existing ItineraryPageViewModel
+                        // Reuse the existing TripViewModel and ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: tripVm),
                         ChangeNotifierProvider.value(value: itineraryVm),
                         // DaySelectionViewModel specific to this page
                         ChangeNotifierProvider(
                           create: (_) => DaySelectionViewModel(
-                            startDate: DateTime(2025, 10, 6),
-                            endDate: DateTime(2025, 10, 12),
+                            startDate: tripVm.trip!.startDate!,
+                            endDate: tripVm.trip!.endDate!,
                           )..selectDay(1),
                         ),
                       ],

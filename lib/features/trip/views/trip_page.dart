@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_page_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 import 'package:provider/provider.dart';
-import 'trip_info_page.dart';
+import 'trip_dashboard_page.dart';
 import 'create_edit_trip_page.dart';
 
 class TripPage extends StatelessWidget {
