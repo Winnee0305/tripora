@@ -12,6 +12,8 @@ class PlaceDetailsService {
 
   Future<Map<String, dynamic>?> fetchPlaceDetails(String placeId) async {
     if (placeId.isEmpty) return null;
+    final cachedData = await _readRawPlaceJson(placeId);
+    if (cachedData != null) return cachedData;
 
     final fields =
         'name,geometry,formatted_address,formatted_phone_number,website,rating,opening_hours,photos,reviews,user_ratings_total,international_phone_number,types';
@@ -70,6 +72,11 @@ class PlaceDetailsService {
     int radius = 1000,
     String type = 'tourist_attraction',
   }) async {
+    final cacheFileName =
+        'nearby_${lat.toStringAsFixed(5)}_${lng.toStringAsFixed(5)}_${radius}_$type.json';
+    final cachedData = await _readNearbyCache(cacheFileName);
+    if (cachedData != null) return cachedData;
+
     final url =
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$radius&type=$type&key=$apiKey';
     try {
@@ -78,10 +85,7 @@ class PlaceDetailsService {
         final data = json.decode(response.body);
         final results = data['results'] ?? [];
 
-        // Take only the first 5 results (or fewer if not enough)
         final limitedResults = results.take(5).toList();
-
-        // Extract only the required fields
         final simplified = limitedResults.map<Map<String, String>>((item) {
           return {
             'place_id': (item['place_id'] ?? '').toString(),
@@ -89,25 +93,8 @@ class PlaceDetailsService {
           };
         }).toList();
 
-        if (kDebugMode) {
-          print('Fetched ${simplified.length} nearby attractions');
-
-          // Save JSON for debugging
-          final debugJson = jsonEncode({
-            'timestamp': DateTime.now().toIso8601String(),
-            'count': simplified.length,
-            'results': simplified,
-          });
-
-          try {
-            final dir = await getApplicationDocumentsDirectory();
-            final file = File('${dir.path}/nearby_places_debug.json');
-            await file.writeAsString(debugJson, mode: FileMode.write);
-            print('✅ Debug JSON saved at: ${file.path}');
-          } catch (e) {
-            print('⚠️ Failed to save debug JSON: $e');
-          }
-        }
+        // Save to local cache
+        await _saveNearbyCache(cacheFileName, simplified);
 
         return simplified;
       }
@@ -115,5 +102,63 @@ class PlaceDetailsService {
       if (kDebugMode) print("Nearby search error: $e");
     }
     return [];
+  }
+
+  Future<void> _saveNearbyCache(
+    String fileName,
+    List<Map<String, String>> data,
+  ) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsString(
+        jsonEncode({
+          'timestamp': DateTime.now().toIso8601String(),
+          'results': data,
+        }),
+      );
+      if (kDebugMode) print('✅ Nearby cache saved at: ${file.path}');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to save nearby cache: $e');
+    }
+  }
+
+  Future<List<Map<String, String>>?> _readNearbyCache(String fileName) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName');
+      if (await file.exists()) {
+        final raw = jsonDecode(await file.readAsString());
+
+        final List<dynamic> resultsDynamic = raw['results'] ?? [];
+        final List<Map<String, String>> results = resultsDynamic
+            .map<Map<String, String>>((item) {
+              return Map<String, String>.from(
+                item.map((key, value) => MapEntry(key, value.toString())),
+              );
+            })
+            .toList();
+
+        if (kDebugMode) print('✅ Loaded nearby cache: ${file.path}');
+        return results;
+      }
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to read nearby cache: $e');
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> _readRawPlaceJson(String placeId) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/raw_place_$placeId.json');
+      if (await file.exists()) {
+        final data = jsonDecode(await file.readAsString());
+        print('✅ Raw place JSON loaded from: ${file.path}');
+
+        return data['result'];
+      }
+    } catch (_) {}
+    return null;
   }
 }
