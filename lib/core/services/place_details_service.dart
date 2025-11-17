@@ -61,11 +61,6 @@ class PlaceDetailsService {
     }
   }
 
-  /// Helper to get photo URL
-  String getPhotoUrl(String photoReference, {int maxWidth = 400}) {
-    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=$maxWidth&photoreference=$photoReference&key=$apiKey';
-  }
-
   Future<List<Map<String, String>>> fetchNearbyAttractions(
     double lat,
     double lng, {

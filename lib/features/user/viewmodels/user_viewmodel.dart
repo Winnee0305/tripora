@@ -10,7 +10,7 @@ class UserViewModel extends ChangeNotifier {
   String? toastMessage;
 
   bool isLoading = false; // for full profile data
-  bool isImageLoading = false; // for image fetch/precache
+  bool isImageLoading = false; // for profile image only
 
   ImageProvider _profileImage = const AssetImage("assets/logo/tripora.JPG");
 
@@ -30,38 +30,11 @@ class UserViewModel extends ChangeNotifier {
     try {
       _user = await _userRepo.getUserProfile();
       debugPrint("✅ User loaded: ${_user?.firstname} ${_user?.lastname}");
-
-      // Start image loading separately
-      await _loadProfileImage(context);
     } catch (e) {
       debugPrint("❌ Failed to load user: $e");
     }
 
     isLoading = false;
-    notifyListeners();
-  }
-
-  /// Loads and precaches the profile image
-  Future<void> _loadProfileImage(BuildContext context) async {
-    final url = _user?.profileImageUrl;
-
-    isImageLoading = true;
-    notifyListeners();
-
-    try {
-      if (url != null && url.isNotEmpty) {
-        final networkImage = NetworkImage(url);
-        await precacheImage(networkImage, context);
-        _profileImage = networkImage;
-      } else {
-        _profileImage = const AssetImage("assets/logo/tripora.JPG");
-      }
-    } catch (e) {
-      debugPrint("❌ Failed to load profile image: $e");
-      _profileImage = const AssetImage("assets/logo/tripora.JPG");
-    }
-
-    isImageLoading = false;
     notifyListeners();
   }
 
@@ -92,8 +65,6 @@ class UserViewModel extends ChangeNotifier {
 
       if (downloadUrl != null) {
         _user = _user?.copyWith(profileImageUrl: downloadUrl);
-        _profileImage = NetworkImage(downloadUrl);
-        await precacheImage(_profileImage, context);
 
         toastMessage = "Profile picture updated!";
       }

@@ -26,7 +26,7 @@ class HeaderSection extends StatelessWidget {
               height: 300,
               width: double.infinity,
               child: AppLoadingNetworkImage(
-                imageUrl: vm.trip!.tripImageUrl ?? 'assets/logo/tripora.JPG',
+                imageUrl: vm.trip!.tripImageUrl ?? '',
                 radius: 14, // optional, controls the loading indicator size
               ),
             ),

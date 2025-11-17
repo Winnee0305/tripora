@@ -78,7 +78,7 @@ class _StatsSectionState extends State<StatsSection> {
                     ),
                   ),
                 );
-              }, // Dummy tap
+              },
               child: Container(
                 decoration: AppWidgetStyles.cardDecoration(
                   context,

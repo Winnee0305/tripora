@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,22 +24,32 @@ class HomeHeaderSection extends StatelessWidget {
         children: [
           // ----- Profile Picture
           GestureDetector(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircleAvatar(radius: 32, backgroundImage: userVm.profileImage),
+            // child: Stack(
+            //   alignment: Alignment.center,
+            //   children: [
+            //     CircleAvatar(radius: 32, backgroundImage: userVm.profileImage),
 
-                if (userVm.isImageLoading)
-                  const CircleAvatar(
-                    radius: 32,
-                    backgroundColor: Colors.white70,
-                    child: SizedBox(
-                      width: 28,
-                      height: 28,
-                      child: CupertinoActivityIndicator(radius: 14),
-                    ),
-                  ),
-              ],
+            //     if (userVm.isImageLoading)
+            //       const CircleAvatar(
+            //         radius: 32,
+            //         backgroundColor: Colors.white70,
+            //         child: SizedBox(
+            //           width: 28,
+            //           height: 28,
+            //           child: CupertinoActivityIndicator(radius: 14),
+            //         ),
+            //       ),
+            //   ],
+            // ),
+            child: ClipOval(
+              child: SizedBox(
+                width: 62,
+                height: 62,
+                child: AppLoadingNetworkImage(
+                  imageUrl: userVm.user!.profileImageUrl ?? "",
+                  radius: 32,
+                ),
+              ),
             ),
             onTap: () {
               final vm = context.read<UserViewModel>();

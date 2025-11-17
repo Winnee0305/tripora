@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_change_picture_sheet.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/reusable_widgets/app_toast.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -46,9 +47,15 @@ class ProfileSection extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 54,
-                    backgroundImage: userVm.profileImage,
+                  ClipOval(
+                    child: SizedBox(
+                      width: 108,
+                      height: 108,
+                      child: AppLoadingNetworkImage(
+                        imageUrl: userVm.user!.profileImageUrl ?? "",
+                        radius: 14,
+                      ),
+                    ),
                   ),
 
                   if (userVm.isImageLoading)

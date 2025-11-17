@@ -10,8 +10,6 @@ class TripDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itineraryVm = context.watch<ItineraryViewModel>();
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
