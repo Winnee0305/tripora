@@ -71,46 +71,6 @@ class ItineraryCard extends StatelessWidget {
                     fontWeight: ManropeFontWeight.light,
                   ),
                 ),
-
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.start,
-                //   children: [
-                //     if (itinerary.estimatedPrice != null) ...[
-                //       const SizedBox(height: 8),
-                //       Row(
-                //         children: [
-                //           Icon(
-                //             CupertinoIcons.money_dollar,
-                //             color: theme.colorScheme.onSurface,
-                //             size: 16,
-                //           ),
-                //           const SizedBox(width: 4),
-                //           Text(
-                //             itinerary.estimatedPrice.toString(),
-                //             style: theme.textTheme.bodyMedium,
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //     const SizedBox(width: 22),
-                //     if (itinerary.estimatedVisitTime != null) ...[
-                //       Row(
-                //         children: [
-                //           Icon(
-                //             CupertinoIcons.clock,
-                //             color: theme.colorScheme.onSurface,
-                //             size: 16,
-                //           ),
-                //           const SizedBox(width: 4),
-                //           Text(
-                //             itinerary.estimatedVisitTime.toString(),
-                //             style: theme.textTheme.bodyMedium,
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //   ],
-                // ),
               ],
             ),
           ),

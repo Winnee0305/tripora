@@ -30,7 +30,7 @@ class _StatsSectionState extends State<StatsSection> {
       final tripVm = context.read<TripViewModel>();
       if (tripVm.trip != null) {
         itineraryVm.setTrip(tripVm.trip!);
-        itineraryVm.loadItineraries();
+        itineraryVm.initialise();
       }
     });
   }

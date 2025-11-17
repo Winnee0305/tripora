@@ -84,6 +84,11 @@ class ItineraryViewModel extends ChangeNotifier {
         a.lastUpdated == b.lastUpdated;
   }
 
+  Future<void> initialise() async {
+    await loadItineraries();
+    listToMap(itineraries, trip!.startDate!, trip!.endDate!);
+  }
+
   Future<void> loadItineraries() async {
     _isLoading = true;
     _error = null;
@@ -99,7 +104,6 @@ class ItineraryViewModel extends ChangeNotifier {
       _error = 'Failed to load trips: $e';
     }
 
-    listToMap(itineraries, trip!.startDate!, trip!.endDate!);
     _isLoading = false;
     notifyListeners();
   }
@@ -214,13 +218,6 @@ class ItineraryViewModel extends ChangeNotifier {
     isEditingInitialized = true;
     notifyListeners();
   }
-
-  // /// Get formatted date label for each day (e.g. "Mon, 6 Oct")
-  // String getDateLabelForDay(int day) {
-  //   final startDate = DateTime(2025, 10, 6);
-  //   final date = startDate.add(Duration(days: day - 1));
-  //   return DateFormat('EEE, d MMM').format(date);
-  // }
 
   bool validateForm() => destinationController.text.trim().isNotEmpty;
 
@@ -363,12 +360,12 @@ class ItineraryViewModel extends ChangeNotifier {
       }
 
       _isUploading = false;
+      await loadItineraries();
       notifyListeners();
     } catch (e) {
       _error = "Sync failed: $e";
       _isUploading = false;
       notifyListeners();
     }
-    loadItineraries();
   }
 }
