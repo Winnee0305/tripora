@@ -16,7 +16,10 @@ class AppTextField extends StatefulWidget {
   final bool isCurrency;
   final bool autofocus;
   final TextEditingController? controller;
-  final TextInputType keyboardType;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final int? minLines;
+  final int? maxLines;
   final InputDecoration? decoration;
 
   /// ---- Validation + Feedback ----
@@ -37,7 +40,10 @@ class AppTextField extends StatefulWidget {
     this.isCurrency = false,
     this.autofocus = false,
     this.controller,
-    this.keyboardType = TextInputType.text,
+    this.keyboardType,
+    this.textInputAction,
+    this.minLines,
+    this.maxLines,
     this.isValid,
     this.helperText,
     this.decoration,
@@ -60,7 +66,6 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   void didUpdateWidget(covariant AppTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update controller text only if the parent text changed
     if (widget.text != oldWidget.text && widget.text != _controller.text) {
       _controller.text = widget.text ?? '';
     }
@@ -69,7 +74,6 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   void dispose() {
     if (widget.controller == null) {
-      // Only dispose the controller if it was created internally
       _controller.dispose();
     }
     super.dispose();
@@ -82,13 +86,12 @@ class _AppTextFieldState extends State<AppTextField> {
     // ---- Determine suffix icon ----
     Widget? suffix;
     if (widget.chooseButton) {
-      // “Choose” button mode
       suffix = Padding(
         padding: const EdgeInsets.only(right: 6),
         child: ElevatedButton(
           onPressed: widget.onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.6),
+            backgroundColor: theme.colorScheme.primary.withOpacity(0.6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -140,6 +143,15 @@ class _AppTextFieldState extends State<AppTextField> {
       );
     }
 
+    // Determine keyboardType and textInputAction for multiline
+    final bool isMultiline = widget.maxLines != null && widget.maxLines! > 1;
+    final keyboardType =
+        widget.keyboardType ??
+        (isMultiline ? TextInputType.multiline : TextInputType.text);
+    final textInputAction =
+        widget.textInputAction ??
+        (isMultiline ? TextInputAction.newline : TextInputAction.done);
+
     return TextField(
       controller: _controller,
       readOnly: widget.readOnly,
@@ -147,9 +159,13 @@ class _AppTextFieldState extends State<AppTextField> {
       onChanged: widget.onChanged,
       obscureText: widget.obscureText,
       style: theme.textTheme.bodyLarge,
+      autofocus: widget.autofocus,
       keyboardType: widget.isNumber
           ? const TextInputType.numberWithOptions(decimal: true)
-          : widget.keyboardType,
+          : keyboardType,
+      textInputAction: textInputAction,
+      minLines: widget.minLines,
+      maxLines: widget.maxLines ?? 1,
       inputFormatters: widget.isNumber
           ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))]
           : null,
@@ -165,7 +181,7 @@ class _AppTextFieldState extends State<AppTextField> {
               minHeight: 50,
             ),
             filled: true,
-            fillColor: theme.colorScheme.primary.withValues(alpha: 0.05),
+            fillColor: theme.colorScheme.primary.withOpacity(0.05),
             prefixIcon: widget.icon != null
                 ? Icon(widget.icon, color: theme.colorScheme.primary, size: 20)
                 : null,

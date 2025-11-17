@@ -172,7 +172,9 @@ flutter:
     - assets/images/travel_partner/business.png
     - assets/images/travel_partner/group_tour.png
     - assets/logo/tripora.JPG
-    
+    - assets/icons/cloud_check.png
+    - assets/icons/cloud_sync.gif
+    - assets/icons/cloud_upload.png
 
 
 

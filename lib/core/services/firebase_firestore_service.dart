@@ -106,7 +106,9 @@ class FirestoreService {
     ItineraryData itinerary,
     String tripId,
   ) async {
-    final itineraryId = itinerary.placeId.isNotEmpty == true
+    print('Adding itinerary for tripId: $tripId');
+    // Use existing id if present, otherwise generate a new one
+    final itineraryId = (itinerary.id.isNotEmpty)
         ? itinerary.id
         : usersCollection
               .doc(uid)
@@ -122,7 +124,10 @@ class FirestoreService {
         .doc(tripId)
         .collection('itineraries')
         .doc(itineraryId)
-        .set(itinerary.copyWith(id: itineraryId).toMap());
+        .set(
+          itinerary.copyWith(id: itineraryId).toMap(),
+          SetOptions(merge: true),
+        );
   }
 
   Future<List<ItineraryData>> getItineraries(String uid, String tripId) async {
@@ -155,6 +160,21 @@ class FirestoreService {
     } catch (e) {
       print('Failed to delete itinerary: $e');
     }
+  }
+
+  Future<void> updateItinerary(
+    String uid,
+    ItineraryData itinerary,
+    String tripId,
+  ) async {
+    // Update the itinerary document in Firestore
+    await usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('itineraries')
+        .doc(itinerary.id)
+        .update(itinerary.toMap());
   }
 
   // Future<void> updateTrip(String uid, TripData trip) async {

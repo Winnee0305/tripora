@@ -98,7 +98,11 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         oldIndex,
                         newIndex,
                       ) => // to implement reordering when within same day
-                          vm.reorderWithinDay(day, oldIndex, newIndex),
+                      context.read<ItineraryViewModel>().reorderWithinDay(
+                        day,
+                        oldIndex,
+                        newIndex,
+                      ),
                   itemBuilder: (context, index) {
                     final item = items[index];
                     // Each item is both draggable and a drop target
@@ -128,11 +132,16 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                             Stack(
                               children: [
                                 // The itinerary item card
-                                ItineraryItem(
-                                  itinerary: item,
-                                  isFirst: index == 0,
-                                  isLast: index == items.length - 1,
-                                  index: index,
+                                GestureDetector(
+                                  child: ItineraryItem(
+                                    itinerary: item,
+                                    isFirst: index == 0,
+                                    isLast: index == items.length - 1,
+                                    index: index,
+                                  ),
+                                  onTap: () {
+                                    _openEditItinerarySheet(context, item);
+                                  },
                                 ),
                                 // The drag handle
                                 Positioned(
@@ -190,6 +199,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         return details.data.fromDay != day;
                       },
                       onAcceptWithDetails: (details) {
+                        if (!mounted) return; // <-- add this line
                         final dragged = details.data;
                         vm.moveItemBetweenDays(
                           dragged.fromDay,

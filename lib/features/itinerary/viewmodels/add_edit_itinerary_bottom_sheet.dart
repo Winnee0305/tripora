@@ -98,7 +98,15 @@ class _AddEditItineraryBottomSheetState
               const SizedBox(height: 20),
 
               // Notes
-              AppTextField(label: "Notes", controller: vm.notesController),
+              // Notes
+              AppTextField(
+                label: "Notes",
+                controller: vm.notesController,
+                maxLines: 5, // allow the field to grow up to 5 lines
+                minLines: 3, // start with 3 lines height
+                textInputAction:
+                    TextInputAction.newline, // optional, allows Enter key
+              ),
               const SizedBox(height: 30),
 
               // Submit button

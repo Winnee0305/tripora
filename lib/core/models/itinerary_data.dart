@@ -7,8 +7,7 @@ class ItineraryData {
   final DateTime date;
   final String userNotes;
   final int sequence;
-
-  final DateTime? lastUpdated;
+  final DateTime lastUpdated;
   Poi? place;
 
   ItineraryData({
@@ -18,6 +17,7 @@ class ItineraryData {
     required this.userNotes,
     required this.sequence,
     required this.lastUpdated,
+    this.place,
   });
 
   // ----- Factory from Firestore -----
@@ -52,6 +52,7 @@ class ItineraryData {
     double? estimatedPrice,
     double? estimatedVisitTime,
     DateTime? lastUpdated,
+    Poi? place,
   }) {
     return ItineraryData(
       id: id ?? this.id,
@@ -59,7 +60,8 @@ class ItineraryData {
       date: date ?? this.date,
       userNotes: userNotes ?? this.userNotes,
       sequence: sequence ?? this.sequence,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
+      lastUpdated: DateTime.now(),
+      place: place ?? this.place,
     );
   }
 

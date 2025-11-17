@@ -8,14 +8,15 @@ enum BackgroundVariant {
   secondaryFilled,
   secondaryTrans,
   danger,
-} // -- define the variants of background
+}
 
-enum TextStyleVariant { small, medium, large } // -- define text style variants
+enum TextStyleVariant { small, medium, large }
 
 class AppButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String text;
-  final IconData? icon;
+  final IconData? icon; // original icon
+  final Widget? iconWidget; // new widget-based icon
   final double? minWidth;
   final double? minHeight;
   final List<BoxShadow>? boxShadow;
@@ -36,6 +37,7 @@ class AppButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.icon,
+    this.iconWidget,
     this.minWidth,
     this.minHeight,
     this.iconSize,
@@ -52,12 +54,12 @@ class AppButton extends StatelessWidget {
     this.mainAxisAlignment,
   });
 
-  /// 🔹 Factory constructors for common button styles
+  /// --- Factory constructors ---
   factory AppButton.primary({
-    // -- main button style
     Key? key,
     required String text,
     IconData? icon,
+    Widget? iconWidget,
     bool iconPosition = true,
     VoidCallback? onPressed,
     double? radius,
@@ -74,6 +76,7 @@ class AppButton extends StatelessWidget {
       key: key,
       text: text,
       icon: icon,
+      iconWidget: iconWidget,
       iconPosition: iconPosition,
       onPressed: onPressed,
       radius: radius ?? 24,
@@ -90,7 +93,8 @@ class AppButton extends StatelessWidget {
 
   factory AppButton.iconOnly({
     Key? key,
-    required IconData icon,
+    IconData? icon,
+    Widget? iconWidget,
     double? iconSize,
     VoidCallback? onPressed,
     BackgroundVariant? backgroundVariant,
@@ -105,6 +109,7 @@ class AppButton extends StatelessWidget {
       key: key,
       text: "",
       icon: icon,
+      iconWidget: iconWidget,
       iconSize: iconSize ?? 24,
       backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       onPressed: onPressed,
@@ -153,6 +158,7 @@ class AppButton extends StatelessWidget {
   factory AppButton.iconTextSmall({
     Key? key,
     required IconData icon,
+    Widget? iconWidget,
     required String text,
     double? iconSize,
     VoidCallback? onPressed,
@@ -168,6 +174,7 @@ class AppButton extends StatelessWidget {
       key: key,
       text: text,
       icon: icon,
+      iconWidget: iconWidget,
       iconSize: iconSize ?? 24,
       backgroundVariant: backgroundVariant ?? BackgroundVariant.primaryFilled,
       textStyleVariant: TextStyleVariant.small,
@@ -187,13 +194,14 @@ class AppButton extends StatelessWidget {
     final shadowTheme = Theme.of(context).extension<ShadowTheme>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    // 🎨 Define styles by variant
     final Color backgroundColor;
     final Color textColor;
     final TextStyle textStyle;
 
-    final bool isSingleElement = text.isEmpty || icon == null;
+    final bool isSingleElement =
+        text.isEmpty || (icon == null && iconWidget == null);
 
+    // --- Background color ---
     switch (backgroundVariant) {
       case BackgroundVariant.primaryFilled:
         backgroundColor = backgroundColorOverride ?? colorScheme.primary;
@@ -201,8 +209,7 @@ class AppButton extends StatelessWidget {
         break;
       case BackgroundVariant.primaryTrans:
         backgroundColor =
-            backgroundColorOverride ??
-            colorScheme.primary.withValues(alpha: 0.2);
+            backgroundColorOverride ?? colorScheme.primary.withOpacity(0.2);
         textColor = textColorOverride ?? colorScheme.primary;
         break;
       case BackgroundVariant.secondaryFilled:
@@ -211,15 +218,16 @@ class AppButton extends StatelessWidget {
         break;
       case BackgroundVariant.secondaryTrans:
         backgroundColor =
-            backgroundColorOverride ??
-            colorScheme.surface.withValues(alpha: 0.7);
+            backgroundColorOverride ?? colorScheme.surface.withOpacity(0.7);
         textColor = textColorOverride ?? colorScheme.secondary;
+        break;
       case BackgroundVariant.danger:
         backgroundColor = backgroundColorOverride ?? Colors.red;
         textColor = textColorOverride ?? Colors.white;
         break;
     }
 
+    // --- Text style ---
     switch (textStyleVariant) {
       case TextStyleVariant.small:
         textStyle =
@@ -254,7 +262,6 @@ class AppButton extends StatelessWidget {
                   backgroundVariant == BackgroundVariant.secondaryTrans)
               ? []
               : (boxShadow ?? shadowTheme?.buttonShadows ?? []),
-
           borderRadius: BorderRadius.circular(radius ?? 12),
         ),
         child: ElevatedButton(
@@ -264,7 +271,8 @@ class AppButton extends StatelessWidget {
             foregroundColor: textColor,
             minimumSize: Size(minWidth ?? 0, minHeight ?? 42),
             padding:
-                padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding ??
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius ?? 12),
             ),
@@ -272,14 +280,15 @@ class AppButton extends StatelessWidget {
             elevation: 0,
           ),
           child: isSingleElement
-              ? (icon != null
-                    ? Icon(icon, size: iconSize ?? 20, color: textColor)
-                    : Text(
-                        text,
-                        style: textStyle.copyWith(color: textColor),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ))
+              ? (iconWidget ??
+                    (icon != null
+                        ? Icon(icon, size: iconSize ?? 20, color: textColor)
+                        : Text(
+                            text,
+                            style: textStyle.copyWith(color: textColor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )))
               : Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment:
@@ -292,16 +301,26 @@ class AppButton extends StatelessWidget {
   }
 
   List<Widget> _buildContent(Color textColor, TextStyle textStyle) {
-    final content = <Widget>[
-      if (icon != null) Icon(icon, size: iconSize ?? 16, color: textColor),
-      if (icon != null) const SizedBox(width: 6),
+    final content = <Widget>[];
+
+    if (iconWidget != null) {
+      content.add(iconWidget!);
+    } else if (icon != null) {
+      content.add(Icon(icon, size: iconSize ?? 16, color: textColor));
+    }
+
+    if (icon != null || iconWidget != null)
+      content.add(const SizedBox(width: 6));
+
+    content.add(
       Text(
         text,
         style: textStyle.copyWith(color: textColor),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-    ];
+    );
+
     return iconPosition ? content : content.reversed.toList();
   }
 }

@@ -42,6 +42,47 @@ class ItineraryViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isUploading => _isUploading;
   String? get error => _error;
+  bool get isSync => checkIsSync();
+
+  bool checkIsSync() {
+    if (itinerariesMap.length != getTotalDays()) return false;
+
+    for (final day in itinerariesMap.keys) {
+      final localList = itinerariesMap[day]!;
+
+      // Filter remote list for items on this day
+      final remoteList = itineraries
+          .where((it) => getDayNumber(it.date, trip!.startDate!) == day)
+          .toList();
+
+      if (localList.length != remoteList.length) return false;
+
+      // Sort both lists by sequence so that mapping to mapToList is consistent
+      final sortedLocal = List<ItineraryData>.from(localList)
+        ..sort((a, b) => a.sequence.compareTo(b.sequence));
+      final sortedRemote = List<ItineraryData>.from(remoteList)
+        ..sort((a, b) => a.sequence.compareTo(b.sequence));
+
+      for (int i = 0; i < sortedLocal.length; i++) {
+        if (!areItinerariesEqual(sortedLocal[i], sortedRemote[i])) return false;
+      }
+    }
+
+    return true;
+  }
+
+  int getTotalDays() {
+    return trip!.endDate!.difference(trip!.startDate!).inDays + 1;
+  }
+
+  bool areItinerariesEqual(ItineraryData a, ItineraryData b) {
+    return a.id == b.id &&
+        a.placeId == b.placeId &&
+        a.userNotes == b.userNotes &&
+        a.date == b.date &&
+        a.sequence == b.sequence &&
+        a.lastUpdated == b.lastUpdated;
+  }
 
   Future<void> loadItineraries() async {
     _isLoading = true;
@@ -50,6 +91,10 @@ class ItineraryViewModel extends ChangeNotifier {
 
     try {
       itineraries = await _itineraryRepo.getItineraries(trip!.tripId);
+      print('Itineraries loaded: ${itineraries.length} items');
+      for (var itinerary in itineraries) {
+        itinerary.loadPlaceDetails();
+      }
     } catch (e) {
       _error = 'Failed to load trips: $e';
     }
@@ -86,9 +131,9 @@ class ItineraryViewModel extends ChangeNotifier {
       }
     }
 
-    // 3. Sort each day's items by date/time
+    // 3. Sort each day's items by sequence
     for (final day in dailyMap.keys) {
-      dailyMap[day]!.sort((a, b) => a.date.compareTo(b.date));
+      dailyMap[day]!.sort((a, b) => a.sequence.compareTo(b.sequence));
     }
 
     itinerariesMap = dailyMap;
@@ -112,93 +157,24 @@ class ItineraryViewModel extends ChangeNotifier {
     return flatList;
   }
 
-  // final Map<int, List<ItineraryData>> _dailyItineraries = {
-  //   1: [
-  //     ItineraryData(
-  //       destination: "Sunway University",
-  //       tags: ["University", "Education"],
-  //       image: "assets/images/itinerary/sunway_university.png",
-  //       estimatedDuration: "2-3 hrs",
-  //       estimatedCost: "Free",
-  //       travelStyle: TravelStyle.driving,
-  //     ),
-  //     Itinerary(
-  //       destination: "Stadthuys",
-  //       tags: ["Museum", "Historical Site"],
-  //       image: "assets/images/itinerary/stadthuys.png",
-  //       estimatedDuration: "1 hr",
-  //       estimatedCost: "Free",
-  //       travelStyle: TravelStyle.driving,
-  //     ),
-  //     Itinerary(
-  //       destination: "Peranakan Place @ Jonker Street Melaka",
-  //       tags: ["Restaurant", "Local Cuisine"],
-  //       image: "assets/images/itinerary/peranakan_place.png",
-  //       estimatedDuration: "1-2 hrs",
-  //       estimatedCost: "RM20-50",
-  //       travelStyle: TravelStyle.driving,
-  //     ),
-  //   ],
-  //   2: [
-  //     Itinerary(
-  //       destination: "Tan Kim Hock @ Jonker Walk",
-  //       tags: ["Souvenir", "Local Delights"],
-  //       image: "assets/images/itinerary/tan_kim_hock.png",
-  //       estimatedDuration: "20 mins",
-  //       estimatedCost: "RM20-40",
-  //       travelStyle: TravelStyle.driving,
-  //     ),
-  //     Itinerary(
-  //       destination: "Mamee Jonker House",
-  //       tags: ["Attraction", "Family Fun"],
-  //       image: "assets/images/itinerary/mamee.png",
-  //       estimatedDuration: "10 mins",
-  //       estimatedCost: "Free",
-  //       travelStyle: TravelStyle.driving,
-  //     ),
-  //   ],
-  // };
-
-  // Map<int, List<Itinerary>> get dailyItineraries => _dailyItineraries;
-
-  // String? getWeatherForDay(int day) => _dailyWeather[day];
-  // String? getLodgingForDay(int day) => _dailyLodging[day];
-
-  // final Map<int, RouteInfo> _routeInfoMap = {};
-  // Map<int, RouteInfo> get routeInfoMap => _routeInfoMap;
-
-  // /// Mocked route info loader
-  // Future<void> loadAllDayRoutes() async {
-  //   _routeInfoMap.clear();
-
-  //   // Just simulate network delay
-  //   await Future.delayed(const Duration(milliseconds: 200));
-
-  //   int routeIndex = 0;
-  //   for (final entry in _dailyItineraries.entries) {
-  //     final items = entry.value;
-  //     for (int i = 0; i < items.length - 1; i++) {
-  //       // Mocked route data (could randomize)
-  //       _routeInfoMap[routeIndex++] = RouteInfo(
-  //         distance: "${(i + 1) * 3.2} km",
-  //         duration: "${(i + 1) * 12} mins",
-  //       );
-  //     }
-  //   }
-
-  //   notifyListeners();
-  // }
-
-  /// Reorder within the same day
   void reorderWithinDay(int day, int oldIndex, int newIndex) {
-    final list = itineraries;
+    final dayList = List<ItineraryData>.from(itinerariesMap[day]!);
+
     if (newIndex > oldIndex) newIndex -= 1;
 
-    final item = list.removeAt(oldIndex);
-    list.insert(newIndex, item);
+    final item = dayList.removeAt(oldIndex);
+    dayList.insert(newIndex, item);
 
+    // Recompute sequence numbers for all items in the day
+    for (int i = 0; i < dayList.length; i++) {
+      dayList[i] = dayList[i].copyWith(
+        sequence: i,
+        lastUpdated: DateTime.now(),
+      );
+    }
+
+    itinerariesMap = {...itinerariesMap, day: dayList};
     notifyListeners();
-    // loadAllDayRoutes();
   }
 
   /// Move itinerary item between different days
@@ -208,11 +184,21 @@ class ItineraryViewModel extends ChangeNotifier {
     ItineraryData itinerary,
     int newIndex,
   ) {
-    // itineraries?.remove(itinerary);
-    // itineraries[fromDay]?.remove(itinerary);
-    // itineraries[toDay]?.insert(newIndex, itinerary);
+    if (fromDay == toDay) return; // already handled by reorderWithinDay
+
+    final fromList = List<ItineraryData>.from(itinerariesMap[fromDay]!);
+    final toList = List<ItineraryData>.from(itinerariesMap[toDay]!);
+
+    fromList.remove(itinerary);
+
+    // Make sure newIndex is valid
+    final insertIndex = newIndex.clamp(0, toList.length);
+    toList.insert(insertIndex, itinerary);
+
+    // Update map immutably to trigger rebuild
+    itinerariesMap = {...itinerariesMap, fromDay: fromList, toDay: toList};
+
     notifyListeners();
-    // loadAllDayRoutes();
   }
 
   void clearForm() {
@@ -238,26 +224,51 @@ class ItineraryViewModel extends ChangeNotifier {
 
   bool validateForm() => destinationController.text.trim().isNotEmpty;
 
-  Future<ItineraryData> getNewItinerary(ItineraryData draftItinerary) async {
-    print('Creating new itinerary with placeId: ${selectedPlaceId ?? ""}');
-    final updatedItinerary = ItineraryData(
-      id: "",
-      placeId: selectedPlaceId ?? "",
+  Future<ItineraryData> getNewItinerary(ItineraryData oldItinerary) async {
+    // Copy existing itinerary
+    final updatedItinerary = oldItinerary.copyWith(
+      placeId: selectedPlaceId ?? oldItinerary.placeId,
       userNotes: notesController.text.trim(),
-      date: draftItinerary.date,
-      sequence: draftItinerary.sequence,
       lastUpdated: DateTime.now(),
     );
-    await updatedItinerary.loadPlaceDetails();
+
+    // Optionally reload place details if placeId changed
+    if (updatedItinerary.placeId != oldItinerary.placeId) {
+      await updatedItinerary.loadPlaceDetails();
+    }
+
     return updatedItinerary;
   }
 
   void updateItinerary(ItineraryData oldItinerary) async {
-    final index = itineraries.indexOf(oldItinerary);
-    if (index != -1) {
-      itineraries[index] = await getNewItinerary(oldItinerary); // TODO
-      notifyListeners();
+    // Find the day entry that contains the old itinerary
+    MapEntry<int, List<ItineraryData>>? dayEntry;
+
+    for (final entry in itinerariesMap.entries) {
+      if (entry.value.contains(oldItinerary)) {
+        dayEntry = entry;
+        break;
+      }
     }
+
+    if (dayEntry == null) return; // Not found, nothing to update
+
+    final day = dayEntry.key;
+    final index = dayEntry.value.indexOf(oldItinerary);
+
+    if (index == -1) return;
+
+    // Fetch or generate the updated itinerary
+    final newItinerary = await getNewItinerary(
+      oldItinerary,
+    ); // your async update
+
+    // Replace the old itinerary in the map
+    final updatedList = List<ItineraryData>.from(dayEntry.value);
+    updatedList[index] = newItinerary;
+    itinerariesMap[day] = updatedList;
+
+    notifyListeners();
   }
 
   void addItinerary(ItineraryData draftItinerary) async {
@@ -287,5 +298,77 @@ class ItineraryViewModel extends ChangeNotifier {
     itinerariesMap = {...itinerariesMap, day: updatedDayList};
 
     notifyListeners(); // now the UI will rebuild
+  }
+
+  Future<void> syncItineraries() async {
+    if (trip == null) return;
+
+    try {
+      print('Starting sync of itineraries...');
+      _isUploading = true;
+      print("isUploading: $isUploading");
+      notifyListeners();
+      // <-- artificial delay so the uploading icon is visible
+      await Future.delayed(const Duration(seconds: 3));
+
+      final remoteList = itineraries; // The one fetched from DB
+      final localList = mapByDayToList(itinerariesMap); // The one user edited
+
+      // Convert to easy lookup maps
+      final remoteMap = {for (var it in remoteList) it.id: it};
+      final localMap = {for (var it in localList) it.id: it};
+
+      // --- Step 2: detect NEW & UPDATED items ---
+      final List<ItineraryData> toCreate = [];
+      final List<ItineraryData> toUpdate = [];
+
+      for (final local in localList) {
+        if (local.id.isEmpty) {
+          // New item (no id yet)
+          toCreate.add(local);
+        } else if (remoteMap.containsKey(local.id)) {
+          final remote = remoteMap[local.id]!;
+
+          // Compare lastUpdated timestamps
+          if (local.lastUpdated.isAfter(remote.lastUpdated)) {
+            toUpdate.add(local);
+          }
+        }
+      }
+
+      // --- Step 3: detect DELETED items ---
+      final List<String> toDelete = [];
+
+      for (final remote in remoteList) {
+        if (!localMap.containsKey(remote.id)) {
+          toDelete.add(remote.id);
+        }
+      }
+
+      print("Items to create: ${toCreate.toString()}");
+      print("Items to update: ${toUpdate.toString()}");
+      print("Items to delete: ${toDelete.toString()}");
+
+      // --- Step 4: push changes to DB ---
+      for (final item in toCreate) {
+        await _itineraryRepo.createItinerary(item, trip!.tripId);
+      }
+
+      for (final item in toUpdate) {
+        await _itineraryRepo.updateItinerary(item, trip!.tripId);
+      }
+
+      for (final id in toDelete) {
+        await _itineraryRepo.deleteItinerary(trip!.tripId, id);
+      }
+
+      _isUploading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = "Sync failed: $e";
+      _isUploading = false;
+      notifyListeners();
+    }
+    loadItineraries();
   }
 }
