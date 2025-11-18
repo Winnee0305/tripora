@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
+import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart';
+import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart'
     show TripViewModel;
 import 'package:tripora/features/trip/views/trip_dashboard_page.dart';
@@ -16,6 +18,8 @@ class ContinueTripSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final tripVm = context.watch<TripViewModel>();
     final itineraryVm = context.watch<ItineraryViewModel>();
+    final expenseVm = context.watch<ExpenseViewModel>();
+    final packingVm = context.watch<PackingViewModel>();
 
     final hasTrips = tripVm.trips.isNotEmpty;
     final firstTrip = hasTrips ? tripVm.trips.first : null;
@@ -71,6 +75,8 @@ class ContinueTripSection extends StatelessWidget {
                           providers: [
                             ChangeNotifierProvider.value(value: tripVm),
                             ChangeNotifierProvider.value(value: itineraryVm),
+                            ChangeNotifierProvider.value(value: expenseVm),
+                            ChangeNotifierProvider.value(value: packingVm),
                           ],
                           child: const TripDashboardPage(),
                         ),

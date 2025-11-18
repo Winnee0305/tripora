@@ -8,7 +8,7 @@ import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/expense/views/expense_page.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
-import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
+import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
@@ -28,9 +28,15 @@ class _StatsSectionState extends State<StatsSection> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final itineraryVm = context.read<ItineraryViewModel>();
       final tripVm = context.read<TripViewModel>();
+      final expenseVm = context.read<ExpenseViewModel>();
+      final packingVm = context.read<PackingViewModel>();
       if (tripVm.trip != null) {
         itineraryVm.setTrip(tripVm.trip!);
         itineraryVm.initialise();
+        expenseVm.setTrip(tripVm.trip!);
+        expenseVm.initialise();
+        packingVm.setTrip(tripVm.trip!);
+        packingVm.initialise();
       }
     });
   }
@@ -40,6 +46,8 @@ class _StatsSectionState extends State<StatsSection> {
     final theme = Theme.of(context);
     final itineraryVm = context.watch<ItineraryViewModel>();
     final tripVm = context.watch<TripViewModel>();
+    final expenseVm = context.watch<ExpenseViewModel>();
+    final packingVm = context.watch<PackingViewModel>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
@@ -125,11 +133,12 @@ class _StatsSectionState extends State<StatsSection> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                      create: (context) => ExpenseViewModel(
-                        tripStartDate: DateTime(2025, 8, 13),
-                        tripEndDate: DateTime(2025, 8, 14),
-                      ),
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        // Reuse the existing TripViewModel and ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: tripVm),
+                        ChangeNotifierProvider.value(value: expenseVm),
+                      ],
                       child: ExpensePage(),
                     ),
                   ),
@@ -238,7 +247,7 @@ class _StatsSectionState extends State<StatsSection> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "9 Activities",
+                      "${itineraryVm.itineraries.length} Activities",
                       style: theme.textTheme.headlineSmall!.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: ManropeFontWeight.semiBold,
@@ -256,9 +265,13 @@ class _StatsSectionState extends State<StatsSection> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                      create: (context) => PackingPageViewModel(),
-                      child: const PackingPage(),
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        // Reuse the existing TripViewModel and ItineraryPageViewModel
+                        ChangeNotifierProvider.value(value: tripVm),
+                        ChangeNotifierProvider.value(value: packingVm),
+                      ],
+                      child: PackingPage(),
                     ),
                   ),
                 );

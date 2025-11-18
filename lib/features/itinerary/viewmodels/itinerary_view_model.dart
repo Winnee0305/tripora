@@ -7,7 +7,6 @@ import 'package:tripora/core/repositories/itinerary_repository.dart';
 class RouteInfo {
   final String distance;
   final String duration;
-  // final Map<int, GlobalKey> dayKeys = {};
   final ScrollController scrollController = ScrollController();
 
   RouteInfo({required this.distance, required this.duration});
@@ -15,12 +14,6 @@ class RouteInfo {
 
 /// ViewModel with mock route data
 class ItineraryViewModel extends ChangeNotifier {
-  // Simple per-day weather and lodging mocks
-  // final Map<int, String> _dailyWeather = {1: "Sunny 29°C", 2: "Cloudy 27°C"};
-  // final Map<int, String> _dailyLodging = {
-  //   1: "AMES Hotel",
-  //   2: "Motel Riverside",
-  // };
   final ItineraryRepository _itineraryRepo;
   final destinationController = TextEditingController();
   final notesController = TextEditingController();

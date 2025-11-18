@@ -1,12 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/core/repositories/expense_repository.dart';
 import 'package:tripora/core/utils/date_utils.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/features/expense/models/expense.dart';
 
 class ExpenseViewModel extends ChangeNotifier {
-  final DateTime tripStartDate;
-  final DateTime tripEndDate;
+  final ExpenseRepository _expenseRepo;
 
   final nameController = TextEditingController();
   final descController = TextEditingController();
@@ -17,15 +18,15 @@ class ExpenseViewModel extends ChangeNotifier {
   double budget = 0;
   List<Expense> expenses = [];
   int? selectedDayIndex;
+  TripData? trip;
 
-  ExpenseViewModel({
-    required this.tripStartDate,
-    required this.tripEndDate,
-    this.expenses = const [],
-    this.budget = 0,
-  }) {
-    loadMockData();
+  ExpenseViewModel(this._expenseRepo);
+  setTrip(TripData tripData) {
+    trip = tripData;
   }
+
+  initialise() {}
+
   bool validateForm() => {
     nameController.text.trim().isNotEmpty &&
         amountController.text.trim().isNotEmpty &&
@@ -45,16 +46,16 @@ class ExpenseViewModel extends ChangeNotifier {
   }
 
   int get tripDays {
-    final days = tripEndDate.difference(tripStartDate).inDays + 1;
+    final days = trip!.endDate!.difference(trip!.startDate!).inDays + 1;
     return days > 0 ? days : 1;
   }
 
   int? expenseDayIndex(Expense expense) {
     final d = DateTime(expense.date.year, expense.date.month, expense.date.day);
     final start = DateTime(
-      tripStartDate.year,
-      tripStartDate.month,
-      tripStartDate.day,
+      trip!.startDate!.year,
+      trip!.startDate!.month,
+      trip!.startDate!.day,
     );
     final diff = d.difference(start).inDays;
     if (diff < 0 || diff >= tripDays) return null;
@@ -86,7 +87,7 @@ class ExpenseViewModel extends ChangeNotifier {
       amount: amountController.text.isNotEmpty
           ? double.parse(amountController.text)
           : 0.0,
-      date: tripStartDate.add(Duration(days: selectedDayIndex ?? 0)),
+      date: trip!.startDate!.add(Duration(days: selectedDayIndex ?? 0)),
     );
   }
 
@@ -181,7 +182,7 @@ class ExpenseViewModel extends ChangeNotifier {
     final generatedExpenses = <Expense>[];
 
     for (int day = 0; day < tripDays; day++) {
-      final date = tripStartDate.add(Duration(days: day));
+      final date = trip!.startDate!.add(Duration(days: day));
       final dailyCount = random.nextInt(3) + 2; // 2–4 expenses per day
       for (int i = 0; i < dailyCount; i++) {
         final title = sampleTitles[random.nextInt(sampleTitles.length)];

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
+import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,8 @@ class TripPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final tripVm = context.watch<TripViewModel>();
     final itineraryVm = context.watch<ItineraryViewModel>();
+    final expenseVm = context.watch<ExpenseViewModel>();
+    final packingVm = context.watch<PackingViewModel>();
 
     return SafeArea(
       child: Scaffold(
@@ -73,6 +77,12 @@ class TripPage extends StatelessWidget {
                                     ChangeNotifierProvider.value(value: tripVm),
                                     ChangeNotifierProvider.value(
                                       value: itineraryVm,
+                                    ),
+                                    ChangeNotifierProvider.value(
+                                      value: expenseVm,
+                                    ),
+                                    ChangeNotifierProvider.value(
+                                      value: packingVm,
                                     ),
                                   ],
                                   child: const TripDashboardPage(),

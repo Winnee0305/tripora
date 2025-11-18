@@ -1,25 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
+import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 
 class ExpenseSummary extends StatelessWidget {
-  final double totalExpense;
-  final double budget;
-  final ValueChanged<double> onBudgetChanged;
-
-  const ExpenseSummary({
-    super.key,
-    required this.totalExpense,
-    required this.budget,
-    required this.onBudgetChanged,
-  });
+  const ExpenseSummary();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final expenseVm = context.watch<ExpenseViewModel>();
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: AppWidgetStyles.cardDecoration(
@@ -42,7 +35,7 @@ class ExpenseSummary extends StatelessWidget {
                   ),
                   builder: (context) {
                     final controller = TextEditingController(
-                      text: budget.toStringAsFixed(0),
+                      text: expenseVm.budget.toStringAsFixed(0),
                     );
 
                     return SingleChildScrollView(
@@ -66,11 +59,8 @@ class ExpenseSummary extends StatelessWidget {
                             label: "Enter new budget",
                             controller: controller,
                             isNumber: true,
+                            isCurrency: true,
                             autofocus: true,
-                            decoration: const InputDecoration(
-                              prefixText: "RM ",
-                              border: OutlineInputBorder(),
-                            ),
                           ),
                           const SizedBox(height: 20),
                           AppButton(
@@ -99,8 +89,8 @@ class ExpenseSummary extends StatelessWidget {
                 );
 
                 // Handle result after closing bottom sheet
-                if (newBudget != null && newBudget != budget) {
-                  onBudgetChanged(newBudget);
+                if (newBudget != null && newBudget != expenseVm.budget) {
+                  expenseVm.updateBudget(newBudget);
 
                   showCupertinoDialog(
                     context: context,
@@ -124,7 +114,7 @@ class ExpenseSummary extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Budget: RM${budget.toStringAsFixed(0)}",
+                    "Budget: RM${expenseVm.budget.toStringAsFixed(0)}",
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.primary,
                     ),
@@ -141,10 +131,10 @@ class ExpenseSummary extends StatelessWidget {
             children: [
               Text("Total Expense", style: theme.textTheme.titleMedium),
               Text(
-                "RM ${totalExpense.toStringAsFixed(2)}",
+                "RM ${expenseVm.totalExpense.toStringAsFixed(2)}",
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: totalExpense > budget
+                  color: expenseVm.totalExpense > expenseVm.budget
                       ? theme.colorScheme.error
                       : theme.colorScheme.primary,
                 ),

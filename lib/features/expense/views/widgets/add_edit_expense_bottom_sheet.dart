@@ -52,10 +52,12 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
                 ),
               ),
               // ----- Title
-              Text(
-                isEditing ? "Edit Expense" : "Add New Expense",
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Center(
+                child: Text(
+                  isEditing ? "Edit Expense" : "Add New Expense",
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

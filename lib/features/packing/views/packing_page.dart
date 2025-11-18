@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/packing/viewmodels/packing_page_viewmodel.dart';
+import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
 import 'widgets/packing_page_header_section.dart';
 import 'widgets/packing_page_category_card.dart';
@@ -10,7 +10,7 @@ class PackingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<PackingPageViewModel>();
+    final vm = context.watch<PackingViewModel>();
     final packedCount = vm.packedItemCount;
     final totalCount = vm.items.length;
 
@@ -39,7 +39,7 @@ class PackingPage extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 60),
                     child: Text(
-                      'Tap the refresh icon to load Melaka trip list',
+                      'Tap the refresh icon to load the packing list',
                       textAlign: TextAlign.center,
                     ),
                   ),

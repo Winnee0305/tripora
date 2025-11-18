@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 
 class PackingPageHeaderSection extends StatelessWidget {
   const PackingPageHeaderSection({
@@ -16,6 +18,7 @@ class PackingPageHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vm = context.watch<PackingViewModel>();
     return Container(
       color: theme.scaffoldBackgroundColor,
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -34,7 +37,7 @@ class PackingPageHeaderSection extends StatelessWidget {
                 backgroundVariant: BackgroundVariant.primaryTrans,
               ),
               Text(
-                'Melaka 2 days family trip',
+                vm.trip!.tripName,
                 style: theme.textTheme.headlineSmall,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

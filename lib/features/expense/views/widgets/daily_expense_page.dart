@@ -18,7 +18,7 @@ class DailyExpensePage extends StatelessWidget {
     final vm = context.watch<ExpenseViewModel>();
     final theme = Theme.of(context);
     final selectedDay = vm.selectedDayIndex ?? 0;
-    final selectedDate = vm.tripStartDate.add(Duration(days: selectedDay));
+    final selectedDate = vm.trip!.startDate!.add(Duration(days: selectedDay));
 
     final dayExpenses = vm.getExpensesForDate(selectedDate);
 

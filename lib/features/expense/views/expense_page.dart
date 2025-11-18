@@ -31,19 +31,14 @@ class ExpensePage extends StatelessWidget {
                   color: theme.scaffoldBackgroundColor,
                   child: Column(
                     children: [
-                      const AppStickyHeader(
-                        title: 'Melaka 2 days family trip',
+                      AppStickyHeader(
+                        title: vm.trip!.tripName,
                         showRightButton: true,
                       ),
                       const SizedBox(height: 30),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: ExpenseSummary(
-                          onBudgetChanged: (newBudget) =>
-                              vm.updateBudget(newBudget),
-                          totalExpense: vm.totalExpense, // total of all days
-                          budget: vm.budget,
-                        ),
+                        child: ExpenseSummary(),
                       ),
                     ],
                   ),
@@ -64,7 +59,7 @@ class ExpensePage extends StatelessWidget {
                   (s, e) => s + e.amount,
                 );
                 final dayDate = generateDateSequence(
-                  startDate: vm.tripStartDate,
+                  startDate: vm.trip!.startDate!,
                   count: vm.tripDays,
                 )[i];
 

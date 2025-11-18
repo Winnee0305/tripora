@@ -7,7 +7,6 @@ import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/core/utils/image_utils.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
-import 'package:tripora/core/services/firebase_auth_service.dart'; // or your AuthState class
 
 class TripRepository {
   final FirestoreService _firestoreService;
