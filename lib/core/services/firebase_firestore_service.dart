@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/packing_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/features/expense/models/expense.dart';
@@ -286,4 +287,112 @@ class FirestoreService {
       'expenseBudget': newBudget,
     });
   }
+
+  // ======= Expenses =======
+  Future<DocumentSnapshot<Map<String, dynamic>>> getPackingDoc(
+    String uid,
+    String tripId,
+    String packingId,
+  ) {
+    return usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('packing')
+        .doc(packingId)
+        .get();
+  }
+
+  Future<void> addPackingItem(
+    String uid,
+    PackingData packing,
+    String tripId,
+  ) async {
+    print('Adding itinerary for tripId: $tripId');
+    // Use existing id if present, otherwise generate a new one
+    final packingId = (packing.id.isNotEmpty)
+        ? packing.id
+        : usersCollection
+              .doc(uid)
+              .collection('trips')
+              .doc(tripId)
+              .collection('packing')
+              .doc()
+              .id;
+
+    await usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('packing')
+        .doc(packingId)
+        .set(packing.copyWith(id: packingId).toMap(), SetOptions(merge: true));
+  }
+
+  Future<List<PackingData>> getPackingItems(String uid, String tripId) async {
+    final snapshot = await usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('packing')
+        .get();
+    return snapshot.docs.map(PackingData.fromFirestore).toList();
+  }
+
+  Future<void> deletePackingItem(
+    String uid,
+    String packingId,
+    String tripId,
+  ) async {
+    try {
+      await usersCollection
+          .doc(uid)
+          .collection('trips')
+          .doc(tripId)
+          .collection('packing')
+          .doc(packingId)
+          .delete();
+      print('Packing item deleted: $packingId');
+    } catch (e) {
+      print('Failed to delete packing item: $e');
+    }
+  }
+
+  Future<void> updatePackingItem(
+    String uid,
+    PackingData packing,
+    String tripId,
+  ) async {
+    // Update the itinerary document in Firestore
+    await usersCollection
+        .doc(uid)
+        .collection('trips')
+        .doc(tripId)
+        .collection('packing')
+        .doc(packing.id)
+        .update(packing.toMap());
+  }
+
+  // Future<double> getExpenseBudget(String uid, String tripId) async {
+  //   final tripDoc = await usersCollection
+  //       .doc(uid)
+  //       .collection('trips')
+  //       .doc(tripId)
+  //       .get();
+  //   final data = tripDoc.data();
+  //   if (data != null && data.containsKey('expenseBudget')) {
+  //     return (data['expenseBudget'] as num).toDouble();
+  //   }
+  //   return 0.0; // Default budget if not set
+  // }
+
+  // Future<void> updateExpenseBudget(
+  //   String uid,
+  //   double newBudget,
+  //   String tripId,
+  // ) async {
+  //   await usersCollection.doc(uid).collection('trips').doc(tripId).update({
+  //     'expenseBudget': newBudget,
+  //   });
+  // }
 }
