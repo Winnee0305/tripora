@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/utils/constants.dart';
-import '../../../viewmodels/trip_viewmodel.dart';
 
 class ChooseDestinationPage extends StatefulWidget {
   const ChooseDestinationPage({super.key});
@@ -87,7 +85,7 @@ class _ChooseDestinationPageState extends State<ChooseDestinationPage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          name!,
+                          name,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: Colors.white,

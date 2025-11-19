@@ -56,7 +56,7 @@ class ExpensePage extends StatelessWidget {
 
                 final dayTotal = dayExpenses.fold<double>(
                   0,
-                  (s, e) => s + e.amount,
+                  (s, e) => s + (e.amount ?? 0),
                 );
                 final dayDate = generateDateSequence(
                   startDate: vm.trip!.startDate!,

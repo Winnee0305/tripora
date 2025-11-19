@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_page.dart';
-import 'package:tripora/features/poi/models/poi.dart';
 import 'package:tripora/features/poi/views/poi_details_screen.dart';
 import '../viewmodels/poi_page_viewmodel.dart';
 import 'poi_header_screen.dart';

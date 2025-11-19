@@ -45,23 +45,4 @@ class ProfileCollectsContent extends StatelessWidget {
       ),
     );
   }
-
-  Widget _circleIconButton(
-    BuildContext context,
-    IconData icon, {
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap ?? () => Navigator.maybePop(context),
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.orange[50],
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 18, color: Colors.orange[700]),
-      ),
-    );
-  }
 }

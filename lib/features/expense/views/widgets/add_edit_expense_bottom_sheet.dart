@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
@@ -9,7 +10,7 @@ import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 
 // This bottom sheet is used for both adding and editing an expense.
 class AddEditExpenseBottomSheet extends StatelessWidget {
-  final Expense? expense;
+  final ExpenseData? expense;
   const AddEditExpenseBottomSheet({super.key, this.expense});
 
   @override
@@ -67,6 +68,7 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
                 label: "Amount *",
                 controller: vm.amountController,
                 isNumber: true,
+                isCurrency: true,
               ),
               const SizedBox(height: 20),
 
@@ -82,6 +84,8 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
               AppTextField(
                 label: "Description (Optional)",
                 controller: vm.descController,
+                minLines: 4,
+                maxLines: 4,
               ),
               const SizedBox(height: 20),
 
@@ -135,12 +139,9 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
                   minWidth: 150,
                   minHeight: 40,
                   onPressed: () {
+                    vm.showErrors = true; // enable showing error messages
+
                     if (!vm.validateForm()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please fill in all required fileds."),
-                        ),
-                      );
                       return;
                     }
 
@@ -149,13 +150,25 @@ class AddEditExpenseBottomSheet extends StatelessWidget {
                     } else {
                       vm.addExpense();
                     }
+
+                    vm.showErrors = false; // reset after successful submit
                     vm.clearForm();
                     Navigator.pop(context);
                   },
+
                   backgroundVariant: BackgroundVariant.primaryFilled,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              if (vm.showErrors && !vm.validateForm())
+                Center(
+                  child: Text(
+                    "Please fill in all required fields (*)",
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

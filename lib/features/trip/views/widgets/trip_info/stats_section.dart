@@ -31,9 +31,11 @@ class _StatsSectionState extends State<StatsSection> {
       final expenseVm = context.read<ExpenseViewModel>();
       final packingVm = context.read<PackingViewModel>();
       if (tripVm.trip != null) {
+        print("initializing itinerary");
         itineraryVm.setTrip(tripVm.trip!);
         itineraryVm.initialise();
         expenseVm.setTrip(tripVm.trip!);
+        print('Trip set in ExpenseViewModel: ${tripVm.trip!.tripName}');
         expenseVm.initialise();
         packingVm.setTrip(tripVm.trip!);
         packingVm.initialise();
@@ -181,7 +183,7 @@ class _StatsSectionState extends State<StatsSection> {
                           ),
                         ),
                         Text(
-                          "300.00",
+                          expenseVm.totalExpense.toStringAsFixed(2),
                           style: theme.textTheme.headlineLarge!.copyWith(
                             color: theme.colorScheme.onPrimary,
                             fontWeight: ManropeFontWeight.semiBold,

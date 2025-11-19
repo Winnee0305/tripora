@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/expense_repository.dart';
 import 'package:tripora/core/utils/date_utils.dart';
 import 'package:tripora/core/utils/format_utils.dart';
-import 'package:tripora/features/expense/models/expense.dart';
+import 'package:tripora/features/expense/models/expense.dart'
+    hide ExpenseCategory;
 
 class ExpenseViewModel extends ChangeNotifier {
   final ExpenseRepository _expenseRepo;
@@ -16,28 +18,54 @@ class ExpenseViewModel extends ChangeNotifier {
 
   bool isEditingInitialized = false;
   double budget = 0;
-  List<Expense> expenses = [];
+  List<ExpenseData> expenses = [];
   int? selectedDayIndex;
   TripData? trip;
+  bool _isLoading = false;
+  bool showErrors = false;
+
+  bool get isLoading => _isLoading;
 
   ExpenseViewModel(this._expenseRepo);
   setTrip(TripData tripData) {
     trip = tripData;
   }
 
-  initialise() {}
+  Future<void> initialise() async {
+    await loadExpenses();
+  }
 
-  bool validateForm() => {
-    nameController.text.trim().isNotEmpty &&
+  Future<void> loadExpenses() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      print("Fetching expense");
+      expenses = await _expenseRepo.getExpenses(trip!.tripId);
+      budget = await _expenseRepo.getBudget(trip!.tripId);
+      print('Expenses loaded: ${expenses.length} items');
+    } catch (e) {}
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  bool validateForm() {
+    final isValid =
+        nameController.text.trim().isNotEmpty &&
         amountController.text.trim().isNotEmpty &&
-        selectedCategory != null,
-  }.every((element) => element == true);
+        selectedCategory != null;
+
+    showErrors = !isValid; // trigger error display
+    notifyListeners();
+    return isValid;
+  }
 
   // ----- Expense List Management
-  List<Expense> getExpensesForDate(DateTime date) =>
+  List<ExpenseData> getExpensesForDate(DateTime date) =>
       expenses.where((e) => isSameDay(e.date, date)).toList();
 
-  List<Expense> get filteredExpenses {
+  List<ExpenseData> get filteredExpenses {
     if (selectedDayIndex == null) return expenses;
     return expenses.where((e) {
       final idx = expenseDayIndex(e);
@@ -50,7 +78,7 @@ class ExpenseViewModel extends ChangeNotifier {
     return days > 0 ? days : 1;
   }
 
-  int? expenseDayIndex(Expense expense) {
+  int? expenseDayIndex(ExpenseData expense) {
     final d = DateTime(expense.date.year, expense.date.month, expense.date.day);
     final start = DateTime(
       trip!.startDate!.year,
@@ -62,10 +90,11 @@ class ExpenseViewModel extends ChangeNotifier {
     return diff;
   }
 
-  double get totalExpense => expenses.fold<double>(0, (s, e) => s + e.amount);
+  double get totalExpense =>
+      expenses.fold<double>(0, (s, e) => s + (e.amount ?? 0));
 
   double get totalForSelected =>
-      filteredExpenses.fold<double>(0, (s, e) => s + e.amount);
+      filteredExpenses.fold<double>(0, (s, e) => s + (e.amount ?? 0));
 
   ExpenseCategory? selectedCategory;
 
@@ -79,22 +108,25 @@ class ExpenseViewModel extends ChangeNotifier {
   }
 
   // ----- Expense Form Management
-  Expense getNewExpense() {
-    return Expense(
+  ExpenseData getNewExpense(String? oldId) {
+    final newExpense = ExpenseData.empty();
+    return newExpense.copyWith(
+      id: oldId ?? '',
       name: nameController.text.trim(),
-      description: descController.text.trim(),
+      desc: descController.text.trim(),
       category: selectedCategory ?? ExpenseCategory.other,
       amount: amountController.text.isNotEmpty
           ? double.parse(amountController.text)
           : 0.0,
       date: trip!.startDate!.add(Duration(days: selectedDayIndex ?? 0)),
+      lastUpdated: DateTime.now(),
     );
   }
 
-  void populateFromExpense(Expense expense) {
+  void populateFromExpense(ExpenseData expense) {
     amountController.text = expense.amount.toString();
     nameController.text = expense.name;
-    descController.text = expense.description ?? '';
+    descController.text = expense.desc ?? '';
     categoryController.text = expense.category.name.capitalize();
     selectedCategory = expense.category;
     isEditingInitialized = true;
@@ -116,23 +148,26 @@ class ExpenseViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateExpense(Expense oldExpense) {
+  void updateExpense(ExpenseData oldExpense) {
     final index = expenses.indexOf(oldExpense);
     if (index != -1) {
-      expenses[index] = getNewExpense();
+      expenses[index] = getNewExpense(oldExpense.id);
+      _expenseRepo.updateExpense(expenses[index], trip!.tripId);
       notifyListeners();
     }
   }
 
   void addExpense() {
-    final newExpense = getNewExpense();
+    final newExpense = getNewExpense(null);
     expenses.add(newExpense);
+    _expenseRepo.createExpense(newExpense, trip!.tripId);
     notifyListeners();
   }
 
   // ----- Budget Management
   void updateBudget(double newBudget) {
     budget = newBudget;
+    _expenseRepo.updateBudget(newBudget, trip!.tripId);
     notifyListeners();
   }
 
@@ -162,47 +197,5 @@ class ExpenseViewModel extends ChangeNotifier {
     amountController.dispose();
     categoryController.dispose();
     super.dispose();
-  }
-
-  // ----- Mock data
-  void loadMockData() {
-    final random = Random();
-
-    final sampleTitles = [
-      'Lunch at Jonker Street',
-      'Grab ride to A\'Famosa',
-      'Entrance Ticket – The Shore',
-      'Souvenirs from Dataran Pahlawan',
-      'Hotel Stay (Day 1)',
-      'Coffee & Dessert',
-      'Dinner by the River',
-      'Breakfast buffet',
-    ];
-
-    final generatedExpenses = <Expense>[];
-
-    for (int day = 0; day < tripDays; day++) {
-      final date = trip!.startDate!.add(Duration(days: day));
-      final dailyCount = random.nextInt(3) + 2; // 2–4 expenses per day
-      for (int i = 0; i < dailyCount; i++) {
-        final title = sampleTitles[random.nextInt(sampleTitles.length)];
-        final amount = (random.nextDouble() * 100) + 10; // RM10–RM110
-
-        generatedExpenses.add(
-          Expense(
-            name: title,
-            amount: double.parse(amount.toStringAsFixed(2)),
-            date: date,
-            category: ExpenseCategory
-                .values[random.nextInt(ExpenseCategory.values.length)],
-            description: "Melaka",
-          ),
-        );
-      }
-    }
-
-    expenses = generatedExpenses;
-    budget = 1000; // Default mock budget
-    notifyListeners();
   }
 }

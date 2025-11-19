@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tripora/core/repositories/itinerary_repository.dart';
-import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info/header_section.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info/stats_section.dart';
 
@@ -11,7 +7,6 @@ class TripDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expenseVm = context.watch<ExpenseViewModel>();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(

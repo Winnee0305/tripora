@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
@@ -22,7 +23,7 @@ class DailyExpensePage extends StatelessWidget {
 
     final dayExpenses = vm.getExpensesForDate(selectedDate);
 
-    final dayTotal = calcTotal<Expense>(dayExpenses, (e) => e.amount);
+    final dayTotal = calcTotal<ExpenseData>(dayExpenses, (e) => e.amount ?? 0);
 
     return Scaffold(
       body: SafeArea(
@@ -57,7 +58,7 @@ class DailyExpensePage extends StatelessWidget {
                         child: ExpenseCard(
                           leadingIcon: vm.getCategoryIcon(expense.category),
                           title: expense.name,
-                          subtitle: expense.description ?? '',
+                          subtitle: expense.desc ?? '',
                           trailingText: expense.amount.toString(),
                           trailingTextUnit: "RM",
                         ),
@@ -167,7 +168,7 @@ class DailyExpensePage extends StatelessWidget {
     );
   }
 
-  void _openAddExpenseSheet(BuildContext context, [Expense? expense]) {
+  void _openAddExpenseSheet(BuildContext context, [ExpenseData? expense]) {
     final vm = context.read<ExpenseViewModel>();
 
     // Reset and populate if editing
