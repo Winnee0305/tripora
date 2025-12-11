@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/ai_agents_repository.dart';
@@ -235,6 +236,20 @@ class ItineraryViewModel extends ChangeNotifier {
     }
 
     return updatedItinerary;
+  }
+
+  List<LatLng> getItineraryLatLngs() {
+    final List<LatLng> latLngs = [];
+
+    for (final dayItineraries in itinerariesMap.values) {
+      for (final itinerary in dayItineraries) {
+        if (itinerary.place != null) {
+          latLngs.add(LatLng(itinerary.place!.lat, itinerary.place!.lng));
+        }
+      }
+    }
+
+    return latLngs;
   }
 
   void updateItinerary(ItineraryData oldItinerary) async {

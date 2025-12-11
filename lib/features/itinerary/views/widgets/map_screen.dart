@@ -193,28 +193,110 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // ------------------------------------------------------------
+  // ZOOM CONTROLS
+  // ------------------------------------------------------------
+  void _zoomIn() {
+    _mapController?.animateCamera(CameraUpdate.zoomIn());
+  }
+
+  void _zoomOut() {
+    _mapController?.animateCamera(CameraUpdate.zoomOut());
+  }
+
+  // ------------------------------------------------------------
   // WIDGET
   // ------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: widget.destinations.first,
-          zoom: 12,
-        ),
-        markers: _markers,
-        polylines: _polylines,
-        onMapCreated: (controller) {
-          _mapController = controller;
-          _fitCameraToMarkers(); // zoom immediately when map loads
-        },
-        zoomGesturesEnabled: true,
-        scrollGesturesEnabled: true,
-        rotateGesturesEnabled: true,
-        tiltGesturesEnabled: true,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: widget.destinations.first,
+              zoom: 12,
+            ),
+            markers: _markers,
+            polylines: _polylines,
+            onMapCreated: (controller) {
+              _mapController = controller;
+              _fitCameraToMarkers(); // zoom immediately when map loads
+            },
+            zoomGesturesEnabled: true,
+            scrollGesturesEnabled: true,
+            rotateGesturesEnabled: true,
+            tiltGesturesEnabled: true,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+
+          // Zoom controls
+          Positioned(
+            left: 22,
+            bottom: 130,
+            child: Column(
+              children: [
+                // Zoom In button
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _zoomIn,
+                      borderRadius: BorderRadius.circular(8),
+                      child: const SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: Icon(Icons.add, size: 24, color: Colors.black87),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Zoom Out button
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _zoomOut,
+                      borderRadius: BorderRadius.circular(8),
+                      child: const SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: Icon(
+                          Icons.remove,
+                          size: 24,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

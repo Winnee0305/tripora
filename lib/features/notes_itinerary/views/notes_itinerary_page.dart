@@ -7,6 +7,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
 import 'package:tripora/core/utils/format_utils.dart';
+import 'package:tripora/features/itinerary/views/widgets/map_screen.dart';
 import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
@@ -24,6 +25,7 @@ class NotesItineraryPage extends StatelessWidget {
 
   final int currentTab;
 
+  // ----- Dummy Data for Map -----
   final List<LatLng> melaccaAttractions = [
     // 1. A Famosa Fort
     LatLng(2.1896, 102.2501),
@@ -76,7 +78,7 @@ class NotesItineraryPage extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
               action: SnackBarAction(
                 label: 'SYNC',
-                textColor: Colors.white,
+                textColor: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () {
                   itineraryVm.syncItineraries();
                 },
@@ -114,6 +116,7 @@ class NotesItineraryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tripVm = context.watch<TripViewModel>();
+    final itineraryVm = context.watch<ItineraryViewModel>();
     return Scaffold(
       extendBodyBehindAppBar: true,
       floatingActionButton: Padding(
@@ -127,7 +130,9 @@ class NotesItineraryPage extends StatelessWidget {
           Positioned.fill(
             child: Image.asset("assets/images/exp_map.png", fit: BoxFit.cover),
           ),
-          // Positioned.fill(child: MapScreen(destinations: melaccaAttractions)),
+          // Positioned.fill(
+          //   child: MapScreen(destinations: itineraryVm.getItineraryLatLngs()),
+          // ),
 
           // ----- Header (Back, Home, etc.)
           const NotesItineraryPageHeaderSection(),
