@@ -11,7 +11,6 @@ import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_p
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
-import 'package:tripora/features/notes/views/notes_content.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
 class NotesItineraryPage extends StatelessWidget {
@@ -166,8 +165,6 @@ class NotesItineraryPage extends StatelessWidget {
                                 color: theme.colorScheme.surface,
                                 child: AppSpecialTabNDaySelectionBar(
                                   listKey: _listKey,
-                                  firstTabLabel: 'Notes',
-
                                   color: AppColors.design2,
                                 ),
                               ),
@@ -184,9 +181,7 @@ class NotesItineraryPage extends StatelessWidget {
                               child: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 300),
                                 switchInCurve: Curves.easeInOut,
-                                child: vm.selectedDay == 0
-                                    ? const NotesContent()
-                                    : ItineraryContent(listKey: _listKey),
+                                child: ItineraryContent(listKey: _listKey),
                               ),
                             ),
                           ),

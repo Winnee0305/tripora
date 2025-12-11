@@ -66,7 +66,7 @@ int getDayNumber(DateTime itineraryDate, DateTime tripStartDate) {
 
 /// Get the actual DateTime of a given day index
 DateTime getDateForDay(int dayIndex, int totalDays, DateTime startDate) {
-  if (dayIndex < 1 || dayIndex > totalDays) {
+  if (dayIndex < 0 || dayIndex > totalDays) {
     throw ArgumentError("Invalid day index: $dayIndex");
   }
   return startDate.add(Duration(days: dayIndex - 1));

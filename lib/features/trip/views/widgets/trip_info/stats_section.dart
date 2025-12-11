@@ -215,7 +215,7 @@ class _StatsSectionState extends State<StatsSection> {
                           create: (_) => DaySelectionViewModel(
                             startDate: tripVm.trip!.startDate!,
                             endDate: tripVm.trip!.endDate!,
-                          )..selectDay(1),
+                          )..selectDay(0),
                         ),
                       ],
                       child: NotesItineraryPage(currentTab: 1),
