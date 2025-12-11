@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
-import 'package:tripora/core/services/place_details_service.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmodel.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';
 import 'package:tripora/features/exploration/views/widgets/search_suggestion_section.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:intl/intl.dart';
 
 class AddEditLodgingBottomSheet extends StatefulWidget {
@@ -20,7 +20,6 @@ class AddEditLodgingBottomSheet extends StatefulWidget {
 }
 
 class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
-  final _nameController = TextEditingController();
   final _locationController = TextEditingController();
   String _selectedPlaceId = '';
   DateTime? _checkInDateTime;
@@ -30,7 +29,7 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
   void initState() {
     super.initState();
     if (widget.lodging != null) {
-      _nameController.text = widget.lodging!.name;
+      _locationController.text = widget.lodging!.name;
       _checkInDateTime = widget.lodging!.checkInDateTime;
       _checkOutDateTime = widget.lodging!.checkOutDateTime;
 
@@ -43,27 +42,18 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
   }
 
   Future<void> _loadPlaceName(String placeId) async {
-    try {
-      final placeDetails = await PlaceDetailsService().fetchPlaceDetails(
-        placeId,
-      );
-      if (mounted && placeDetails != null) {
-        setState(() {
-          _locationController.text = placeDetails['name'] ?? 'Unknown location';
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _locationController.text = 'Location selected';
-        });
-      }
+    final viewModel = context.read<ItineraryViewModel>();
+    final placeName = await viewModel.getPlaceNameFromPlaceId(placeId);
+
+    if (mounted) {
+      setState(() {
+        _locationController.text = placeName ?? 'Unknown location';
+      });
     }
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _locationController.dispose();
     super.dispose();
   }
@@ -180,10 +170,6 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
                 ],
               ),
               const SizedBox(height: 24),
-
-              // Lodging name field
-              AppTextField(label: "Lodging Name", controller: _nameController),
-              const SizedBox(height: 20),
 
               // Location field with search
               GestureDetector(
@@ -363,10 +349,10 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
                       radius: 12,
                       minHeight: 48,
                       onPressed: () {
-                        if (_nameController.text.isEmpty) {
+                        if (_locationController.text.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Please enter lodging name'),
+                              content: Text('Please select a location'),
                             ),
                           );
                           return;
@@ -395,7 +381,7 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
 
                         final lodging = LodgingData(
                           id: widget.lodging?.id ?? '',
-                          name: _nameController.text,
+                          name: _locationController.text,
                           placeId: _selectedPlaceId,
                           date: widget.lodging?.date ?? DateTime.now(),
                           checkInDateTime: _checkInDateTime!,

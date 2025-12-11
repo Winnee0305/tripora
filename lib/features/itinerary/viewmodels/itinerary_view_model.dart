@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/lodging_data.dart';
+import 'package:tripora/core/models/flight_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/ai_agents_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
 import 'package:tripora/core/repositories/lodging_repository.dart';
+import 'package:tripora/core/repositories/flight_repository.dart';
 import 'package:tripora/core/services/ai_agents_service.dart';
+import 'package:tripora/core/services/place_details_service.dart';
 
 /// Simple mock RouteInfo model (for testing only)
 class RouteInfo {
@@ -21,19 +24,22 @@ class RouteInfo {
 class ItineraryViewModel extends ChangeNotifier {
   final ItineraryRepository _itineraryRepo;
   final LodgingRepository _lodgingRepo;
+  final FlightRepository _flightRepo;
   final destinationController = TextEditingController();
   final notesController = TextEditingController();
   String? selectedPlaceId;
 
   bool isEditingInitialized = false;
 
-  ItineraryViewModel(this._itineraryRepo, this._lodgingRepo);
+  ItineraryViewModel(this._itineraryRepo, this._lodgingRepo, this._flightRepo);
 
   // --- Local states ---
   List<ItineraryData> itineraries = [];
   Map<int, List<ItineraryData>> itinerariesMap = {};
   List<LodgingData> lodgings = [];
   Map<int, List<LodgingData>> lodgingsMap = {};
+  List<FlightData> flights = [];
+  Map<int, List<FlightData>> flightsMap = {};
   bool _isLoading = false;
   bool _isUploading = false;
   String? _error;
@@ -87,8 +93,10 @@ class ItineraryViewModel extends ChangeNotifier {
   Future<void> initialise() async {
     await loadItineraries();
     await loadLodgings();
+    await loadFlights();
     listToMap(itineraries, trip!.startDate!, trip!.endDate!);
     mapLodgingsByDay();
+    mapFlightsByDay();
   }
 
   Future<void> loadItineraries() async {
@@ -614,5 +622,101 @@ class ItineraryViewModel extends ChangeNotifier {
 
   List<LodgingData> getLodgingsForDay(int day) {
     return lodgingsMap[day] ?? [];
+  }
+
+  /// Get place name from place ID using PlaceDetailsService
+  Future<String?> getPlaceNameFromPlaceId(String placeId) async {
+    try {
+      final placeDetails = await PlaceDetailsService().fetchPlaceDetails(
+        placeId,
+      );
+      return placeDetails?['name'] as String?;
+    } catch (e) {
+      print('Error fetching place name: $e');
+      return null;
+    }
+  }
+
+  // --- Flight Management ---
+  Future<void> loadFlights() async {
+    try {
+      flights = await _flightRepo.fetchFlights(trip!.tripId);
+      print('Flights loaded: ${flights.length} items');
+    } catch (e) {
+      _error = 'Failed to load flights: $e';
+      print('Error loading flights: $e');
+    }
+  }
+
+  void mapFlightsByDay() {
+    final Map<int, List<FlightData>> dailyMap = {};
+
+    // Initialize all days with empty lists
+    final totalDays = getTotalDays();
+    for (int i = 1; i <= totalDays; i++) {
+      dailyMap[i] = [];
+    }
+
+    // Assign flights to the correct day based on the date field
+    for (final flight in flights) {
+      final day = getDayNumber(
+        flight.date,
+        trip!.startDate!,
+      );
+
+      if (dailyMap.containsKey(day)) {
+        dailyMap[day]!.add(flight);
+      }
+    }
+
+    flightsMap = dailyMap;
+    notifyListeners();
+  }
+
+  Future<void> addFlight(FlightData flight) async {
+    try {
+      final docId = await _flightRepo.addFlight(trip!.tripId, flight);
+      final newFlight = flight.copyWith(id: docId);
+      flights.add(newFlight);
+      mapFlightsByDay();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to add flight: $e';
+      print('Error adding flight: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateFlight(FlightData flight) async {
+    try {
+      await _flightRepo.updateFlight(trip!.tripId, flight);
+      final index = flights.indexWhere((f) => f.id == flight.id);
+      if (index != -1) {
+        flights[index] = flight;
+        mapFlightsByDay();
+        notifyListeners();
+      }
+    } catch (e) {
+      _error = 'Failed to update flight: $e';
+      print('Error updating flight: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteFlight(String flightId) async {
+    try {
+      await _flightRepo.deleteFlight(trip!.tripId, flightId);
+      flights.removeWhere((f) => f.id == flightId);
+      mapFlightsByDay();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to delete flight: $e';
+      print('Error deleting flight: $e');
+      rethrow;
+    }
+  }
+
+  List<FlightData> getFlightsForDay(int day) {
+    return flightsMap[day] ?? [];
   }
 }

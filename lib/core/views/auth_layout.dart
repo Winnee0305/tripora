@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/repositories/expense_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
 import 'package:tripora/core/repositories/lodging_repository.dart';
+import 'package:tripora/core/repositories/flight_repository.dart';
 import 'package:tripora/core/repositories/packing_repository.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 import 'package:tripora/core/repositories/user_repository.dart';
@@ -51,6 +52,10 @@ class AuthLayout extends StatelessWidget {
                 FirebaseFirestore.instance,
                 user.uid,
               );
+              final flightRepo = FlightRepository(
+                FirebaseFirestore.instance,
+                user.uid,
+              );
               final expenseRepo = ExpenseRepository(firestore, user.uid);
               final packingRepo = PackingRepository(firestore, user.uid);
 
@@ -72,7 +77,11 @@ class AuthLayout extends StatelessWidget {
                   ),
                   ChangeNotifierProvider<ItineraryViewModel>(
                     create: (_) {
-                      final vm = ItineraryViewModel(itineraryRepo, lodgingRepo);
+                      final vm = ItineraryViewModel(
+                        itineraryRepo,
+                        lodgingRepo,
+                        flightRepo,
+                      );
                       return vm;
                     },
                   ),

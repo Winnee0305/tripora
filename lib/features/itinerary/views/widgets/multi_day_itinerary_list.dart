@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/lodging_data.dart';
+import 'package:tripora/core/models/flight_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/features/itinerary/views/widgets/activity_type_selection_sheet.dart';
 import 'package:tripora/features/itinerary/views/widgets/add_edit_itinerary_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/views/widgets/add_edit_lodging_bottom_sheet.dart';
+import 'package:tripora/features/itinerary/views/widgets/add_edit_flight_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
 import 'package:tripora/features/itinerary/views/widgets/lodging_card.dart';
+import 'package:tripora/features/itinerary/views/widgets/flight_card.dart';
 import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 
 @immutable
@@ -137,6 +140,64 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                   SnackBar(
                                     content: Text(
                                       'Failed to update lodging: $e',
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+
+                // ----- Flight cards -----
+                ...vm
+                    .getFlightsForDay(day)
+                    .map(
+                      (flight) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: FlightCard(
+                          flight: flight,
+                          onTap: () async {
+                            final result = await showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) =>
+                                  AddEditFlightBottomSheet(flight: flight),
+                            );
+
+                            if (result == null || !mounted) return;
+
+                            try {
+                              if (result == 'delete') {
+                                await vm.deleteFlight(flight.id);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Flight "${flight.airline}" deleted successfully',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else if (result is FlightData) {
+                                await vm.updateFlight(result);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Flight "${result.airline}" updated successfully',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Failed to update flight: $e',
                                     ),
                                   ),
                                 );
@@ -331,12 +392,38 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         }
                         break;
                       case ActivityType.flight:
-                        // TODO: Show flight selection sheet
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Flight selection coming soon'),
-                          ),
+                        final draftFlight = FlightData.empty(
+                          vm.getDate(day),
+                          vm.getLastSequence(day),
                         );
+                        final result = await showModalBottomSheet<FlightData>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (_) =>
+                              AddEditFlightBottomSheet(flight: draftFlight),
+                        );
+                        if (result != null && mounted) {
+                          try {
+                            await vm.addFlight(result);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Flight "${result.airline}" added successfully',
+                                  ),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to add flight: $e'),
+                                ),
+                              );
+                            }
+                          }
+                        }
                         break;
                       case ActivityType.notes:
                         // TODO: Show notes entry sheet

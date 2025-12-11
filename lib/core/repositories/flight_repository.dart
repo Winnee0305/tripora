@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tripora/core/models/lodging_data.dart';
+import 'package:tripora/core/models/flight_data.dart';
 
-class LodgingRepository {
+class FlightRepository {
   final FirebaseFirestore _firestore;
   final String _uid;
 
-  LodgingRepository(this._firestore, this._uid);
+  FlightRepository(this._firestore, this._uid);
 
-  // Fetch all lodgings for a trip
-  Future<List<LodgingData>> fetchLodgings(String tripId) async {
+  // Fetch all flights for a trip
+  Future<List<FlightData>> fetchFlights(String tripId) async {
     try {
       final snapshot = await _firestore
           .collection('users')
@@ -17,22 +17,22 @@ class LodgingRepository {
           .doc(tripId)
           .collection('itineraries')
           .doc('data')
-          .collection('lodgings')
+          .collection('flights')
           .get();
 
       return snapshot.docs
-          .map((doc) => LodgingData.fromFirestore(doc))
+          .map((doc) => FlightData.fromFirestore(doc))
           .toList();
     } catch (e) {
-      throw Exception('Failed to fetch lodgings: $e');
+      throw Exception('Failed to fetch flights: $e');
     }
   }
 
-  // Add a new lodging
-  Future<String> addLodging(String tripId, LodgingData lodging) async {
+  // Add a new flight
+  Future<String> addFlight(String tripId, FlightData flight) async {
     try {
-      final lodgingId = (lodging.id.isNotEmpty)
-          ? lodging.id
+      final flightId = (flight.id.isNotEmpty)
+          ? flight.id
           : _firestore
                 .collection('users')
                 .doc(_uid)
@@ -40,7 +40,7 @@ class LodgingRepository {
                 .doc(tripId)
                 .collection('itineraries')
                 .doc('data')
-                .collection('lodgings')
+                .collection('flights')
                 .doc()
                 .id;
 
@@ -51,21 +51,21 @@ class LodgingRepository {
           .doc(tripId)
           .collection('itineraries')
           .doc('data')
-          .collection('lodgings')
-          .doc(lodgingId)
+          .collection('flights')
+          .doc(flightId)
           .set(
-            lodging.copyWith(id: lodgingId).toMap(),
+            flight.copyWith(id: flightId).toMap(),
             SetOptions(merge: true),
           );
 
-      return lodgingId;
+      return flightId;
     } catch (e) {
-      throw Exception('Failed to add lodging: $e');
+      throw Exception('Failed to add flight: $e');
     }
   }
 
-  // Update an existing lodging
-  Future<void> updateLodging(String tripId, LodgingData lodging) async {
+  // Update an existing flight
+  Future<void> updateFlight(String tripId, FlightData flight) async {
     try {
       await _firestore
           .collection('users')
@@ -74,16 +74,16 @@ class LodgingRepository {
           .doc(tripId)
           .collection('itineraries')
           .doc('data')
-          .collection('lodgings')
-          .doc(lodging.id)
-          .update(lodging.toMap());
+          .collection('flights')
+          .doc(flight.id)
+          .update(flight.toMap());
     } catch (e) {
-      throw Exception('Failed to update lodging: $e');
+      throw Exception('Failed to update flight: $e');
     }
   }
 
-  // Delete a lodging
-  Future<void> deleteLodging(String tripId, String lodgingId) async {
+  // Delete a flight
+  Future<void> deleteFlight(String tripId, String flightId) async {
     try {
       await _firestore
           .collection('users')
@@ -92,16 +92,16 @@ class LodgingRepository {
           .doc(tripId)
           .collection('itineraries')
           .doc('data')
-          .collection('lodgings')
-          .doc(lodgingId)
+          .collection('flights')
+          .doc(flightId)
           .delete();
     } catch (e) {
-      throw Exception('Failed to delete lodging: $e');
+      throw Exception('Failed to delete flight: $e');
     }
   }
 
-  // Stream lodgings for real-time updates
-  Stream<List<LodgingData>> streamLodgings(String tripId) {
+  // Stream flights for real-time updates
+  Stream<List<FlightData>> streamFlights(String tripId) {
     return _firestore
         .collection('users')
         .doc(_uid)
@@ -109,12 +109,9 @@ class LodgingRepository {
         .doc(tripId)
         .collection('itineraries')
         .doc('data')
-        .collection('lodgings')
+        .collection('flights')
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => LodgingData.fromFirestore(doc))
-              .toList(),
-        );
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => FlightData.fromFirestore(doc)).toList());
   }
 }

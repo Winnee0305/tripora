@@ -38,7 +38,6 @@ class LodgingData {
 
   // ----- To Firestore -----
   Map<String, dynamic> toMap() => {
-    'type': 'lodging',
     'name': name,
     'placeId': placeId,
     'date': date.toIso8601String(),
