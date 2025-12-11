@@ -69,12 +69,11 @@ class ItineraryViewModel extends ChangeNotifier {
   }
 
   bool areItinerariesEqual(ItineraryData a, ItineraryData b) {
-    return a.id == b.id &&
-        a.placeId == b.placeId &&
+    // return a.id == b.id &&
+    return a.placeId == b.placeId &&
         a.userNotes == b.userNotes &&
         a.date == b.date &&
-        a.sequence == b.sequence &&
-        a.lastUpdated == b.lastUpdated;
+        a.sequence == b.sequence;
   }
 
   Future<void> initialise() async {
@@ -196,6 +195,12 @@ class ItineraryViewModel extends ChangeNotifier {
     itinerariesMap = {...itinerariesMap, fromDay: fromList, toDay: toList};
 
     notifyListeners();
+  }
+
+  void deleteItinerary(ItineraryData itinerary) {
+    itinerariesMap.forEach((day, itemList) {
+      itemList.removeWhere((item) => item.id == itinerary.id);
+    });
   }
 
   void clearForm() {
@@ -348,8 +353,8 @@ class ItineraryViewModel extends ChangeNotifier {
         await _itineraryRepo.updateItinerary(item, trip!.tripId);
       }
 
-      for (final id in toDelete) {
-        await _itineraryRepo.deleteItinerary(trip!.tripId, id);
+      for (final item in toDelete) {
+        await _itineraryRepo.deleteItinerary(trip!.tripId, item);
       }
 
       _isUploading = false;

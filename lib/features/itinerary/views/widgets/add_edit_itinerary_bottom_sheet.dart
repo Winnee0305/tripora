@@ -111,32 +111,92 @@ class _AddEditItineraryBottomSheetState
 
               // Submit button
               Center(
-                child: AppButton.textOnly(
-                  text: isEditing ? "Update Itinerary" : "Add Itinerary",
-                  minWidth: 150,
-                  minHeight: 40,
-                  onPressed: () {
-                    if (!vm.validateForm()) {
-                      return;
-                    }
+                child: isEditing
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 20,
+                        children: [
+                          AppButton.textOnly(
+                            text: "Delete Itinerary",
+                            minWidth: 150,
+                            minHeight: 40,
+                            backgroundColorOverride:
+                                theme.colorScheme.errorContainer,
+                            textColorOverride: theme.colorScheme.onPrimary,
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Delete Itinerary"),
+                                    content: const Text(
+                                      "Are you sure you want to delete this itinerary? This action cannot be undone.",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        child: const Text(
+                                          "Delete",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
 
-                    if (isEditing) {
-                      print(
-                        'Updating itinerary ${widget.itinerary!.toString()}',
-                      );
-                      vm.updateItinerary(widget.itinerary!);
-                    } else {
-                      print(
-                        'Adding itinerary ${vm.destinationController.text}',
-                      );
+                              if (confirm == true) {
+                                vm.deleteItinerary(widget.itinerary!);
+                                vm.clearForm();
+                                Navigator.pop(context); // close the screen
+                              }
+                            },
+                          ),
+                          AppButton.textOnly(
+                            text: "Update Itinerary",
+                            minWidth: 150,
+                            minHeight: 40,
+                            onPressed: () {
+                              if (!vm.validateForm()) {
+                                return;
+                              }
 
-                      vm.addItinerary(widget.itinerary!);
-                    }
+                              print(
+                                'Updating itinerary ${widget.itinerary!.toString()}',
+                              );
+                              vm.updateItinerary(widget.itinerary!);
 
-                    vm.clearForm();
-                    Navigator.pop(context);
-                  },
-                ),
+                              vm.clearForm();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      )
+                    : AppButton.textOnly(
+                        text: "Add Itinerary",
+                        minWidth: 150,
+                        minHeight: 40,
+                        onPressed: () {
+                          if (!vm.validateForm()) {
+                            return;
+                          }
+
+                          print(
+                            'Adding itinerary ${vm.destinationController.text}',
+                          );
+
+                          vm.addItinerary(widget.itinerary!);
+
+                          vm.clearForm();
+                          Navigator.pop(context);
+                        },
+                      ),
               ),
               const SizedBox(height: 10),
               if (!vm.validateForm())

@@ -60,7 +60,7 @@ class ItineraryData {
       date: date ?? this.date,
       userNotes: userNotes ?? this.userNotes,
       sequence: sequence ?? this.sequence,
-      lastUpdated: DateTime.now(),
+      lastUpdated: lastUpdated ?? DateTime.now(),
       place: place ?? this.place,
     );
   }

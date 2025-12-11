@@ -6,6 +6,7 @@ import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/features/poi/views/poi_page.dart';
 
 class ItineraryCard extends StatelessWidget {
   const ItineraryCard({super.key, required this.itinerary});
@@ -22,14 +23,26 @@ class ItineraryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: SizedBox(
-                  height: 80,
-                  width: 80,
-                  child: AppLoadingNetworkImage(
-                    imageUrl: itinerary.place?.imageUrl ?? '',
-                    radius: 14, // optional, controls the loading indicator size
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PoiPage(placeId: itinerary.place!.id),
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: AppLoadingNetworkImage(
+                      imageUrl: itinerary.place?.imageUrl ?? '',
+                      radius:
+                          14, // optional, controls the loading indicator size
+                    ),
                   ),
                 ),
               ),

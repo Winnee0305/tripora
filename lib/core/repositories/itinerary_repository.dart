@@ -18,8 +18,8 @@ class ItineraryRepository {
   }
 
   // ---- DELETE ----
-  Future<void> deleteItinerary(String itineraryId, String tripId) async {
-    await _firestoreService.deleteItinerary(_uid, itineraryId, tripId);
+  Future<void> deleteItinerary(String tripId, String itineraryId) async {
+    await _firestoreService.deleteItinerary(_uid, tripId, itineraryId);
   }
 
   // ---- UPDATE ----

@@ -4,7 +4,7 @@ import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/utils/format_utils.dart';
-import 'package:tripora/features/itinerary/viewmodels/add_edit_itinerary_bottom_sheet.dart';
+import 'package:tripora/features/itinerary/views/widgets/add_edit_itinerary_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
@@ -85,8 +85,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 else
                   const SizedBox(height: 0),
                 const SizedBox(height: 16),
-                // ----- Lodging info (if any)
-                const LodgingCard(),
+
                 const SizedBox(height: 26),
                 // ----- Itinerary items -----
                 ReorderableListView.builder(

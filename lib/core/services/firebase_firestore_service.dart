@@ -148,8 +148,8 @@ class FirestoreService {
   // }
   Future<void> deleteItinerary(
     String uid,
-    String itineraryId,
     String tripId,
+    String itineraryId,
   ) async {
     try {
       await usersCollection
