@@ -308,7 +308,7 @@ class _StatsSectionState extends State<StatsSection> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "7",
+                              packingVm.packedItemCount.toString(),
                               style: theme.textTheme.headlineLarge!.copyWith(
                                 color: theme.colorScheme.onPrimary,
                                 fontWeight: ManropeFontWeight.semiBold,
@@ -317,7 +317,7 @@ class _StatsSectionState extends State<StatsSection> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              "/ 30",
+                              "/ ${packingVm.getTotalItems().toString()}",
                               style: theme.textTheme.headlineSmall!.copyWith(
                                 color: theme.colorScheme.onPrimary,
                                 fontWeight: ManropeFontWeight.semiBold,

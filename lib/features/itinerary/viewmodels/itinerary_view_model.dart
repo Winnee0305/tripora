@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
+import 'package:tripora/core/repositories/ai_agents_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
+import 'package:tripora/core/services/ai_agents_service.dart';
 
 /// Simple mock RouteInfo model (for testing only)
 class RouteInfo {
@@ -293,6 +295,135 @@ class ItineraryViewModel extends ChangeNotifier {
     itinerariesMap = {...itinerariesMap, day: updatedDayList};
 
     notifyListeners(); // now the UI will rebuild
+  }
+
+  Future<Map<String, dynamic>?> generateAIPlan() async {
+    if (trip == null) return null;
+
+    try {
+      final aiRepo = AIAgentRepository(service: AIAgentService());
+
+      // Calculate trip duration in days
+      final tripDuration =
+          trip!.endDate!.difference(trip!.startDate!).inDays + 1;
+
+      // Prepare the request body
+      final body = {
+        'destination_state': trip!.destination,
+        'max_pois_per_day': 6,
+        'number_of_travelers': trip!.travelersCount,
+        'preferred_poi_names': [],
+        'trip_duration_days': tripDuration,
+        'user_preferences': [trip!.travelStyle, trip!.travelPartnerType],
+      };
+
+      print('=== AI Plan Request ===');
+      print('Body: $body');
+
+      final result = await aiRepo.planTripMobile(body);
+
+      print('=== AI Plan Result ===');
+      print('Result: $result');
+
+      return result;
+    } catch (e) {
+      _error = 'Failed to generate AI plan: $e';
+      print('Error in generateAIPlan: $e');
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<void> processAIPlanResult(dynamic result) async {
+    if (result == null || trip == null) return;
+
+    try {
+      // Expected result format: { "pois_sequence": [...] }
+      final poisSequence = result['pois_sequence'] as List<dynamic>?;
+
+      if (poisSequence == null) {
+        print('No pois_sequence data in result');
+        return;
+      }
+
+      print('Processing ${poisSequence.length} POIs from AI result');
+
+      // Group POIs by day
+      final Map<int, List<Map<String, dynamic>>> poisByDay = {};
+
+      for (var poi in poisSequence) {
+        final poiMap = poi as Map<String, dynamic>;
+        final day = poiMap['day'] as int;
+
+        if (!poisByDay.containsKey(day)) {
+          poisByDay[day] = [];
+        }
+        poisByDay[day]!.add(poiMap);
+      }
+
+      // Create new itineraries map with all days initialized
+      final totalDays = trip!.endDate!.difference(trip!.startDate!).inDays + 1;
+
+      final newItinerariesMap = <int, List<ItineraryData>>{};
+
+      // Initialize all days with empty lists
+      for (int i = 1; i <= totalDays; i++) {
+        newItinerariesMap[i] = [];
+      }
+
+      // Process each day that has POIs
+      for (var entry in poisByDay.entries) {
+        final dayNumber = entry.key;
+        final pois = entry.value;
+
+        final List<ItineraryData> dayItineraries = [];
+
+        // Sort by sequence_number
+        pois.sort(
+          (a, b) => (a['sequence_number'] as int).compareTo(
+            b['sequence_number'] as int,
+          ),
+        );
+
+        for (int i = 0; i < pois.length; i++) {
+          final poi = pois[i];
+
+          // Calculate the date for this day
+          final date = trip!.startDate!.add(Duration(days: dayNumber - 1));
+
+          // Create itinerary item
+          final itinerary = ItineraryData(
+            id: '', // Will be generated when synced
+            placeId: poi['google_place_id'] ?? '',
+            date: date,
+            userNotes: poi['name'] ?? '', // Use POI name as notes
+            sequence: i,
+            lastUpdated: DateTime.now(),
+          );
+
+          // Load place details asynchronously
+          await itinerary.loadPlaceDetails();
+
+          dayItineraries.add(itinerary);
+        }
+
+        newItinerariesMap[dayNumber] = dayItineraries;
+      }
+
+      // Update the itineraries map using the proper method
+      listToMap(
+        newItinerariesMap.values.expand((list) => list).toList(),
+        trip!.startDate!,
+        trip!.endDate!,
+      );
+
+      print('Successfully processed ${poisByDay.length} days of itinerary');
+    } catch (e) {
+      _error = 'Error processing AI result: $e';
+      print('Error in processAIPlanResult: $e');
+      notifyListeners();
+      rethrow;
+    }
   }
 
   Future<void> syncItineraries() async {
