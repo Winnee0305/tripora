@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/utils/format_utils.dart';
+import 'package:tripora/features/itinerary/views/widgets/activity_type_selection_sheet.dart';
 import 'package:tripora/features/itinerary/views/widgets/add_edit_itinerary_bottom_sheet.dart';
+import 'package:tripora/features/itinerary/views/widgets/add_edit_lodging_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
@@ -85,6 +88,64 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 else
                   const SizedBox(height: 0),
                 const SizedBox(height: 16),
+
+                // ----- Lodging cards -----
+                ...vm
+                    .getLodgingsForDay(day)
+                    .map(
+                      (lodging) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: LodgingCard(
+                          lodging: lodging,
+                          onTap: () async {
+                            final result = await showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) =>
+                                  AddEditLodgingBottomSheet(lodging: lodging),
+                            );
+
+                            if (result == null || !mounted) return;
+
+                            try {
+                              if (result == 'delete') {
+                                await vm.deleteLodging(lodging.id);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Lodging "${lodging.name}" deleted successfully',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else if (result is LodgingData) {
+                                await vm.updateLodging(result);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Lodging "${result.name}" updated successfully',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Failed to update lodging: $e',
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
 
                 const SizedBox(height: 26),
                 // ----- Itinerary items -----
@@ -217,13 +278,75 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   minWidth: double.infinity,
                   minHeight: 36,
                   backgroundVariant: BackgroundVariant.primaryTrans,
-                  onPressed: () {
-                    final draftItinerary = ItineraryData.empty(
-                      vm.getDate(day),
-                      vm.getLastSequence(day),
-                    );
+                  onPressed: () async {
+                    final activityType =
+                        await showModalBottomSheet<ActivityType>(
+                          context: context,
+                          builder: (context) =>
+                              const ActivityTypeSelectionSheet(),
+                        );
 
-                    _openEditItinerarySheet(context, draftItinerary);
+                    if (activityType == null) return;
+
+                    switch (activityType) {
+                      case ActivityType.destination:
+                        final draftItinerary = ItineraryData.empty(
+                          vm.getDate(day),
+                          vm.getLastSequence(day),
+                        );
+                        _openEditItinerarySheet(context, draftItinerary);
+                        break;
+                      case ActivityType.lodging:
+                        final draftLodging = LodgingData.empty(
+                          vm.getDate(day),
+                          vm.getLastSequence(day),
+                        );
+                        final result = await showModalBottomSheet<LodgingData>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (_) =>
+                              AddEditLodgingBottomSheet(lodging: draftLodging),
+                        );
+                        if (result != null && mounted) {
+                          try {
+                            await vm.addLodging(result);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Lodging "${result.name}" added successfully',
+                                  ),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to add lodging: $e'),
+                                ),
+                              );
+                            }
+                          }
+                        }
+                        break;
+                      case ActivityType.flight:
+                        // TODO: Show flight selection sheet
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Flight selection coming soon'),
+                          ),
+                        );
+                        break;
+                      case ActivityType.notes:
+                        // TODO: Show notes entry sheet
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Notes entry coming soon'),
+                          ),
+                        );
+                        break;
+                    }
                   },
                 ),
                 const SizedBox(height: 24),

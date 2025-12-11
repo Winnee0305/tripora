@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/ai_agents_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
+import 'package:tripora/core/repositories/lodging_repository.dart';
 import 'package:tripora/core/services/ai_agents_service.dart';
 
 /// Simple mock RouteInfo model (for testing only)
@@ -18,17 +20,20 @@ class RouteInfo {
 /// ViewModel with mock route data
 class ItineraryViewModel extends ChangeNotifier {
   final ItineraryRepository _itineraryRepo;
+  final LodgingRepository _lodgingRepo;
   final destinationController = TextEditingController();
   final notesController = TextEditingController();
   String? selectedPlaceId;
 
   bool isEditingInitialized = false;
 
-  ItineraryViewModel(this._itineraryRepo);
+  ItineraryViewModel(this._itineraryRepo, this._lodgingRepo);
 
   // --- Local states ---
   List<ItineraryData> itineraries = [];
   Map<int, List<ItineraryData>> itinerariesMap = {};
+  List<LodgingData> lodgings = [];
+  Map<int, List<LodgingData>> lodgingsMap = {};
   bool _isLoading = false;
   bool _isUploading = false;
   String? _error;
@@ -81,7 +86,9 @@ class ItineraryViewModel extends ChangeNotifier {
 
   Future<void> initialise() async {
     await loadItineraries();
+    await loadLodgings();
     listToMap(itineraries, trip!.startDate!, trip!.endDate!);
+    mapLodgingsByDay();
   }
 
   Future<void> loadItineraries() async {
@@ -511,5 +518,101 @@ class ItineraryViewModel extends ChangeNotifier {
       _isUploading = false;
       notifyListeners();
     }
+  }
+
+  // ==================== Lodging Methods ====================
+
+  Future<void> loadLodgings() async {
+    try {
+      lodgings = await _lodgingRepo.fetchLodgings(trip!.tripId);
+      print('Lodgings loaded: ${lodgings.length} items');
+    } catch (e) {
+      _error = 'Failed to load lodgings: $e';
+      print('Error loading lodgings: $e');
+    }
+  }
+
+  /// Map lodgings to days based on check-in to check-out date range
+  void mapLodgingsByDay() {
+    final Map<int, List<LodgingData>> dailyMap = {};
+
+    // Initialize all days with empty lists
+    final totalDays = trip!.endDate!.difference(trip!.startDate!).inDays + 1;
+    for (int i = 1; i <= totalDays; i++) {
+      dailyMap[i] = [];
+    }
+
+    // Assign lodgings to all days they span
+    for (final lodging in lodgings) {
+      final checkInDay = getDayNumber(
+        lodging.checkInDateTime,
+        trip!.startDate!,
+      );
+      final checkOutDay = getDayNumber(
+        lodging.checkOutDateTime,
+        trip!.startDate!,
+      );
+
+      // Add lodging to all days from check-in to check-out
+      for (
+        int day = checkInDay;
+        day <= checkOutDay && day <= totalDays;
+        day++
+      ) {
+        if (dailyMap.containsKey(day)) {
+          dailyMap[day]!.add(lodging);
+        }
+      }
+    }
+
+    lodgingsMap = dailyMap;
+    notifyListeners();
+  }
+
+  Future<void> addLodging(LodgingData lodging) async {
+    try {
+      final docId = await _lodgingRepo.addLodging(trip!.tripId, lodging);
+      final newLodging = lodging.copyWith(id: docId);
+      lodgings.add(newLodging);
+      mapLodgingsByDay();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to add lodging: $e';
+      print('Error adding lodging: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateLodging(LodgingData lodging) async {
+    try {
+      await _lodgingRepo.updateLodging(trip!.tripId, lodging);
+      final index = lodgings.indexWhere((l) => l.id == lodging.id);
+      if (index != -1) {
+        lodgings[index] = lodging;
+        mapLodgingsByDay();
+        notifyListeners();
+      }
+    } catch (e) {
+      _error = 'Failed to update lodging: $e';
+      print('Error updating lodging: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteLodging(String lodgingId) async {
+    try {
+      await _lodgingRepo.deleteLodging(trip!.tripId, lodgingId);
+      lodgings.removeWhere((l) => l.id == lodgingId);
+      mapLodgingsByDay();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to delete lodging: $e';
+      print('Error deleting lodging: $e');
+      rethrow;
+    }
+  }
+
+  List<LodgingData> getLodgingsForDay(int day) {
+    return lodgingsMap[day] ?? [];
   }
 }

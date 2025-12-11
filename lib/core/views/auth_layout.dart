@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/repositories/expense_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
+import 'package:tripora/core/repositories/lodging_repository.dart';
 import 'package:tripora/core/repositories/packing_repository.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 import 'package:tripora/core/repositories/user_repository.dart';
@@ -45,6 +47,10 @@ class AuthLayout extends StatelessWidget {
               final userRepo = UserRepository(firestore, user.uid, storage);
               final tripRepo = TripRepository(firestore, user.uid, storage);
               final itineraryRepo = ItineraryRepository(firestore, user.uid);
+              final lodgingRepo = LodgingRepository(
+                FirebaseFirestore.instance,
+                user.uid,
+              );
               final expenseRepo = ExpenseRepository(firestore, user.uid);
               final packingRepo = PackingRepository(firestore, user.uid);
 
@@ -66,7 +72,7 @@ class AuthLayout extends StatelessWidget {
                   ),
                   ChangeNotifierProvider<ItineraryViewModel>(
                     create: (_) {
-                      final vm = ItineraryViewModel(itineraryRepo);
+                      final vm = ItineraryViewModel(itineraryRepo, lodgingRepo);
                       return vm;
                     },
                   ),

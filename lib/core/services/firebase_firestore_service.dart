@@ -140,7 +140,16 @@ class FirestoreService {
         .doc(tripId)
         .collection('itineraries')
         .get();
-    return snapshot.docs.map(ItineraryData.fromFirestore).toList();
+
+    // Filter out lodging documents
+    return snapshot.docs
+        .where((doc) {
+          final data = doc.data() as Map<String, dynamic>?;
+          final type = data?['type'];
+          return type == null || type == 'destination';
+        })
+        .map(ItineraryData.fromFirestore)
+        .toList();
   }
 
   // Future<void> deleteTrip(String uid, String tripId) async {

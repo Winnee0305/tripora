@@ -35,11 +35,12 @@ class ItineraryData {
 
   // ----- To Firestore -----
   Map<String, dynamic> toMap() => {
+    'type': 'destination',
     'placeId': placeId,
     'date': date.toIso8601String(),
     'userNotes': userNotes,
     'sequence': sequence.toString(),
-    'lastUpdated': lastUpdated?.toIso8601String(),
+    'lastUpdated': lastUpdated.toIso8601String(),
   };
 
   // ----- Copy With -----
