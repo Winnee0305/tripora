@@ -137,8 +137,8 @@ class Poi {
   }
 
   Future<void> loadDesc() async {
-    final aiDesc = await getPoiDesc(name, address);
-    description = aiDesc; // updates this POI's description
+    // final aiDesc = await getPoiDesc(name, address);
+    // description = aiDesc; // updates this POI's description
   }
 
   static List<Review> _parseReviews(List<dynamic>? reviewsData) {

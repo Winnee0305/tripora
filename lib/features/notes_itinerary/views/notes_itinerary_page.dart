@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/repositories/ai_agents_repository.dart';
+import 'package:tripora/core/services/ai_agents_service.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
@@ -10,6 +13,8 @@ import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
+import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
+import 'package:tripora/features/itinerary/views/widgets/ai_plan_button.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
@@ -33,12 +38,202 @@ class NotesItineraryPage extends StatelessWidget {
     LatLng(2.1920, 102.2495),
   ];
 
+  void _handleAIPlan(BuildContext context, TripViewModel tripVm) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                'Generating AI itinerary plan...',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final aiRepo = AIAgentRepository(service: AIAgentService());
+
+      // Calculate trip duration in days
+      final tripDuration =
+          tripVm.trip!.endDate!.difference(tripVm.trip!.startDate!).inDays + 1;
+
+      // Prepare the request body with trip information
+      final body = {
+        'destination_state': tripVm.trip!.destination,
+        'max_pois_per_day': 6,
+        'number_of_travelers': tripVm.trip!.travelersCount,
+        'preferred_poi_names': [],
+        'trip_duration_days': tripDuration,
+        'user_preferences': [
+          tripVm.trip!.travelStyle,
+          tripVm.trip!.travelPartnerType,
+        ],
+      };
+
+      print('=== AI Plan Request ===');
+      print('Body: $body');
+
+      final result = await aiRepo.planTripMobile(body);
+
+      print('=== AI Plan Result ===');
+      print('Result: $result');
+
+      // Close loading dialog
+      if (context.mounted) Navigator.of(context).pop();
+
+      // Process the AI result and update itineraries
+      if (result != null && context.mounted) {
+        final itineraryVm = context.read<ItineraryViewModel>();
+        await _processAIResult(result, itineraryVm, tripVm);
+
+        // Show success message
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('AI itinerary plan generated successfully!'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              action: SnackBarAction(
+                label: 'SYNC',
+                textColor: Colors.white,
+                onPressed: () {
+                  itineraryVm.syncItineraries();
+                },
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) Navigator.of(context).pop();
+
+      // Show error message
+      if (context.mounted) {
+        print("Failed to generate AI plan: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate AI plan: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _processAIResult(
+    dynamic result,
+    ItineraryViewModel itineraryVm,
+    TripViewModel tripVm,
+  ) async {
+    try {
+      // Expected result format: { "pois_sequence": [...] }
+      final poisSequence = result['pois_sequence'] as List<dynamic>?;
+
+      if (poisSequence == null) {
+        print('No pois_sequence data in result');
+        return;
+      }
+
+      print('Processing ${poisSequence.length} POIs from AI result');
+
+      // Group POIs by day
+      final Map<int, List<Map<String, dynamic>>> poisByDay = {};
+
+      for (var poi in poisSequence) {
+        final poiMap = poi as Map<String, dynamic>;
+        final day = poiMap['day'] as int;
+
+        if (!poisByDay.containsKey(day)) {
+          poisByDay[day] = [];
+        }
+        poisByDay[day]!.add(poiMap);
+      }
+
+      // Create new itineraries map with all days initialized
+      final totalDays =
+          tripVm.trip!.endDate!.difference(tripVm.trip!.startDate!).inDays + 1;
+
+      final newItinerariesMap = <int, List<ItineraryData>>{};
+
+      // Initialize all days with empty lists
+      for (int i = 1; i <= totalDays; i++) {
+        newItinerariesMap[i] = [];
+      }
+
+      // Process each day that has POIs
+      for (var entry in poisByDay.entries) {
+        final dayNumber = entry.key;
+        final pois = entry.value;
+
+        final List<ItineraryData> dayItineraries = [];
+
+        // Sort by sequence_number
+        pois.sort(
+          (a, b) => (a['sequence_number'] as int).compareTo(
+            b['sequence_number'] as int,
+          ),
+        );
+
+        for (int i = 0; i < pois.length; i++) {
+          final poi = pois[i];
+
+          // Calculate the date for this day
+          final date = tripVm.trip!.startDate!.add(
+            Duration(days: dayNumber - 1),
+          );
+
+          // Create itinerary item
+          final itinerary = ItineraryData(
+            id: '', // Will be generated when synced
+            placeId: poi['google_place_id'] ?? '',
+            date: date,
+            userNotes: poi['name'] ?? '', // Use POI name as notes
+            sequence: i,
+            lastUpdated: DateTime.now(),
+          );
+
+          // Load place details asynchronously
+          await itinerary.loadPlaceDetails();
+
+          dayItineraries.add(itinerary);
+        }
+
+        newItinerariesMap[dayNumber] = dayItineraries;
+      }
+
+      // Update the view model's map using the proper method
+      itineraryVm.listToMap(
+        newItinerariesMap.values.expand((list) => list).toList(),
+        tripVm.trip!.startDate!,
+        tripVm.trip!.endDate!,
+      );
+
+      print('Successfully processed ${poisByDay.length} days of itinerary');
+    } catch (e) {
+      print('Error processing AI result: $e');
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tripVm = context.watch<TripViewModel>();
     return Scaffold(
       extendBodyBehindAppBar: true,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: AIPlanButton(onPressed: () => _handleAIPlan(context, tripVm)),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
           // ----- Map Background -----
