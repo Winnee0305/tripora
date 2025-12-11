@@ -20,9 +20,7 @@ class FlightRepository {
           .collection('flights')
           .get();
 
-      return snapshot.docs
-          .map((doc) => FlightData.fromFirestore(doc))
-          .toList();
+      return snapshot.docs.map((doc) => FlightData.fromFirestore(doc)).toList();
     } catch (e) {
       throw Exception('Failed to fetch flights: $e');
     }
@@ -53,10 +51,7 @@ class FlightRepository {
           .doc('data')
           .collection('flights')
           .doc(flightId)
-          .set(
-            flight.copyWith(id: flightId).toMap(),
-            SetOptions(merge: true),
-          );
+          .set(flight.copyWith(id: flightId).toMap(), SetOptions(merge: true));
 
       return flightId;
     } catch (e) {
@@ -111,7 +106,10 @@ class FlightRepository {
         .doc('data')
         .collection('flights')
         .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((doc) => FlightData.fromFirestore(doc)).toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => FlightData.fromFirestore(doc))
+              .toList(),
+        );
   }
 }

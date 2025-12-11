@@ -44,16 +44,16 @@ class FlightData {
 
   // ----- To Firestore -----
   Map<String, dynamic> toMap() => {
-        'flightNumber': flightNumber,
-        'airline': airline,
-        'departureAirport': departureAirport,
-        'arrivalAirport': arrivalAirport,
-        'departureDateTime': departureDateTime.toIso8601String(),
-        'arrivalDateTime': arrivalDateTime.toIso8601String(),
-        'date': date.toIso8601String(),
-        'sequence': sequence.toString(),
-        'lastUpdated': lastUpdated.toIso8601String(),
-      };
+    'flightNumber': flightNumber,
+    'airline': airline,
+    'departureAirport': departureAirport,
+    'arrivalAirport': arrivalAirport,
+    'departureDateTime': departureDateTime.toIso8601String(),
+    'arrivalDateTime': arrivalDateTime.toIso8601String(),
+    'date': date.toIso8601String(),
+    'sequence': sequence.toString(),
+    'lastUpdated': lastUpdated.toIso8601String(),
+  };
 
   // ----- Copy With -----
   FlightData copyWith({

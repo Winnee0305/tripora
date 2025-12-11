@@ -23,7 +23,7 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
   final _arrivalAirportController = TextEditingController();
   DateTime? _departureDateTime;
   DateTime? _arrivalDateTime;
-  
+
   final _flightService = FlightAutocompleteService();
   Timer? _debounceTimer;
   bool _isSearching = false;
@@ -40,7 +40,7 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
       _departureDateTime = widget.flight!.departureDateTime;
       _arrivalDateTime = widget.flight!.arrivalDateTime;
     }
-    
+
     // Add listener to flight number field for autocomplete
     _flightNumberController.addListener(_onFlightNumberChanged);
   }
@@ -55,10 +55,10 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
     _arrivalAirportController.dispose();
     super.dispose();
   }
-  
+
   void _onFlightNumberChanged() {
     _debounceTimer?.cancel();
-    
+
     final flightNumber = _flightNumberController.text.trim();
     if (flightNumber.isEmpty) {
       setState(() {
@@ -67,18 +67,18 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
       });
       return;
     }
-    
+
     // Debounce the search by 800ms
     _debounceTimer = Timer(const Duration(milliseconds: 800), () {
       _searchFlight(flightNumber);
     });
   }
-  
+
   Future<void> _searchFlight(String flightNumber) async {
     setState(() {
       _isSearching = true;
     });
-    
+
     try {
       final results = await _flightService.searchFlightByNumber(flightNumber);
       if (mounted) {
@@ -95,15 +95,15 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
       }
     }
   }
-  
+
   void _selectFlightSuggestion(Map<String, dynamic> flight) {
     setState(() {
       _airlineController.text = flight['airline'] ?? '';
-      _departureAirportController.text = 
+      _departureAirportController.text =
           '${flight['departureAirport']} (${flight['departureIata']})';
-      _arrivalAirportController.text = 
+      _arrivalAirportController.text =
           '${flight['arrivalAirport']} (${flight['arrivalIata']})';
-      
+
       // Parse scheduled times if available
       if (flight['departureScheduled'] != null) {
         try {
@@ -112,7 +112,7 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
           print('Error parsing departure time: $e');
         }
       }
-      
+
       if (flight['arrivalScheduled'] != null) {
         try {
           _arrivalDateTime = DateTime.parse(flight['arrivalScheduled']);
@@ -120,7 +120,7 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
           print('Error parsing arrival time: $e');
         }
       }
-      
+
       _flightSuggestions = [];
     });
   }
@@ -265,7 +265,7 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
                         ),
                     ],
                   ),
-                  
+
                   // Flight suggestions
                   if (_flightSuggestions.isNotEmpty) ...[
                     const SizedBox(height: 8),
@@ -315,7 +315,9 @@ class _AddEditFlightBottomSheetState extends State<AddEditFlightBottomSheet> {
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               size: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(0.4),
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.4,
+                              ),
                             ),
                           );
                         },

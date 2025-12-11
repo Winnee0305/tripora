@@ -659,10 +659,7 @@ class ItineraryViewModel extends ChangeNotifier {
 
     // Assign flights to the correct day based on the date field
     for (final flight in flights) {
-      final day = getDayNumber(
-        flight.date,
-        trip!.startDate!,
-      );
+      final day = getDayNumber(flight.date, trip!.startDate!);
 
       if (dailyMap.containsKey(day)) {
         dailyMap[day]!.add(flight);
