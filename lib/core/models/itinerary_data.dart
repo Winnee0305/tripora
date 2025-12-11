@@ -4,6 +4,7 @@ import 'package:tripora/features/poi/models/poi.dart';
 class ItineraryData {
   final String id;
   final String placeId;
+  final String type; // 'destination' or 'note'
   final DateTime date;
   final String userNotes;
   final int sequence;
@@ -13,6 +14,7 @@ class ItineraryData {
   ItineraryData({
     required this.id,
     required this.placeId,
+    required this.type,
     required this.date,
     required this.userNotes,
     required this.sequence,
@@ -20,14 +22,18 @@ class ItineraryData {
     this.place,
   });
 
+  bool get isNote => type == 'note';
+  bool get isDestination => type == 'destination';
+
   // ----- Factory from Firestore -----
   factory ItineraryData.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return ItineraryData(
       id: doc.id,
-      placeId: data['placeId'],
+      placeId: data['placeId'] ?? '',
+      type: data['type'] ?? 'destination',
       date: DateTime.parse(data['date']),
-      userNotes: data['userNotes'],
+      userNotes: data['userNotes'] ?? '',
       sequence: int.tryParse(data['sequence'].toString()) ?? 0,
       lastUpdated: DateTime.parse(data['lastUpdated']),
     );
@@ -35,7 +41,7 @@ class ItineraryData {
 
   // ----- To Firestore -----
   Map<String, dynamic> toMap() => {
-    'type': 'destination',
+    'type': type,
     'placeId': placeId,
     'date': date.toIso8601String(),
     'userNotes': userNotes,
@@ -47,6 +53,7 @@ class ItineraryData {
   ItineraryData copyWith({
     String? id,
     String? placeId,
+    String? type,
     DateTime? date,
     String? userNotes,
     int? sequence,
@@ -58,6 +65,7 @@ class ItineraryData {
     return ItineraryData(
       id: id ?? this.id,
       placeId: placeId ?? this.placeId,
+      type: type ?? this.type,
       date: date ?? this.date,
       userNotes: userNotes ?? this.userNotes,
       sequence: sequence ?? this.sequence,
@@ -78,6 +86,19 @@ class ItineraryData {
     return ItineraryData(
       id: '',
       placeId: '',
+      type: 'destination',
+      date: date,
+      userNotes: '',
+      sequence: sequence,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  factory ItineraryData.emptyNote(DateTime date, int sequence) {
+    return ItineraryData(
+      id: '',
+      placeId: '',
+      type: 'note',
       date: date,
       userNotes: '',
       sequence: sequence,

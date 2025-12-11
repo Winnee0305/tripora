@@ -141,12 +141,12 @@ class FirestoreService {
         .collection('itineraries')
         .get();
 
-    // Filter out lodging documents
+    // Filter out lodging documents, include destinations and notes
     return snapshot.docs
         .where((doc) {
           final data = doc.data() as Map<String, dynamic>?;
           final type = data?['type'];
-          return type == null || type == 'destination';
+          return type == null || type == 'destination' || type == 'note';
         })
         .map(ItineraryData.fromFirestore)
         .toList();

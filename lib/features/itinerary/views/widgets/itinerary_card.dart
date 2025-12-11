@@ -15,6 +15,60 @@ class ItineraryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    // If it's a note, show compact sticky note card
+    if (itinerary.isNote) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(
+            0xFFFFF9E6,
+          ).withOpacity(0.7), // Semi-transparent yellow
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: const Color(0xFFFFE082).withOpacity(0.5),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Note icon - smaller and simpler
+            Icon(Icons.sticky_note_2, color: const Color(0xFFFFB300), size: 18),
+            const SizedBox(width: 10),
+            // Note content
+            Expanded(
+              child: Text(
+                itinerary.userNotes.isEmpty
+                    ? 'Empty note'
+                    : itinerary.userNotes,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: itinerary.userNotes.isEmpty
+                      ? Colors.black54
+                      : Colors.black87,
+                  fontStyle: itinerary.userNotes.isEmpty
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                  height: 1.4,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Drag handle - more subtle
+            Icon(Icons.drag_indicator, color: Colors.black26, size: 16),
+          ],
+        ),
+      );
+    }
+
+    // Regular destination card
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: AppWidgetStyles.cardDecoration(context),

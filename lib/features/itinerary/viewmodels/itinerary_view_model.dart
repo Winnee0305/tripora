@@ -235,7 +235,12 @@ class ItineraryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool validateForm() => destinationController.text.trim().isNotEmpty;
+  bool validateForm({bool isNote = false}) {
+    if (isNote) {
+      return notesController.text.trim().isNotEmpty;
+    }
+    return destinationController.text.trim().isNotEmpty;
+  }
 
   Future<ItineraryData> getNewItinerary(ItineraryData oldItinerary) async {
     // Copy existing itinerary
@@ -267,39 +272,48 @@ class ItineraryViewModel extends ChangeNotifier {
     return latLngs;
   }
 
-  void updateItinerary(ItineraryData oldItinerary) async {
-    // Find the day entry that contains the old itinerary
+  void updateItinerary(ItineraryData updatedItinerary) async {
+    // Find the day entry that contains the itinerary with matching ID
     MapEntry<int, List<ItineraryData>>? dayEntry;
+    int? foundIndex;
 
     for (final entry in itinerariesMap.entries) {
-      if (entry.value.contains(oldItinerary)) {
+      foundIndex = entry.value.indexWhere((item) => item.id == updatedItinerary.id);
+      if (foundIndex != -1) {
         dayEntry = entry;
         break;
       }
     }
 
-    if (dayEntry == null) return; // Not found, nothing to update
+    if (dayEntry == null || foundIndex == null || foundIndex == -1) {
+      return; // Not found, nothing to update
+    }
 
     final day = dayEntry.key;
-    final index = dayEntry.value.indexOf(oldItinerary);
+    final oldItinerary = dayEntry.value[foundIndex];
 
-    if (index == -1) return;
-
-    // Fetch or generate the updated itinerary
-    final newItinerary = await getNewItinerary(
-      oldItinerary,
-    ); // your async update
+    // For notes, use the updated one directly; for destinations, process through getNewItinerary
+    final newItinerary = updatedItinerary.isNote 
+        ? updatedItinerary 
+        : await getNewItinerary(oldItinerary);
 
     // Replace the old itinerary in the map
     final updatedList = List<ItineraryData>.from(dayEntry.value);
-    updatedList[index] = newItinerary;
+    updatedList[foundIndex] = newItinerary;
     itinerariesMap[day] = updatedList;
+
+    // Save to Firestore
+    await _itineraryRepo.updateItinerary(newItinerary, trip!.tripId);
 
     notifyListeners();
   }
 
   void addItinerary(ItineraryData draftItinerary) async {
-    final newItinerary = await getNewItinerary(draftItinerary);
+    // For notes, use the draft directly since it already has the updated userNotes
+    // For destinations, process through getNewItinerary to load place details
+    final newItinerary = draftItinerary.isNote 
+        ? draftItinerary 
+        : await getNewItinerary(draftItinerary);
     addToMap(newItinerary);
     notifyListeners();
   }
@@ -425,6 +439,7 @@ class ItineraryViewModel extends ChangeNotifier {
           final itinerary = ItineraryData(
             id: '', // Will be generated when synced
             placeId: poi['google_place_id'] ?? '',
+            type: 'destination',
             date: date,
             userNotes: poi['name'] ?? '', // Use POI name as notes
             sequence: i,

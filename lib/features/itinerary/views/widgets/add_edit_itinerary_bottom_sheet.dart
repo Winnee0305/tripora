@@ -26,7 +26,8 @@ class _AddEditItineraryBottomSheetState
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).viewInsets;
 
-    final isEditing = widget.itinerary?.placeId.isNotEmpty ?? false;
+    // Check if editing: for destinations check placeId, for notes check id
+    final isEditing = widget.itinerary?.id.isNotEmpty ?? false;
 
     // Populate form if editing
     if (widget.itinerary != null && !vm.isEditingInitialized) {
@@ -61,7 +62,9 @@ class _AddEditItineraryBottomSheetState
 
               // Title
               Text(
-                isEditing ? "Edit Itinerary" : "Add New Itinerary",
+                widget.itinerary?.isNote ?? false
+                    ? (isEditing ? "Edit Note" : "Add Note")
+                    : (isEditing ? "Edit Itinerary" : "Add New Itinerary"),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -69,38 +72,39 @@ class _AddEditItineraryBottomSheetState
               const SizedBox(height: 20),
 
               // ----------------------------
-              // Destination field with search
+              // Destination field with search (skip for notes)
               // ----------------------------
-              GestureDetector(
-                onTap: () async {
-                  final selected = await showModalBottomSheet<String>(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
+              if (!(widget.itinerary?.isNote ?? false)) ...[
+                GestureDetector(
+                  onTap: () async {
+                    final selected = await showModalBottomSheet<String>(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24),
+                        ),
                       ),
-                    ),
-                    builder: (_) => _DestinationSearchSheet(vm: vm),
-                  );
+                      builder: (_) => _DestinationSearchSheet(vm: vm),
+                    );
 
-                  if (selected != null) {
-                    vm.destinationController.text = selected;
-                  }
-                },
-                child: AbsorbPointer(
-                  child: AppTextField(
-                    label: "Destination",
-                    controller: vm.destinationController,
+                    if (selected != null) {
+                      vm.destinationController.text = selected;
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: AppTextField(
+                      label: "Destination",
+                      controller: vm.destinationController,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+              ],
 
               // Notes
-              // Notes
               AppTextField(
-                label: "Notes",
+                label: widget.itinerary?.isNote ?? false ? "Note" : "Notes",
                 controller: vm.notesController,
                 maxLines: 5, // allow the field to grow up to 5 lines
                 minLines: 3, // start with 3 lines height
@@ -117,20 +121,23 @@ class _AddEditItineraryBottomSheetState
                         spacing: 20,
                         children: [
                           AppButton.textOnly(
-                            text: "Delete Itinerary",
+                            text: widget.itinerary?.isNote ?? false ? "Delete Note" : "Delete Itinerary",
                             minWidth: 150,
                             minHeight: 40,
                             backgroundColorOverride:
                                 theme.colorScheme.errorContainer,
                             textColorOverride: theme.colorScheme.onPrimary,
                             onPressed: () async {
+                              final isNote = widget.itinerary?.isNote ?? false;
                               final confirm = await showDialog<bool>(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: const Text("Delete Itinerary"),
-                                    content: const Text(
-                                      "Are you sure you want to delete this itinerary? This action cannot be undone.",
+                                    title: Text(isNote ? "Delete Note" : "Delete Itinerary"),
+                                    content: Text(
+                                      isNote 
+                                        ? "Are you sure you want to delete this note? This action cannot be undone."
+                                        : "Are you sure you want to delete this itinerary? This action cannot be undone.",
                                     ),
                                     actions: [
                                       TextButton(
@@ -159,18 +166,28 @@ class _AddEditItineraryBottomSheetState
                             },
                           ),
                           AppButton.textOnly(
-                            text: "Update Itinerary",
+                            text: widget.itinerary?.isNote ?? false ? "Update Note" : "Update Itinerary",
                             minWidth: 150,
                             minHeight: 40,
                             onPressed: () {
-                              if (!vm.validateForm()) {
+                              final isNote = widget.itinerary?.isNote ?? false;
+                              if (!vm.validateForm(isNote: isNote)) {
                                 return;
                               }
 
-                              print(
-                                'Updating itinerary ${widget.itinerary!.toString()}',
-                              );
-                              vm.updateItinerary(widget.itinerary!);
+                              // For notes, create updated note with new text
+                              if (isNote) {
+                                final updatedNote = widget.itinerary!.copyWith(
+                                  userNotes: vm.notesController.text.trim(),
+                                  lastUpdated: DateTime.now(),
+                                );
+                                vm.updateItinerary(updatedNote);
+                              } else {
+                                print(
+                                  'Updating itinerary ${widget.itinerary!.toString()}',
+                                );
+                                vm.updateItinerary(widget.itinerary!);
+                              }
 
                               vm.clearForm();
                               Navigator.pop(context);
@@ -179,27 +196,38 @@ class _AddEditItineraryBottomSheetState
                         ],
                       )
                     : AppButton.textOnly(
-                        text: "Add Itinerary",
+                        text: widget.itinerary?.isNote ?? false
+                            ? "Add Note"
+                            : "Add Itinerary",
                         minWidth: 150,
                         minHeight: 40,
                         onPressed: () {
-                          if (!vm.validateForm()) {
+                          final isNote = widget.itinerary?.isNote ?? false;
+                          if (!vm.validateForm(isNote: isNote)) {
                             return;
                           }
 
-                          print(
-                            'Adding itinerary ${vm.destinationController.text}',
-                          );
-
-                          vm.addItinerary(widget.itinerary!);
-
-                          vm.clearForm();
-                          Navigator.pop(context);
+                          // For notes, return the itinerary with updated notes
+                          if (isNote) {
+                            final updatedNote = widget.itinerary!.copyWith(
+                              userNotes: vm.notesController.text.trim(),
+                              lastUpdated: DateTime.now(),
+                            );
+                            vm.clearForm();
+                            Navigator.pop(context, updatedNote);
+                          } else {
+                            print(
+                              'Adding itinerary ${vm.destinationController.text}',
+                            );
+                            vm.addItinerary(widget.itinerary!);
+                            vm.clearForm();
+                            Navigator.pop(context);
+                          }
                         },
                       ),
               ),
               const SizedBox(height: 10),
-              if (!vm.validateForm())
+              if (!vm.validateForm(isNote: widget.itinerary?.isNote ?? false))
                 Center(
                   child: Text(
                     "Please fill in all required fields.",
@@ -222,7 +250,7 @@ class _AddEditItineraryBottomSheetState
 class _DestinationSearchSheet extends StatefulWidget {
   final ItineraryViewModel vm;
 
-  const _DestinationSearchSheet({super.key, required this.vm});
+  const _DestinationSearchSheet({required this.vm});
 
   @override
   State<_DestinationSearchSheet> createState() =>

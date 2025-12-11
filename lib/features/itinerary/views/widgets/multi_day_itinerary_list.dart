@@ -226,9 +226,14 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                       ),
                   itemBuilder: (context, index) {
                     final item = items[index];
+                    // Calculate destination number (exclude notes from numbering)
+                    final destinationIndex = items
+                        .sublist(0, index)
+                        .where((i) => i.isDestination)
+                        .length;
                     // Each item is both draggable and a drop target
                     return DragTarget<_DraggedItinerary>(
-                      key: ValueKey(item),
+                      key: ValueKey(item.id),
                       builder: (context, candidateData, rejectedData) {
                         final isActive = candidateData.isNotEmpty;
                         // Highlight drop target when active
@@ -258,7 +263,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                     itinerary: item,
                                     isFirst: index == 0,
                                     isLast: index == items.length - 1,
-                                    index: index,
+                                    index: destinationIndex,
                                   ),
                                   onTap: () {
                                     _openEditItinerarySheet(context, item);
@@ -426,12 +431,41 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         }
                         break;
                       case ActivityType.notes:
-                        // TODO: Show notes entry sheet
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Notes entry coming soon'),
-                          ),
+                        final draftNote = ItineraryData.emptyNote(
+                          vm.getDate(day),
+                          vm.getLastSequence(day),
                         );
+                        final result =
+                            await showModalBottomSheet<ItineraryData>(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => ChangeNotifierProvider.value(
+                                value: vm,
+                                child: AddEditItineraryBottomSheet(
+                                  itinerary: draftNote,
+                                ),
+                              ),
+                            );
+                        if (result != null && mounted) {
+                          try {
+                            vm.addItinerary(result);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Note added successfully'),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to add note: $e'),
+                                ),
+                              );
+                            }
+                          }
+                        }
                         break;
                     }
                   },

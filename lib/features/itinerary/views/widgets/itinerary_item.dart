@@ -21,21 +21,67 @@ class ItineraryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // For notes, use IntrinsicHeight so timeline extends with note height
+    if (itinerary.isNote) {
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Timeline line only (no pin) for notes
+            SizedBox(
+              width: 20,
+              child: Column(
+                children: [
+                  // Top line
+                  if (!isFirst)
+                    Container(
+                      width: 1,
+                      height: 4,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.6),
+                    )
+                  else
+                    Container(width: 1, height: 4, color: Colors.transparent),
+
+                  // Bottom line - expands to match note height
+                  if (!isLast)
+                    Expanded(
+                      child: Container(
+                        width: 1,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondary.withValues(alpha: 0.6),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                children: [
+                  ItineraryCard(itinerary: itinerary),
+                  if (!isLast) const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // For destinations, use IntrinsicHeight
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ----- Timeline indicator
           TimelineIndicator(isFirst: isFirst, isLast: isLast, index: index),
-
-          const SizedBox(width: 12), // Space between timeline and card
-          // ----- Card content
+          const SizedBox(width: 12),
           Expanded(
-            // Take the remaining horizontal space
             child: Column(
               children: [
                 ItineraryCard(itinerary: itinerary),
-                // ----- ETA between itinerary items -----
                 if (!isLast) EtaCard(itinerary: itinerary),
               ],
             ),
