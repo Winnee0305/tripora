@@ -753,50 +753,6 @@ class ItineraryViewModel extends ChangeNotifier {
       _isUploading = true;
       notifyListeners();
 
-      // Convert itineraries map to serializable format
-      final Map<int, List<Map<String, dynamic>>> itinerariesByDay = {};
-      for (final entry in itinerariesMap.entries) {
-        itinerariesByDay[entry.key] = entry.value.map((itinerary) {
-          return {
-            'id': itinerary.id,
-            'placeId': itinerary.placeId,
-            'type': itinerary.type,
-            'date': itinerary.date.toIso8601String(),
-            'userNotes': itinerary.userNotes,
-            'sequence': itinerary.sequence,
-            'lastUpdated': itinerary.lastUpdated.toIso8601String(),
-          };
-        }).toList();
-      }
-
-      // Convert lodgings to serializable format
-      final List<Map<String, dynamic>> lodgingsList = lodgings.map((lodging) {
-        return {
-          'id': lodging.id,
-          'name': lodging.name,
-          'placeId': lodging.placeId,
-          'checkInDateTime': lodging.checkInDateTime.toIso8601String(),
-          'checkOutDateTime': lodging.checkOutDateTime.toIso8601String(),
-          'lastUpdated': lodging.lastUpdated.toIso8601String(),
-          'sequence': lodging.sequence,
-        };
-      }).toList();
-
-      // Convert flights to serializable format
-      final List<Map<String, dynamic>> flightsList = flights.map((flight) {
-        return {
-          'id': flight.id,
-          'flightNumber': flight.flightNumber,
-          'airline': flight.airline,
-          'departureAirport': flight.departureAirport,
-          'arrivalAirport': flight.arrivalAirport,
-          'departureDateTime': flight.departureDateTime.toIso8601String(),
-          'arrivalDateTime': flight.arrivalDateTime.toIso8601String(),
-          'lastUpdated': flight.lastUpdated.toIso8601String(),
-          'sequence': flight.sequence,
-        };
-      }).toList();
-
       // Check if already published
       final existingPost = await _postRepo.getPostByTripId(trip!.tripId);
 
@@ -812,15 +768,28 @@ class ItineraryViewModel extends ChangeNotifier {
         tripImageUrl: trip!.tripImageUrl,
         userName: userName,
         userImageUrl: userImageUrl,
-        itinerariesByDay: itinerariesByDay,
-        lodgings: lodgingsList,
-        flights: flightsList,
         lastPublished: DateTime.now(),
         lastUpdated: DateTime.now(),
         tripDeleted: false,
       );
 
-      final postId = await _postRepo.publishPost(post);
+      // Flatten itineraries from all days
+      final List<ItineraryData> allItineraries = [];
+      for (final dayItineraries in itinerariesMap.values) {
+        allItineraries.addAll(dayItineraries);
+      }
+
+      debugPrint('📤 Publishing post with:');
+      debugPrint('  - ${allItineraries.length} itineraries');
+      debugPrint('  - ${lodgings.length} lodgings');
+      debugPrint('  - ${flights.length} flights');
+
+      final postId = await _postRepo.publishPost(
+        post,
+        allItineraries,
+        lodgings,
+        flights,
+      );
 
       debugPrint('📝 Post published with ID: $postId, tripId: ${trip!.tripId}');
 

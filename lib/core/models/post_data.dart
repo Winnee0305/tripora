@@ -12,10 +12,7 @@ class PostData {
   final String? tripImageUrl; // For display in posts
   final String userName; // User's display name
   final String? userImageUrl; // User's profile image
-  final Map<int, List<Map<String, dynamic>>>
-  itinerariesByDay; // Day number -> list of itineraries
-  final List<Map<String, dynamic>> lodgings;
-  final List<Map<String, dynamic>> flights;
+  // Note: itineraries, lodgings, and flights are now stored as subcollections
   final DateTime lastPublished;
   final DateTime lastUpdated;
   final bool tripDeleted; // Flag indicating if source trip was deleted
@@ -32,15 +29,12 @@ class PostData {
     this.tripImageUrl,
     required this.userName,
     this.userImageUrl,
-    required this.itinerariesByDay,
-    required this.lodgings,
-    required this.flights,
     required this.lastPublished,
     required this.lastUpdated,
     this.tripDeleted = false,
   });
 
-  // Convert to Firestore map
+  // Convert to Firestore map (subcollections are stored separately)
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -53,31 +47,15 @@ class PostData {
       'tripImageUrl': tripImageUrl,
       'userName': userName,
       'userImageUrl': userImageUrl,
-      'itinerariesByDay': itinerariesByDay.map(
-        (day, itineraries) => MapEntry(day.toString(), itineraries),
-      ),
-      'lodgings': lodgings,
-      'flights': flights,
       'lastPublished': lastPublished.toIso8601String(),
       'lastUpdated': lastUpdated.toIso8601String(),
       'tripDeleted': tripDeleted,
     };
   }
 
-  // Create from Firestore document
+  // Create from Firestore document (subcollections are fetched separately)
   factory PostData.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-
-    // Convert string keys back to int for itinerariesByDay
-    final Map<int, List<Map<String, dynamic>>> itinerariesByDay = {};
-    final rawItineraries = data['itinerariesByDay'] as Map<String, dynamic>?;
-    if (rawItineraries != null) {
-      rawItineraries.forEach((key, value) {
-        itinerariesByDay[int.parse(key)] = List<Map<String, dynamic>>.from(
-          value,
-        );
-      });
-    }
 
     return PostData(
       postId: doc.id,
@@ -91,9 +69,6 @@ class PostData {
       tripImageUrl: data['tripImageUrl'],
       userName: data['userName'] ?? 'Unknown User',
       userImageUrl: data['userImageUrl'],
-      itinerariesByDay: itinerariesByDay,
-      lodgings: List<Map<String, dynamic>>.from(data['lodgings'] ?? []),
-      flights: List<Map<String, dynamic>>.from(data['flights'] ?? []),
       lastPublished: DateTime.parse(data['lastPublished']),
       lastUpdated: DateTime.parse(data['lastUpdated']),
       tripDeleted: data['tripDeleted'] ?? false,
@@ -112,9 +87,6 @@ class PostData {
     String? tripImageUrl,
     String? userName,
     String? userImageUrl,
-    Map<int, List<Map<String, dynamic>>>? itinerariesByDay,
-    List<Map<String, dynamic>>? lodgings,
-    List<Map<String, dynamic>>? flights,
     DateTime? lastPublished,
     DateTime? lastUpdated,
     bool? tripDeleted,
@@ -131,9 +103,6 @@ class PostData {
       tripImageUrl: tripImageUrl ?? this.tripImageUrl,
       userName: userName ?? this.userName,
       userImageUrl: userImageUrl ?? this.userImageUrl,
-      itinerariesByDay: itinerariesByDay ?? this.itinerariesByDay,
-      lodgings: lodgings ?? this.lodgings,
-      flights: flights ?? this.flights,
       lastPublished: lastPublished ?? this.lastPublished,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       tripDeleted: tripDeleted ?? this.tripDeleted,

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tripora/core/models/expense_data.dart';
+import 'package:tripora/core/models/flight_data.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
+import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/models/packing_data.dart';
 import 'package:tripora/core/models/post_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
@@ -421,7 +423,13 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> get postsCollection =>
       _firestore.collection('posts');
 
-  Future<String> publishPost(String uid, PostData post) async {
+  Future<String> publishPost(
+    String uid,
+    PostData post,
+    List<ItineraryData> itineraries,
+    List<LodgingData> lodgings,
+    List<FlightData> flights,
+  ) async {
     final postData = post.toMap();
 
     // Check if post already exists for this trip
@@ -429,21 +437,105 @@ class FirestoreService {
         ? await getPostByTripId(uid, post.tripId!)
         : null;
 
+    String postId;
     if (existingPost != null) {
       // Update existing post
-      await postsCollection.doc(existingPost.postId).update({
+      postId = existingPost.postId;
+      await postsCollection.doc(postId).update({
         ...postData,
         'lastPublished': DateTime.now().toIso8601String(),
       });
-      return existingPost.postId;
+
+      // Delete existing subcollections before adding new ones
+      await _deletePostSubcollections(postId);
     } else {
       // Create new post
       final docRef = await postsCollection.add({
         ...postData,
         'lastPublished': DateTime.now().toIso8601String(),
       });
-      return docRef.id;
+      postId = docRef.id;
     }
+
+    // Add subcollections
+    await _addPostItineraries(postId, itineraries);
+    await _addPostLodgings(postId, lodgings);
+    await _addPostFlights(postId, flights);
+
+    return postId;
+  }
+
+  Future<void> _deletePostSubcollections(String postId) async {
+    final postRef = postsCollection.doc(postId);
+
+    // Delete itineraries
+    final itinerariesSnapshot = await postRef.collection('itineraries').get();
+    for (final doc in itinerariesSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Delete lodgings
+    final lodgingsSnapshot = await postRef.collection('lodgings').get();
+    for (final doc in lodgingsSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Delete flights
+    final flightsSnapshot = await postRef.collection('flights').get();
+    for (final doc in flightsSnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> _addPostItineraries(
+    String postId,
+    List<ItineraryData> itineraries,
+  ) async {
+    final postRef = postsCollection.doc(postId);
+    final batch = _firestore.batch();
+
+    for (final itinerary in itineraries) {
+      final docRef = postRef.collection('itineraries').doc(itinerary.id);
+      batch.set(docRef, itinerary.toMap());
+    }
+
+    await batch.commit();
+  }
+
+  Future<void> _addPostLodgings(
+    String postId,
+    List<LodgingData> lodgings,
+  ) async {
+    debugPrint('🏨 Adding ${lodgings.length} lodgings to post $postId');
+
+    if (lodgings.isEmpty) {
+      debugPrint('⚠️ No lodgings to add');
+      return;
+    }
+
+    final postRef = postsCollection.doc(postId);
+    final batch = _firestore.batch();
+
+    for (final lodging in lodgings) {
+      final docRef = postRef.collection('lodgings').doc(lodging.id);
+      debugPrint('  - Adding lodging: ${lodging.id} - ${lodging.name}');
+      batch.set(docRef, lodging.toMap());
+    }
+
+    await batch.commit();
+    debugPrint('✅ Successfully added ${lodgings.length} lodgings');
+  }
+
+  Future<void> _addPostFlights(String postId, List<FlightData> flights) async {
+    final postRef = postsCollection.doc(postId);
+    final batch = _firestore.batch();
+
+    for (final flight in flights) {
+      final docRef = postRef.collection('flights').doc(flight.id);
+      batch.set(docRef, flight.toMap());
+    }
+
+    await batch.commit();
   }
 
   Future<PostData?> getPost(String postId) async {
