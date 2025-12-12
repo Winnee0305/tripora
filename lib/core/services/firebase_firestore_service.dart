@@ -543,6 +543,44 @@ class FirestoreService {
     return doc.exists ? PostData.fromFirestore(doc) : null;
   }
 
+  Future<List<ItineraryData>> getPostItineraries(String postId) async {
+    // Note: Using orderBy on multiple fields requires a composite index
+    // For now, we'll fetch all and sort in memory
+    final snapshot = await postsCollection
+        .doc(postId)
+        .collection('itineraries')
+        .get();
+
+    final itineraries = snapshot.docs
+        .map((doc) => ItineraryData.fromFirestore(doc))
+        .toList();
+
+    // Sort in memory by date first, then by sequence
+    itineraries.sort((a, b) {
+      final dateComparison = a.date.compareTo(b.date);
+      if (dateComparison != 0) return dateComparison;
+      return a.sequence.compareTo(b.sequence);
+    });
+
+    return itineraries;
+  }
+
+  Future<List<LodgingData>> getPostLodgings(String postId) async {
+    final snapshot = await postsCollection
+        .doc(postId)
+        .collection('lodgings')
+        .get();
+    return snapshot.docs.map((doc) => LodgingData.fromFirestore(doc)).toList();
+  }
+
+  Future<List<FlightData>> getPostFlights(String postId) async {
+    final snapshot = await postsCollection
+        .doc(postId)
+        .collection('flights')
+        .get();
+    return snapshot.docs.map((doc) => FlightData.fromFirestore(doc)).toList();
+  }
+
   Future<List<PostData>> getUserPosts(String userId) async {
     final snapshot = await postsCollection
         .where('userId', isEqualTo: userId)

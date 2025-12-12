@@ -11,6 +11,7 @@ import 'package:tripora/features/itinerary/views/widgets/add_edit_itinerary_bott
 import 'package:tripora/features/itinerary/views/widgets/add_edit_lodging_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/views/widgets/add_edit_flight_bottom_sheet.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
+import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/weather_viewmodel.dart';
 import 'package:tripora/features/itinerary/views/widgets/itinerary_item.dart';
 import 'package:tripora/features/itinerary/views/widgets/lodging_card.dart';
@@ -25,9 +26,14 @@ class _DraggedItinerary {
 }
 
 class MultiDayItineraryList extends StatefulWidget {
-  const MultiDayItineraryList({super.key, required this.scrollController});
+  const MultiDayItineraryList({
+    super.key,
+    required this.scrollController,
+    this.isViewMode = false,
+  });
 
   final ScrollController scrollController;
+  final bool isViewMode;
 
   @override
   State<MultiDayItineraryList> createState() => MultiDayItineraryListState();
@@ -49,18 +55,90 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<ItineraryViewModel>();
     final weatherVm = context.watch<WeatherViewModel>();
 
+    // Get data based on view mode
+    final Map<int, List<dynamic>> itinerariesMap;
+    final Map<int, List<dynamic>> lodgingsMap;
+    final Map<int, List<dynamic>> flightsMap;
+    final DateTime? tripStartDate;
+    final dynamic vm; // Keep vm for edit mode operations
+    final bool isLoading;
+
+    if (widget.isViewMode) {
+      final postVm = context.watch<PostItineraryViewModel>();
+      itinerariesMap = postVm.itinerariesMap.cast<int, List<dynamic>>();
+      lodgingsMap = postVm.lodgingsMap.cast<int, List<dynamic>>();
+      flightsMap = postVm.flightsMap.cast<int, List<dynamic>>();
+      tripStartDate = postVm.trip?.startDate;
+      isLoading = postVm.isLoading;
+      vm = postVm; // For compatibility
+      debugPrint('🎨 MultiDayItineraryList building in VIEW MODE:');
+      debugPrint('   - isLoading: $isLoading');
+      debugPrint('   - itinerariesMap.keys: ${itinerariesMap.keys.toList()}');
+      debugPrint('   - itinerariesMap.isEmpty: ${itinerariesMap.isEmpty}');
+      debugPrint('   - tripStartDate: $tripStartDate');
+    } else {
+      final itineraryVm = context.watch<ItineraryViewModel>();
+      itinerariesMap = itineraryVm.itinerariesMap.cast<int, List<dynamic>>();
+      lodgingsMap = itineraryVm.lodgingsMap.cast<int, List<dynamic>>();
+      flightsMap = itineraryVm.flightsMap.cast<int, List<dynamic>>();
+      tripStartDate = itineraryVm.trip?.startDate;
+      isLoading = false; // ItineraryViewModel loads data differently
+      vm = itineraryVm;
+    }
+
+    // Show loading indicator while data is being fetched
+    if (isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // Handle empty state or null data
+    if (itinerariesMap.isEmpty || tripStartDate == null) {
+      debugPrint(
+        '⚠️ Showing empty state: isEmpty=${itinerariesMap.isEmpty}, tripStartDate=$tripStartDate',
+      );
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text('No itinerary data available'),
+        ),
+      );
+    }
+
     return Column(
-      children: List.generate(vm.itinerariesMap.keys.length, (dayIndex) {
-        final day = vm.itinerariesMap.keys.elementAt(dayIndex);
-        final items = vm.itinerariesMap[day]!;
+      children: List.generate(itinerariesMap.keys.length, (dayIndex) {
+        final day = itinerariesMap.keys.elementAt(dayIndex);
+        final items = itinerariesMap[day]!;
 
         _dayKeys[day] = GlobalKey();
 
         return DragTarget<_DraggedItinerary>(
           key: _dayKeys[day],
+          onAcceptWithDetails: widget.isViewMode
+              ? null
+              : (details) {
+                  final dragged = details.data;
+                  // Append to end of the target day for simplicity. Users can reorder within day afterwards.
+                  final insertIndex = vm.itinerariesMap[day]?.length ?? 0;
+                  vm.moveItemBetweenDays(
+                    dragged.fromDay,
+                    day,
+                    dragged.itinerary,
+                    insertIndex,
+                  );
+                },
+          onWillAcceptWithDetails: widget.isViewMode
+              ? null
+              : (details) {
+                  // Accept drops from other days only to avoid redundant moves
+                  return details.data.fromDay != day;
+                },
           builder: (context, candidateData, rejectedData) {
             final dayWeatherForecast = (weatherVm.dailyForecasts.length >= day)
                 ? weatherVm.dailyForecasts[day - 1]
@@ -71,7 +149,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Text(
-                    "Day $day • ${getFormattedDayLabel(day, vm.itinerariesMap.keys.length, vm.trip!.startDate!)}",
+                    "Day $day • ${getFormattedDayLabel(day, itinerariesMap.keys.length, tripStartDate!)}",
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: ManropeFontWeight.semiBold,
                     ),
@@ -93,434 +171,462 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                 const SizedBox(height: 16),
 
                 // ----- Lodging cards -----
-                ...vm
-                    .getLodgingsForDay(day)
-                    .map(
-                      (lodging) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: LodgingCard(
-                          lodging: lodging,
-                          onTap: () async {
-                            final result = await showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (_) =>
-                                  AddEditLodgingBottomSheet(lodging: lodging),
-                            );
+                ...(lodgingsMap[day] ?? []).map(
+                  (lodging) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: LodgingCard(
+                      lodging: lodging,
+                      onTap: widget.isViewMode
+                          ? null
+                          : () async {
+                              final result = await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) =>
+                                    AddEditLodgingBottomSheet(lodging: lodging),
+                              );
 
-                            if (result == null || !mounted) return;
+                              if (result == null || !mounted) return;
 
-                            try {
-                              if (result == 'delete') {
-                                await vm.deleteLodging(lodging.id);
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Lodging "${lodging.name}" deleted successfully',
+                              try {
+                                if (result == 'delete') {
+                                  await vm.deleteLodging(lodging.id);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Lodging "${lodging.name}" deleted successfully',
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
+                                } else if (result is LodgingData) {
+                                  await vm.updateLodging(result);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Lodging "${result.name}" updated successfully',
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 }
-                              } else if (result is LodgingData) {
-                                await vm.updateLodging(result);
+                              } catch (e) {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Lodging "${result.name}" updated successfully',
+                                        'Failed to update lodging: $e',
                                       ),
                                     ),
                                   );
                                 }
                               }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Failed to update lodging: $e',
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                        ),
-                      ),
+                            },
                     ),
+                  ),
+                ),
 
                 // ----- Flight cards -----
-                ...vm
-                    .getFlightsForDay(day)
-                    .map(
-                      (flight) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: FlightCard(
-                          flight: flight,
-                          onTap: () async {
-                            final result = await showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (_) =>
-                                  AddEditFlightBottomSheet(flight: flight),
-                            );
+                ...(flightsMap[day] ?? []).map(
+                  (flight) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: FlightCard(
+                      flight: flight,
+                      onTap: widget.isViewMode
+                          ? null
+                          : () async {
+                              final result = await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) =>
+                                    AddEditFlightBottomSheet(flight: flight),
+                              );
 
-                            if (result == null || !mounted) return;
+                              if (result == null || !mounted) return;
 
+                              try {
+                                if (result == 'delete') {
+                                  await vm.deleteFlight(flight.id);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Flight "${flight.airline}" deleted successfully',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } else if (result is FlightData) {
+                                  await vm.updateFlight(result);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Flight "${result.airline}" updated successfully',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Failed to update flight: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                    ),
+                  ),
+                ),
+
+                // Add spacing only in edit mode (for drag and drop visual feedback)
+                SizedBox(height: widget.isViewMode ? 0 : 0),
+                // ----- Itinerary items -----
+                // Use ReorderableListView in edit mode, ListView in view mode
+                if (widget.isViewMode)
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      // Calculate destination number (exclude notes from numbering)
+                      final destinationIndex = items
+                          .sublist(0, index)
+                          .where((i) => i.isDestination)
+                          .length;
+                      return GestureDetector(
+                        onTap: null, //         No tap action in view mode
+                        child: ItineraryItem(
+                          itinerary: item,
+                          isFirst: index == 0,
+                          isLast: index == items.length - 1,
+                          index: destinationIndex,
+                        ),
+                      );
+                    },
+                  )
+                else
+                  ReorderableListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    onReorder: (oldIndex, newIndex) =>
+                        vm.reorderWithinDay(day, oldIndex, newIndex),
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      // Calculate destination number (exclude notes from numbering)
+                      final destinationIndex = items
+                          .sublist(0, index)
+                          .where((i) => i.isDestination)
+                          .length;
+                      // Each item is both draggable and a drop target
+                      return DragTarget<_DraggedItinerary>(
+                        key: ValueKey(item.id),
+                        builder: (context, candidateData, rejectedData) {
+                          final isActive = candidateData.isNotEmpty;
+                          // Highlight drop target when active
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Highlight drop target when active
+                              if (isActive)
+                                Container(
+                                  height: 12,
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.12),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                  ),
+                                ),
+                              // The actual itinerary item with drag handle
+                              Stack(
+                                children: [
+                                  // The itinerary item card
+                                  GestureDetector(
+                                    onTap: widget.isViewMode
+                                        ? null
+                                        : () {
+                                            _openEditItinerarySheet(
+                                              context,
+                                              item,
+                                              vm,
+                                            );
+                                          },
+                                    child: ItineraryItem(
+                                      itinerary: item,
+                                      isFirst: index == 0,
+                                      isLast: index == items.length - 1,
+                                      index: destinationIndex,
+                                    ),
+                                  ),
+                                  // The drag handle (hidden in view mode)
+                                  if (!widget.isViewMode)
+                                    Positioned(
+                                      right: 8,
+                                      top: 8,
+                                      // Using LongPressDraggable for better UX
+                                      child:
+                                          LongPressDraggable<_DraggedItinerary>(
+                                            data: _DraggedItinerary(
+                                              itinerary: item,
+                                              fromDay: day,
+                                            ),
+                                            feedback: Material(
+                                              elevation: 6,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: ConstrainedBox(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                      maxWidth: 360,
+                                                    ),
+                                                child: Opacity(
+                                                  opacity: 0.95,
+                                                  child: ItineraryItem(
+                                                    itinerary: item,
+                                                    isFirst: true,
+                                                    isLast: true,
+                                                    index: index,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            childWhenDragging: Opacity(
+                                              opacity: 0.3,
+                                              child: Icon(
+                                                Icons.open_with,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
+                                                size: 12,
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              Icons.open_with,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(0.6),
+                                              size: 16,
+                                            ),
+                                          ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                        onWillAcceptWithDetails: widget.isViewMode
+                            ? null
+                            : (details) {
+                                return details.data.fromDay != day;
+                              },
+                        onAcceptWithDetails: widget.isViewMode
+                            ? null
+                            : (details) {
+                                if (!mounted) return;
+                                final dragged = details.data;
+                                vm.moveItemBetweenDays(
+                                  dragged.fromDay,
+                                  day,
+                                  dragged.itinerary,
+                                  index,
+                                );
+                              },
+                      );
+                    },
+                  ),
+                const SizedBox(height: 16),
+                if (!widget.isViewMode)
+                  AppButton.textOnly(
+                    text: 'Add Activity',
+                    radius: 10,
+                    minWidth: double.infinity,
+                    minHeight: 36,
+                    backgroundVariant: BackgroundVariant.primaryTrans,
+                    onPressed: () async {
+                      final activityType =
+                          await showModalBottomSheet<ActivityType>(
+                            context: context,
+                            builder: (context) =>
+                                const ActivityTypeSelectionSheet(),
+                          );
+
+                      if (activityType == null) return;
+
+                      switch (activityType) {
+                        case ActivityType.destination:
+                          final draftItinerary = ItineraryData.empty(
+                            vm.getDate(day),
+                            vm.getLastSequence(day),
+                          );
+                          _openEditItinerarySheet(context, draftItinerary, vm);
+                          break;
+                        case ActivityType.lodging:
+                          final draftLodging = LodgingData.empty(
+                            vm.getDate(day),
+                            vm.getLastSequence(day),
+                          );
+                          final result =
+                              await showModalBottomSheet<LodgingData>(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) => AddEditLodgingBottomSheet(
+                                  lodging: draftLodging,
+                                ),
+                              );
+                          if (result != null && mounted) {
                             try {
-                              if (result == 'delete') {
-                                await vm.deleteFlight(flight.id);
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Flight "${flight.airline}" deleted successfully',
-                                      ),
+                              await vm.addLodging(result);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Lodging "${result.name}" added successfully',
                                     ),
-                                  );
-                                }
-                              } else if (result is FlightData) {
-                                await vm.updateFlight(result);
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Flight "${result.airline}" updated successfully',
-                                      ),
-                                    ),
-                                  );
-                                }
+                                  ),
+                                );
                               }
                             } catch (e) {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                      'Failed to update flight: $e',
-                                    ),
+                                    content: Text('Failed to add lodging: $e'),
                                   ),
                                 );
                               }
                             }
-                          },
-                        ),
-                      ),
-                    ),
-
-                const SizedBox(height: 26),
-                // ----- Itinerary items -----
-                ReorderableListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: items.length,
-                  onReorder:
-                      (
-                        oldIndex,
-                        newIndex,
-                      ) => // to implement reordering when within same day
-                      context.read<ItineraryViewModel>().reorderWithinDay(
-                        day,
-                        oldIndex,
-                        newIndex,
-                      ),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    // Calculate destination number (exclude notes from numbering)
-                    final destinationIndex = items
-                        .sublist(0, index)
-                        .where((i) => i.isDestination)
-                        .length;
-                    // Each item is both draggable and a drop target
-                    return DragTarget<_DraggedItinerary>(
-                      key: ValueKey(item.id),
-                      builder: (context, candidateData, rejectedData) {
-                        final isActive = candidateData.isNotEmpty;
-                        // Highlight drop target when active
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Highlight drop target when active
-                            if (isActive)
-                              Container(
-                                height: 12,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withOpacity(0.12),
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                ),
-                              ),
-                            // The actual itinerary item with drag handle
-                            Stack(
-                              children: [
-                                // The itinerary item card
-                                GestureDetector(
-                                  child: ItineraryItem(
-                                    itinerary: item,
-                                    isFirst: index == 0,
-                                    isLast: index == items.length - 1,
-                                    index: destinationIndex,
-                                  ),
-                                  onTap: () {
-                                    _openEditItinerarySheet(context, item);
-                                  },
-                                ),
-                                // The drag handle
-                                Positioned(
-                                  right: 8,
-                                  top: 8,
-                                  // Using LongPressDraggable for better UX
-                                  child: LongPressDraggable<_DraggedItinerary>(
-                                    data: _DraggedItinerary(
-                                      itinerary: item,
-                                      fromDay: day,
-                                    ),
-                                    feedback: Material(
-                                      elevation: 6,
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 360,
-                                        ),
-                                        child: Opacity(
-                                          opacity: 0.95,
-                                          child: ItineraryItem(
-                                            itinerary: item,
-                                            isFirst: true,
-                                            isLast: true,
-                                            index: index,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    childWhenDragging: Opacity(
-                                      opacity: 0.3,
-                                      child: Icon(
-                                        Icons.open_with,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                        size: 12,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.open_with,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface.withOpacity(0.6),
-                                      size: 16,
+                          }
+                          break;
+                        case ActivityType.flight:
+                          final draftFlight = FlightData.empty(
+                            vm.getDate(day),
+                            vm.getLastSequence(day),
+                          );
+                          final result = await showModalBottomSheet<FlightData>(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (_) =>
+                                AddEditFlightBottomSheet(flight: draftFlight),
+                          );
+                          if (result != null && mounted) {
+                            try {
+                              await vm.addFlight(result);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Flight "${result.airline}" added successfully',
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                      onWillAcceptWithDetails: (details) {
-                        return details.data.fromDay != day;
-                      },
-                      onAcceptWithDetails: (details) {
-                        if (!mounted) return; // <-- add this line
-                        final dragged = details.data;
-                        vm.moveItemBetweenDays(
-                          dragged.fromDay,
-                          day,
-                          dragged.itinerary,
-                          index,
-                        );
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                AppButton.textOnly(
-                  text: 'Add Activity',
-                  radius: 10,
-                  minWidth: double.infinity,
-                  minHeight: 36,
-                  backgroundVariant: BackgroundVariant.primaryTrans,
-                  onPressed: () async {
-                    final activityType =
-                        await showModalBottomSheet<ActivityType>(
-                          context: context,
-                          builder: (context) =>
-                              const ActivityTypeSelectionSheet(),
-                        );
-
-                    if (activityType == null) return;
-
-                    switch (activityType) {
-                      case ActivityType.destination:
-                        final draftItinerary = ItineraryData.empty(
-                          vm.getDate(day),
-                          vm.getLastSequence(day),
-                        );
-                        _openEditItinerarySheet(context, draftItinerary);
-                        break;
-                      case ActivityType.lodging:
-                        final draftLodging = LodgingData.empty(
-                          vm.getDate(day),
-                          vm.getLastSequence(day),
-                        );
-                        final result = await showModalBottomSheet<LodgingData>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (_) =>
-                              AddEditLodgingBottomSheet(lodging: draftLodging),
-                        );
-                        if (result != null && mounted) {
-                          try {
-                            await vm.addLodging(result);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Lodging "${result.name}" added successfully',
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to add flight: $e'),
                                   ),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to add lodging: $e'),
-                                ),
-                              );
+                                );
+                              }
                             }
                           }
-                        }
-                        break;
-                      case ActivityType.flight:
-                        final draftFlight = FlightData.empty(
-                          vm.getDate(day),
-                          vm.getLastSequence(day),
-                        );
-                        final result = await showModalBottomSheet<FlightData>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (_) =>
-                              AddEditFlightBottomSheet(flight: draftFlight),
-                        );
-                        if (result != null && mounted) {
-                          try {
-                            await vm.addFlight(result);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Flight "${result.airline}" added successfully',
+                          break;
+                        case ActivityType.notes:
+                          final draftNote = ItineraryData.emptyNote(
+                            vm.getDate(day),
+                            vm.getLastSequence(day),
+                          );
+                          final result =
+                              await showModalBottomSheet<ItineraryData>(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) => ChangeNotifierProvider.value(
+                                  value: vm,
+                                  child: AddEditItineraryBottomSheet(
+                                    itinerary: draftNote,
                                   ),
                                 ),
                               );
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to add flight: $e'),
-                                ),
-                              );
-                            }
-                          }
-                        }
-                        break;
-                      case ActivityType.notes:
-                        final draftNote = ItineraryData.emptyNote(
-                          vm.getDate(day),
-                          vm.getLastSequence(day),
-                        );
-                        final result =
-                            await showModalBottomSheet<ItineraryData>(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (_) => ChangeNotifierProvider.value(
-                                value: vm,
-                                child: AddEditItineraryBottomSheet(
-                                  itinerary: draftNote,
-                                ),
-                              ),
-                            );
-                        if (result != null && mounted) {
-                          try {
-                            vm.addItinerary(result);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Note added successfully'),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to add note: $e'),
-                                ),
-                              );
+                          if (result != null && mounted) {
+                            try {
+                              vm.addItinerary(result);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Note added successfully'),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to add note: $e'),
+                                  ),
+                                );
+                              }
                             }
                           }
-                        }
-                        break;
-                    }
-                  },
-                ),
-                const SizedBox(height: 24),
+                          break;
+                      }
+                    },
+                  ),
+                // Only add spacing in edit mode for the "Add Activity" button area
+                if (!widget.isViewMode) const SizedBox(height: 24),
                 // Trailing drop target to append at end of day
-                DragTarget<_DraggedItinerary>(
-                  builder: (context, candidateData, rejectedData) {
-                    final isActive = candidateData.isNotEmpty;
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 120),
-                      height: isActive ? 16 : 8,
-                      margin: const EdgeInsets.only(top: 8, bottom: 4),
-                      decoration: isActive
-                          ? BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withOpacity(0.12),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                            )
-                          : null,
-                    );
-                  },
-                  onWillAcceptWithDetails: (details) {
-                    return details.data.fromDay != day;
-                  },
-                  onAcceptWithDetails: (details) {
-                    final dragged = details.data;
-                    final insertIndex = vm.itinerariesMap[day]?.length ?? 0;
-                    vm.moveItemBetweenDays(
-                      dragged.fromDay,
-                      day,
-                      dragged.itinerary,
-                      insertIndex,
-                    );
-                  },
-                ),
+                if (!widget.isViewMode)
+                  DragTarget<_DraggedItinerary>(
+                    builder: (context, candidateData, rejectedData) {
+                      final isActive = candidateData.isNotEmpty;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 120),
+                        height: isActive ? 16 : 8,
+                        margin: const EdgeInsets.only(top: 8, bottom: 4),
+                        decoration: isActive
+                            ? BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.12),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(6),
+                                ),
+                              )
+                            : null,
+                      );
+                    },
+                    onWillAcceptWithDetails: widget.isViewMode
+                        ? null
+                        : (details) {
+                            return details.data.fromDay != day;
+                          },
+                    onAcceptWithDetails: widget.isViewMode
+                        ? null
+                        : (details) {
+                            final dragged = details.data;
+                            final insertIndex =
+                                vm.itinerariesMap[day]?.length ?? 0;
+                            vm.moveItemBetweenDays(
+                              dragged.fromDay,
+                              day,
+                              dragged.itinerary,
+                              insertIndex,
+                            );
+                          },
+                  ),
               ],
-            );
-          },
-          onWillAcceptWithDetails: (details) {
-            // Accept drops from other days only to avoid redundant moves
-            return details.data.fromDay != day;
-          },
-          onAcceptWithDetails: (details) {
-            final dragged = details.data;
-            // Append to end of the target day for simplicity. Users can reorder within day afterwards.
-            final insertIndex = vm.itinerariesMap[day]?.length ?? 0;
-            vm.moveItemBetweenDays(
-              dragged.fromDay,
-              day,
-              dragged.itinerary,
-              insertIndex,
             );
           },
         );
@@ -529,10 +635,13 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
   }
 
   void _openEditItinerarySheet(
-    BuildContext context, [
+    BuildContext context,
     ItineraryData? itinerary,
-  ]) {
-    final vm = context.read<ItineraryViewModel>();
+    dynamic viewModel,
+  ) {
+    final vm = viewModel is ItineraryViewModel
+        ? viewModel
+        : context.read<ItineraryViewModel>();
 
     // Reset and populate if editing
     vm.clearForm();

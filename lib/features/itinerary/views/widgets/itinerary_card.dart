@@ -78,15 +78,17 @@ class ItineraryCard extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PoiPage(placeId: itinerary.place!.id),
-                    ),
-                  );
-                },
+                onTap: itinerary.place != null
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PoiPage(placeId: itinerary.place!.id),
+                          ),
+                        );
+                      }
+                    : null,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: SizedBox(
@@ -122,7 +124,7 @@ class ItineraryCard extends StatelessWidget {
                         child: Wrap(
                           spacing: 6,
                           runSpacing: 6,
-                          children: itinerary.place!.tags.map((tag) {
+                          children: (itinerary.place?.tags ?? []).map((tag) {
                             return AppButton.textOnly(
                               text: tag,
                               onPressed: () {},

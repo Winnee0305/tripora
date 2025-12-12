@@ -12,15 +12,21 @@ import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_p
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
+import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/views/widgets/ai_plan_button.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class NotesItineraryPage extends StatefulWidget {
-  const NotesItineraryPage({super.key, required this.currentTab});
+  const NotesItineraryPage({
+    super.key,
+    required this.currentTab,
+    this.isViewMode = false,
+  });
 
   final int currentTab;
+  final bool isViewMode;
 
   @override
   State<NotesItineraryPage> createState() => _NotesItineraryPageState();
@@ -144,7 +150,10 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
           // ),
 
           // ----- Header (Back, Home, etc.)
-          NotesItineraryPageHeaderSection(userVm: userVm),
+          NotesItineraryPageHeaderSection(
+            userVm: userVm,
+            isViewMode: widget.isViewMode,
+          ),
 
           // ----- Draggable Sheet -----
           DraggableScrollableSheet(
@@ -277,7 +286,10 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
                               child: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 300),
                                 switchInCurve: Curves.easeInOut,
-                                child: ItineraryContent(listKey: _listKey),
+                                child: ItineraryContent(
+                                  listKey: _listKey,
+                                  isViewMode: widget.isViewMode,
+                                ),
                               ),
                             ),
                           ),
@@ -291,32 +303,36 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
           ),
 
           // ----- Draggable AI Button (on top of everything) -----
-          Positioned(
-            left: _fabPosition!.dx,
-            top: _fabPosition!.dy,
-            child: Draggable(
-              feedback: Material(
-                color: Colors.transparent,
-                child: Opacity(
-                  opacity: 0.8,
-                  child: AIPlanButton(onPressed: () {}),
+          if (!widget.isViewMode)
+            Positioned(
+              left: _fabPosition!.dx,
+              top: _fabPosition!.dy,
+              child: Draggable(
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: Opacity(
+                    opacity: 0.8,
+                    child: AIPlanButton(onPressed: () {}),
+                  ),
+                ),
+                childWhenDragging: Container(),
+                onDragEnd: (details) {
+                  setState(() {
+                    // Constrain position within screen bounds
+                    _fabPosition = Offset(
+                      details.offset.dx.clamp(0, screenSize.width - 80),
+                      details.offset.dy.clamp(0, screenSize.height - 80),
+                    );
+                  });
+                },
+                child: AIPlanButton(
+                  onPressed: () {
+                    final tripVm = context.read<TripViewModel>();
+                    _handleAIPlan(context, tripVm);
+                  },
                 ),
               ),
-              childWhenDragging: Container(),
-              onDragEnd: (details) {
-                setState(() {
-                  // Constrain position within screen bounds
-                  _fabPosition = Offset(
-                    details.offset.dx.clamp(0, screenSize.width - 80),
-                    details.offset.dy.clamp(0, screenSize.height - 80),
-                  );
-                });
-              },
-              child: AIPlanButton(
-                onPressed: () => _handleAIPlan(context, tripVm),
-              ),
             ),
-          ),
         ],
       ),
       // ),
