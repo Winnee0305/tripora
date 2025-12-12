@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmodel.dart';
 import 'package:tripora/features/exploration/views/widgets/post_section.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';

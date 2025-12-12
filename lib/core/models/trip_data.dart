@@ -12,6 +12,7 @@ class TripData {
   final String? tripImageUrl;
   final String? tripStoragePath;
   final DateTime? lastUpdated;
+  final String? publishedPostId; // Link to the published post
 
   TripData({
     required this.tripId,
@@ -25,6 +26,7 @@ class TripData {
     this.tripImageUrl,
     this.tripStoragePath,
     this.lastUpdated,
+    this.publishedPostId,
   });
 
   // -----  Factory from Firestore -----
@@ -44,6 +46,7 @@ class TripData {
       lastUpdated: data['lastUpdated'] != null
           ? DateTime.parse(data['lastUpdated'])
           : null,
+      publishedPostId: data['publishedPostId'],
     );
   }
 
@@ -60,6 +63,7 @@ class TripData {
     'tripImageUrl': tripImageUrl,
     'tripStoragePath': tripStoragePath,
     'lastUpdated': DateTime.now().toIso8601String(),
+    'publishedPostId': publishedPostId,
   };
 
   // ----- Copy With -----
@@ -75,6 +79,7 @@ class TripData {
     String? tripImageUrl,
     String? tripStoragePath,
     DateTime? lastUpdated,
+    String? publishedPostId,
   }) {
     return TripData(
       tripId: tripId ?? this.tripId,
@@ -88,6 +93,7 @@ class TripData {
       tripImageUrl: tripImageUrl ?? this.tripImageUrl,
       tripStoragePath: tripStoragePath ?? this.tripStoragePath,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      publishedPostId: publishedPostId ?? this.publishedPostId,
     );
   }
 

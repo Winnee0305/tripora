@@ -743,7 +743,10 @@ class ItineraryViewModel extends ChangeNotifier {
   }
 
   // ----- Publish/Share Itinerary -----
-  Future<String?> publishItinerary() async {
+  Future<String?> publishItinerary({
+    required String userName,
+    String? userImageUrl,
+  }) async {
     if (trip == null) return null;
 
     try {
@@ -806,14 +809,20 @@ class ItineraryViewModel extends ChangeNotifier {
         startDate: trip!.startDate!,
         endDate: trip!.endDate!,
         travelersCount: trip!.travelersCount,
+        tripImageUrl: trip!.tripImageUrl,
+        userName: userName,
+        userImageUrl: userImageUrl,
         itinerariesByDay: itinerariesByDay,
         lodgings: lodgingsList,
         flights: flightsList,
         lastPublished: DateTime.now(),
         lastUpdated: DateTime.now(),
+        tripDeleted: false,
       );
 
       final postId = await _postRepo.publishPost(post);
+
+      debugPrint('📝 Post published with ID: $postId, tripId: ${trip!.tripId}');
 
       _isUploading = false;
       notifyListeners();
@@ -835,6 +844,32 @@ class ItineraryViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error getting published post: $e');
       return null;
+    }
+  }
+
+  // Unpublish the itinerary (delete the post)
+  Future<void> unpublishItinerary() async {
+    if (trip == null) return;
+
+    try {
+      _isUploading = true;
+      notifyListeners();
+
+      final existingPost = await _postRepo.getPostByTripId(trip!.tripId);
+
+      if (existingPost != null) {
+        await _postRepo.unpublishPost(existingPost.postId, trip!.tripId);
+        debugPrint('🗑️ Post unpublished: ${existingPost.postId}');
+      }
+
+      _isUploading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to unpublish itinerary: $e';
+      debugPrint('❌ Error unpublishing itinerary: $e');
+      _isUploading = false;
+      notifyListeners();
+      rethrow;
     }
   }
 }

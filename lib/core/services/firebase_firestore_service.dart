@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/packing_data.dart';
@@ -72,10 +73,20 @@ class FirestoreService {
   // }
   Future<void> deleteTrip(String uid, String tripId) async {
     try {
+      // Check if trip has a published post
+      final post = await getPostByTripId(uid, tripId);
+
+      if (post != null) {
+        // Mark the post as orphaned (trip deleted)
+        await markPostAsOrphaned(post.postId);
+        print('🔗 Post ${post.postId} marked as orphaned after trip deletion');
+      }
+
       await usersCollection.doc(uid).collection('trips').doc(tripId).delete();
-      print('Trip deleted: $tripId');
+      print('🗑️ Trip deleted: $tripId');
     } catch (e) {
-      print('Failed to delete trip: $e');
+      print('❌ Failed to delete trip: $e');
+      rethrow;
     }
   }
 
@@ -414,7 +425,9 @@ class FirestoreService {
     final postData = post.toMap();
 
     // Check if post already exists for this trip
-    final existingPost = await getPostByTripId(uid, post.tripId);
+    final existingPost = post.tripId != null
+        ? await getPostByTripId(uid, post.tripId!)
+        : null;
 
     if (existingPost != null) {
       // Update existing post
@@ -460,5 +473,33 @@ class FirestoreService {
 
     if (snapshot.docs.isEmpty) return null;
     return PostData.fromFirestore(snapshot.docs.first);
+  }
+
+  // Get all posts (for public feed)
+  Future<List<PostData>> getAllPosts({int limit = 50}) async {
+    final snapshot = await postsCollection
+        .orderBy('lastPublished', descending: true)
+        .limit(limit)
+        .get();
+
+    return snapshot.docs.map(PostData.fromFirestore).toList();
+  }
+
+  // Mark post as orphaned when trip is deleted
+  Future<void> markPostAsOrphaned(String postId) async {
+    await postsCollection.doc(postId).update({
+      'tripId': null,
+      'tripDeleted': true,
+    });
+  }
+
+  // Unpublish a post (delete it)
+  Future<void> unpublishPost(String postId, String? tripId) async {
+    await deletePost(postId);
+
+    // If trip still exists, remove the publishedPostId link
+    if (tripId != null) {
+      // Note: This will be handled by the repository layer
+    }
   }
 }

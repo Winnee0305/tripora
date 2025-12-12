@@ -4,9 +4,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class NotesItineraryPageHeaderSection extends StatelessWidget {
-  const NotesItineraryPageHeaderSection({super.key});
+  const NotesItineraryPageHeaderSection({super.key, required this.userVm});
+
+  final UserViewModel userVm;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +110,28 @@ class NotesItineraryPageHeaderSection extends StatelessWidget {
                     }
 
                     try {
-                      final postId = await itineraryVm.publishItinerary();
+                      // Get user data for post
+                      final user = userVm.user;
+                      if (user == null) {
+                        throw Exception('User data not available');
+                      }
+
+                      final userName = '${user.firstname} ${user.lastname}';
+                      // Sanitize profile image URL - treat whitespace-only as null
+                      final userImageUrl =
+                          (user.profileImageUrl != null &&
+                              user.profileImageUrl!.trim().isNotEmpty)
+                          ? user.profileImageUrl
+                          : null;
+
+                      debugPrint(
+                        '👤 Publishing with userName: $userName, userImageUrl: $userImageUrl',
+                      );
+
+                      final postId = await itineraryVm.publishItinerary(
+                        userName: userName,
+                        userImageUrl: userImageUrl,
+                      );
                       debugPrint(
                         '✅ Published successfully with postId: $postId',
                       );

@@ -15,6 +15,7 @@ import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart'
 import 'package:tripora/features/itinerary/views/widgets/ai_plan_button.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class NotesItineraryPage extends StatefulWidget {
   const NotesItineraryPage({super.key, required this.currentTab});
@@ -124,10 +125,11 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tripVm = context.watch<TripViewModel>();
+    final userVm = context.read<UserViewModel>();
     final screenSize = MediaQuery.of(context).size;
 
     // Initialize FAB position if not set (bottom-right corner with padding)
-    _fabPosition ??= Offset(screenSize.width - 100, screenSize.height - 120);
+    _fabPosition ??= Offset(screenSize.width - 80, screenSize.height - 180);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -142,7 +144,7 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
           // ),
 
           // ----- Header (Back, Home, etc.)
-          const NotesItineraryPageHeaderSection(),
+          NotesItineraryPageHeaderSection(userVm: userVm),
 
           // ----- Draggable Sheet -----
           DraggableScrollableSheet(

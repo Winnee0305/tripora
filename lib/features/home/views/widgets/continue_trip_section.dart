@@ -8,6 +8,7 @@ import 'package:tripora/features/navigation/viewmodels/navigation_viewmodel.dart
 import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart'
     show TripViewModel;
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/trip/views/trip_dashboard_page.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info_card.dart';
 
@@ -20,6 +21,7 @@ class ContinueTripSection extends StatelessWidget {
     final itineraryVm = context.watch<ItineraryViewModel>();
     final expenseVm = context.watch<ExpenseViewModel>();
     final packingVm = context.watch<PackingViewModel>();
+    final userVm = context.watch<UserViewModel>();
 
     final hasTrips = tripVm.trips.isNotEmpty;
     final firstTrip = hasTrips ? tripVm.trips.first : null;
@@ -77,6 +79,7 @@ class ContinueTripSection extends StatelessWidget {
                             ChangeNotifierProvider.value(value: itineraryVm),
                             ChangeNotifierProvider.value(value: expenseVm),
                             ChangeNotifierProvider.value(value: packingVm),
+                            ChangeNotifierProvider.value(value: userVm),
                           ],
                           child: const TripDashboardPage(),
                         ),

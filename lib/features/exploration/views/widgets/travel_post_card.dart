@@ -26,19 +26,14 @@ class TravelPostCard extends StatelessWidget {
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
-                child: Image.asset(
-                  post.imageUrl,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                child: _buildImage(post.imageUrl),
               ),
               Positioned(
                 top: 8,
                 left: 8,
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage(post.authorImageUrl),
+                  backgroundImage: _getImageProvider(post.authorImageUrl),
                 ),
               ),
             ],
@@ -140,5 +135,61 @@ class TravelPostCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Helper method to build image based on URL type
+  Widget _buildImage(String imageUrl) {
+    // Check if it's a network URL (http/https)
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return Image.network(
+        imageUrl,
+        height: 160,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback to default asset if network image fails
+          return Image.asset(
+            'assets/images/exp_msia.png',
+            height: 160,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            height: 160,
+            width: double.infinity,
+            color: Colors.grey[300],
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      // It's a local asset
+      return Image.asset(
+        imageUrl,
+        height: 160,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  ImageProvider _getImageProvider(String imageUrl) {
+    // Check if it's a network URL (http/https)
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return NetworkImage(imageUrl);
+    } else {
+      // It's a local asset
+      return AssetImage(imageUrl);
+    }
   }
 }

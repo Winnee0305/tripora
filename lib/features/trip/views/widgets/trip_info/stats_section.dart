@@ -12,6 +12,7 @@ import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class StatsSection extends StatefulWidget {
   const StatsSection({super.key});
@@ -30,6 +31,7 @@ class _StatsSectionState extends State<StatsSection> {
       final tripVm = context.read<TripViewModel>();
       final expenseVm = context.read<ExpenseViewModel>();
       final packingVm = context.read<PackingViewModel>();
+      final userVm = context.read<UserViewModel>();
       if (tripVm.trip != null) {
         print("initializing itinerary");
         itineraryVm.setTrip(tripVm.trip!);
@@ -68,6 +70,7 @@ class _StatsSectionState extends State<StatsSection> {
             InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: () {
+                final userVm = context.read<UserViewModel>();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -76,6 +79,7 @@ class _StatsSectionState extends State<StatsSection> {
                         // Reuse the existing TripViewModel and ItineraryPageViewModel
                         ChangeNotifierProvider.value(value: tripVm),
                         ChangeNotifierProvider.value(value: itineraryVm),
+                        ChangeNotifierProvider.value(value: userVm),
                         // DaySelectionViewModel specific to this page
                         ChangeNotifierProvider(
                           create: (_) => DaySelectionViewModel(
@@ -202,6 +206,7 @@ class _StatsSectionState extends State<StatsSection> {
             InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: () {
+                final userVm = context.read<UserViewModel>();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -210,6 +215,7 @@ class _StatsSectionState extends State<StatsSection> {
                         // Reuse the existing TripViewModel and ItineraryPageViewModel
                         ChangeNotifierProvider.value(value: tripVm),
                         ChangeNotifierProvider.value(value: itineraryVm),
+                        ChangeNotifierProvider.value(value: userVm),
                         // DaySelectionViewModel specific to this page
                         ChangeNotifierProvider(
                           create: (_) => DaySelectionViewModel(

@@ -34,4 +34,19 @@ class PostRepository {
   Future<PostData?> getPostByTripId(String tripId) async {
     return await _firestoreService.getPostByTripId(_uid, tripId);
   }
+
+  // Get all posts for public feed
+  Future<List<PostData>> getAllPosts({int limit = 50}) async {
+    return await _firestoreService.getAllPosts(limit: limit);
+  }
+
+  // Mark post as orphaned when trip is deleted
+  Future<void> markPostAsOrphaned(String postId) async {
+    await _firestoreService.markPostAsOrphaned(postId);
+  }
+
+  // Unpublish a post
+  Future<void> unpublishPost(String postId, String? tripId) async {
+    await _firestoreService.unpublishPost(postId, tripId);
+  }
 }
