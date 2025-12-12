@@ -286,12 +286,11 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   ),
                 ),
 
-                // Add spacing only in edit mode (for drag and drop visual feedback)
-                SizedBox(height: widget.isViewMode ? 0 : 0),
                 // ----- Itinerary items -----
                 // Use ReorderableListView in edit mode, ListView in view mode
                 if (widget.isViewMode)
                   ListView.builder(
+                    padding: const EdgeInsets.only(top: 20, bottom: 30),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: items.length,
@@ -309,6 +308,8 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                           isFirst: index == 0,
                           isLast: index == items.length - 1,
                           index: destinationIndex,
+                          // No drag handle in view mode
+                          showDragHandle: !widget.isViewMode,
                         ),
                       );
                     },

@@ -10,6 +10,7 @@ class ItineraryItem extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
   final int index;
+  final bool? showDragHandle;
 
   const ItineraryItem({
     super.key,
@@ -17,6 +18,7 @@ class ItineraryItem extends StatelessWidget {
     this.isFirst = false,
     this.isLast = false,
     required this.index,
+    this.showDragHandle,
   });
 
   @override
@@ -61,7 +63,10 @@ class ItineraryItem extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  ItineraryCard(itinerary: itinerary),
+                  ItineraryCard(
+                    itinerary: itinerary,
+                    showDragHandle: showDragHandle,
+                  ),
                   if (!isLast) const SizedBox(height: 40),
                 ],
               ),
@@ -81,7 +86,10 @@ class ItineraryItem extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                ItineraryCard(itinerary: itinerary),
+                ItineraryCard(
+                  itinerary: itinerary,
+                  showDragHandle: showDragHandle,
+                ),
                 if (!isLast) EtaCard(itinerary: itinerary),
               ],
             ),

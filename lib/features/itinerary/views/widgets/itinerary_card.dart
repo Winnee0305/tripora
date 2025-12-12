@@ -9,9 +9,14 @@ import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
 
 class ItineraryCard extends StatelessWidget {
-  const ItineraryCard({super.key, required this.itinerary});
+  const ItineraryCard({
+    super.key,
+    required this.itinerary,
+    this.showDragHandle,
+  });
 
   final ItineraryData itinerary;
+  final bool? showDragHandle;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -61,8 +66,10 @@ class ItineraryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
             // Drag handle - more subtle
-            Icon(Icons.drag_indicator, color: Colors.black26, size: 16),
+            if (showDragHandle ?? false)
+              Icon(Icons.drag_indicator, color: Colors.black26, size: 16),
           ],
         ),
       );
@@ -145,11 +152,13 @@ class ItineraryCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                CupertinoIcons.line_horizontal_3,
-                color: theme.colorScheme.onSurface,
-                size: 20,
-              ),
+
+              if (showDragHandle ?? true)
+                Icon(
+                  CupertinoIcons.line_horizontal_3,
+                  color: theme.colorScheme.onSurface,
+                  size: 20,
+                ),
             ],
           ),
           SizedBox(height: 12),
