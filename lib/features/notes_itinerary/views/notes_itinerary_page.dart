@@ -16,14 +16,22 @@ import 'package:tripora/features/itinerary/views/widgets/ai_plan_button.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 
-class NotesItineraryPage extends StatelessWidget {
-  NotesItineraryPage({super.key, required this.currentTab});
+class NotesItineraryPage extends StatefulWidget {
+  const NotesItineraryPage({super.key, required this.currentTab});
 
+  final int currentTab;
+
+  @override
+  State<NotesItineraryPage> createState() => _NotesItineraryPageState();
+}
+
+class _NotesItineraryPageState extends State<NotesItineraryPage> {
   // The listKey is final, so it can be used inside a StatelessWidget
   final GlobalKey<MultiDayItineraryListState> _listKey =
       GlobalKey<MultiDayItineraryListState>();
 
-  final int currentTab;
+  // Position for draggable FAB (will be initialized in build)
+  Offset? _fabPosition;
 
   // ----- Dummy Data for Map -----
   final List<LatLng> melaccaAttractions = [
@@ -116,14 +124,13 @@ class NotesItineraryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tripVm = context.watch<TripViewModel>();
-    final itineraryVm = context.watch<ItineraryViewModel>();
+    final screenSize = MediaQuery.of(context).size;
+
+    // Initialize FAB position if not set (bottom-right corner with padding)
+    _fabPosition ??= Offset(screenSize.width - 100, screenSize.height - 120);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: AIPlanButton(onPressed: () => _handleAIPlan(context, tripVm)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
           // ----- Map Background -----
@@ -280,6 +287,34 @@ class NotesItineraryPage extends StatelessWidget {
               );
             },
           ),
+
+          // ----- Draggable AI Button (on top of everything) -----
+          Positioned(
+            left: _fabPosition!.dx,
+            top: _fabPosition!.dy,
+            child: Draggable(
+              feedback: Material(
+                color: Colors.transparent,
+                child: Opacity(
+                  opacity: 0.8,
+                  child: AIPlanButton(onPressed: () {}),
+                ),
+              ),
+              childWhenDragging: Container(),
+              onDragEnd: (details) {
+                setState(() {
+                  // Constrain position within screen bounds
+                  _fabPosition = Offset(
+                    details.offset.dx.clamp(0, screenSize.width - 80),
+                    details.offset.dy.clamp(0, screenSize.height - 80),
+                  );
+                });
+              },
+              child: AIPlanButton(
+                onPressed: () => _handleAIPlan(context, tripVm),
+              ),
+            ),
+          ),
         ],
       ),
       // ),
@@ -291,13 +326,8 @@ class NotesItineraryPage extends StatelessWidget {
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double height;
-  final Color? backgroundColor;
 
-  _StickyHeaderDelegate({
-    required this.child,
-    required this.height,
-    this.backgroundColor,
-  });
+  _StickyHeaderDelegate({required this.child, required this.height});
 
   @override
   double get minExtent => height;
@@ -312,16 +342,11 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return SizedBox(
       height: height,
-      child: Material(
-        color: backgroundColor ?? Colors.transparent,
-        child: child,
-      ),
+      child: Material(color: Colors.transparent, child: child),
     );
   }
 
   @override
   bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) =>
-      oldDelegate.child != child ||
-      oldDelegate.height != height ||
-      oldDelegate.backgroundColor != backgroundColor;
+      oldDelegate.child != child || oldDelegate.height != height;
 }

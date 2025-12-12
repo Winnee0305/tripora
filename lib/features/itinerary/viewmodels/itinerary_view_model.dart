@@ -278,7 +278,9 @@ class ItineraryViewModel extends ChangeNotifier {
     int? foundIndex;
 
     for (final entry in itinerariesMap.entries) {
-      foundIndex = entry.value.indexWhere((item) => item.id == updatedItinerary.id);
+      foundIndex = entry.value.indexWhere(
+        (item) => item.id == updatedItinerary.id,
+      );
       if (foundIndex != -1) {
         dayEntry = entry;
         break;
@@ -293,8 +295,8 @@ class ItineraryViewModel extends ChangeNotifier {
     final oldItinerary = dayEntry.value[foundIndex];
 
     // For notes, use the updated one directly; for destinations, process through getNewItinerary
-    final newItinerary = updatedItinerary.isNote 
-        ? updatedItinerary 
+    final newItinerary = updatedItinerary.isNote
+        ? updatedItinerary
         : await getNewItinerary(oldItinerary);
 
     // Replace the old itinerary in the map
@@ -311,8 +313,8 @@ class ItineraryViewModel extends ChangeNotifier {
   void addItinerary(ItineraryData draftItinerary) async {
     // For notes, use the draft directly since it already has the updated userNotes
     // For destinations, process through getNewItinerary to load place details
-    final newItinerary = draftItinerary.isNote 
-        ? draftItinerary 
+    final newItinerary = draftItinerary.isNote
+        ? draftItinerary
         : await getNewItinerary(draftItinerary);
     addToMap(newItinerary);
     notifyListeners();

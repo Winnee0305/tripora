@@ -121,7 +121,9 @@ class _AddEditItineraryBottomSheetState
                         spacing: 20,
                         children: [
                           AppButton.textOnly(
-                            text: widget.itinerary?.isNote ?? false ? "Delete Note" : "Delete Itinerary",
+                            text: widget.itinerary?.isNote ?? false
+                                ? "Delete Note"
+                                : "Delete Itinerary",
                             minWidth: 150,
                             minHeight: 40,
                             backgroundColorOverride:
@@ -133,11 +135,15 @@ class _AddEditItineraryBottomSheetState
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text(isNote ? "Delete Note" : "Delete Itinerary"),
+                                    title: Text(
+                                      isNote
+                                          ? "Delete Note"
+                                          : "Delete Itinerary",
+                                    ),
                                     content: Text(
-                                      isNote 
-                                        ? "Are you sure you want to delete this note? This action cannot be undone."
-                                        : "Are you sure you want to delete this itinerary? This action cannot be undone.",
+                                      isNote
+                                          ? "Are you sure you want to delete this note? This action cannot be undone."
+                                          : "Are you sure you want to delete this itinerary? This action cannot be undone.",
                                     ),
                                     actions: [
                                       TextButton(
@@ -166,7 +172,9 @@ class _AddEditItineraryBottomSheetState
                             },
                           ),
                           AppButton.textOnly(
-                            text: widget.itinerary?.isNote ?? false ? "Update Note" : "Update Itinerary",
+                            text: widget.itinerary?.isNote ?? false
+                                ? "Update Note"
+                                : "Update Itinerary",
                             minWidth: 150,
                             minHeight: 40,
                             onPressed: () {
