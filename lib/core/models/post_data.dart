@@ -16,6 +16,8 @@ class PostData {
   final DateTime lastPublished;
   final DateTime lastUpdated;
   final bool tripDeleted; // Flag indicating if source trip was deleted
+  final int
+  collectsCount; // Number of times this post has been collected/favorited
 
   PostData({
     required this.postId,
@@ -32,6 +34,7 @@ class PostData {
     required this.lastPublished,
     required this.lastUpdated,
     this.tripDeleted = false,
+    this.collectsCount = 0,
   });
 
   // Convert to Firestore map (subcollections are stored separately)
@@ -50,6 +53,7 @@ class PostData {
       'lastPublished': lastPublished.toIso8601String(),
       'lastUpdated': lastUpdated.toIso8601String(),
       'tripDeleted': tripDeleted,
+      'collectsCount': collectsCount,
     };
   }
 
@@ -72,6 +76,7 @@ class PostData {
       lastPublished: DateTime.parse(data['lastPublished']),
       lastUpdated: DateTime.parse(data['lastUpdated']),
       tripDeleted: data['tripDeleted'] ?? false,
+      collectsCount: data['collectsCount'] ?? 0,
     );
   }
 
@@ -90,6 +95,7 @@ class PostData {
     DateTime? lastPublished,
     DateTime? lastUpdated,
     bool? tripDeleted,
+    int? collectsCount,
   }) {
     return PostData(
       postId: postId ?? this.postId,
@@ -106,6 +112,7 @@ class PostData {
       lastPublished: lastPublished ?? this.lastPublished,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       tripDeleted: tripDeleted ?? this.tripDeleted,
+      collectsCount: collectsCount ?? this.collectsCount,
     );
   }
 }

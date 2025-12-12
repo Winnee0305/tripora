@@ -1,14 +1,123 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tripora/core/repositories/collected_post_repository.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/exploration/models/travel_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class TravelPostCard extends StatelessWidget {
+class TravelPostCard extends StatefulWidget {
   final Post post;
+  final String postId;
+  final int collectsCount;
 
-  const TravelPostCard({super.key, required this.post});
+  const TravelPostCard({
+    super.key,
+    required this.post,
+    required this.postId,
+    required this.collectsCount,
+  });
+
+  @override
+  State<TravelPostCard> createState() => _TravelPostCardState();
+}
+
+class _TravelPostCardState extends State<TravelPostCard> {
+  late CollectedPostRepository _collectedPostRepo;
+  bool _isCollected = false;
+  bool _isCheckingCollection = true;
+  bool _isToggling = false;
+  late int _currentCollectsCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _collectedPostRepo = CollectedPostRepository(FirestoreService());
+    _currentCollectsCount = widget.collectsCount;
+    _checkIfCollected();
+  }
+
+  Future<void> _checkIfCollected() async {
+    try {
+      final userVm = context.read<UserViewModel>();
+      final uid = userVm.user?.uid;
+      if (uid == null) {
+        if (mounted) {
+          setState(() {
+            _isCheckingCollection = false;
+          });
+        }
+        return;
+      }
+
+      final isCollected = await _collectedPostRepo.isCollected(
+        uid,
+        widget.postId,
+      );
+      if (mounted) {
+        setState(() {
+          _isCollected = isCollected;
+          _isCheckingCollection = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error checking collection status: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingCollection = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleCollect() async {
+    if (_isToggling) return;
+
+    final userVm = context.read<UserViewModel>();
+    final uid = userVm.user?.uid;
+    if (uid == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please log in to save favorites')),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isToggling = true;
+    });
+
+    try {
+      final newState = await _collectedPostRepo.toggleCollection(
+        uid,
+        widget.postId,
+      );
+      if (mounted) {
+        setState(() {
+          _isCollected = newState;
+          _currentCollectsCount += newState ? 1 : -1;
+          _isToggling = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error toggling collection: $e');
+      if (mounted) {
+        setState(() {
+          _isToggling = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +135,16 @@ class TravelPostCard extends StatelessWidget {
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
-                child: _buildImage(post.imageUrl),
+                child: _buildImage(widget.post.imageUrl),
               ),
               Positioned(
                 top: 8,
                 left: 8,
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: _getImageProvider(post.authorImageUrl),
+                  backgroundImage: _getImageProvider(
+                    widget.post.authorImageUrl,
+                  ),
                 ),
               ),
             ],
@@ -47,7 +158,7 @@ class TravelPostCard extends StatelessWidget {
               children: [
                 // Title
                 Text(
-                  post.title,
+                  widget.post.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -65,7 +176,7 @@ class TravelPostCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        post.location,
+                        widget.post.location,
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.onSurface,
@@ -80,55 +191,47 @@ class TravelPostCard extends StatelessWidget {
 
                 Align(
                   alignment: Alignment.centerRight,
-                  child: AppButton.iconTextSmall(
-                    onPressed: () {},
-                    text: "${post.likes}",
-                    iconSize: 14,
-                    minHeight: 30,
-                    minWidth: 60,
-                    icon: CupertinoIcons.heart,
-                    boxShadow: [],
-                    textStyleOverride: Theme.of(context).textTheme.labelMedium
-                        ?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: ManropeFontWeight.regular,
-                        ),
-                    backgroundVariant: BackgroundVariant.primaryTrans,
+                  child: SizedBox(
+                    width: 50,
+                    child: _isCheckingCollection
+                        ? AppButton.iconTextSmall(
+                            onPressed: null,
+                            text: "$_currentCollectsCount",
+                            iconSize: 14,
+                            minHeight: 30,
+                            minWidth: 40,
+                            icon: CupertinoIcons.heart,
+                            boxShadow: [],
+                            textStyleOverride: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: ManropeFontWeight.bold,
+                                ),
+                            backgroundVariant: BackgroundVariant.primaryTrans,
+                          )
+                        : AppButton.iconTextSmall(
+                            onPressed: _isToggling ? null : _toggleCollect,
+                            text: "$_currentCollectsCount",
+                            iconSize: 14,
+                            minHeight: 30,
+                            minWidth: 40,
+                            icon: _isCollected
+                                ? CupertinoIcons.heart_fill
+                                : CupertinoIcons.heart,
+                            boxShadow: [],
+                            textStyleOverride: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: ManropeFontWeight.bold,
+                                ),
+                            backgroundVariant: BackgroundVariant.primaryTrans,
+                          ),
                   ),
                 ),
-                // Likes
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   children: [
-                //     Container(
-                //       padding: const EdgeInsets.symmetric(
-                //         horizontal: 8,
-                //         vertical: 4,
-                //       ),
-                //       decoration: BoxDecoration(
-                //         color: Colors.orange.shade50,
-                //         borderRadius: BorderRadius.circular(12),
-                //       ),
-
-                // child: Row(
-                //   children: [
-                //     const SizedBox(width: 8),
-                //     Icon(
-                //       CupertinoIcons.heart,
-                //       size: 14,
-                //       color: Theme.of(context).colorScheme.primary,
-                //     ),
-                //     const SizedBox(width: 4),
-                //     Text(
-                //       "${post.likes}",
-                //       style: Theme.of(context).textTheme.labelMedium
-                //           ?.copyWith(
-                //             color: Theme.of(context).colorScheme.primary,
-                //             fontWeight: ManropeFontWeight.regular,
-                //           ),
-                //     ),
-                //   ],
-                // ),
               ],
             ),
           ),

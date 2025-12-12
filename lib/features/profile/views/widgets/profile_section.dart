@@ -115,15 +115,26 @@ class ProfileSection extends StatelessWidget {
         // ----- Stats -----
         SizedBox(
           height: 84,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
-            children: [
-              StatCard(label: 'Following', value: '4'),
-              StatCard(label: 'Followers', value: '1'),
-              StatCard(label: 'Likes &\nComments', value: '12'),
-            ],
-          ),
+          child: vm.isLoadingCounts
+              ? const Center(child: CupertinoActivityIndicator())
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 20,
+                  children: [
+                    StatCard(
+                      label: 'Trips\nCreated',
+                      value: '${vm.tripsCreatedCount}',
+                    ),
+                    StatCard(
+                      label: 'Shared\nTrips',
+                      value: '${vm.sharedTripsCount}',
+                    ),
+                    StatCard(
+                      label: 'Collection',
+                      value: '${vm.collectionsCount}',
+                    ),
+                  ],
+                ),
         ),
         const SizedBox(height: 22),
       ],

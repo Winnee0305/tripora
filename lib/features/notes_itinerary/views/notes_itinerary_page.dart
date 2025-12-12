@@ -134,6 +134,11 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
     final userVm = context.read<UserViewModel>();
     final screenSize = MediaQuery.of(context).size;
 
+    // Get postId if in view mode
+    final postId = widget.isViewMode
+        ? context.read<PostItineraryViewModel>().postId
+        : null;
+
     // Initialize FAB position if not set (bottom-right corner with padding)
     _fabPosition ??= Offset(screenSize.width - 80, screenSize.height - 180);
 
@@ -153,6 +158,7 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
           NotesItineraryPageHeaderSection(
             userVm: userVm,
             isViewMode: widget.isViewMode,
+            postId: postId,
           ),
 
           // ----- Draggable Sheet -----

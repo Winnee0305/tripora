@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/post_data.dart';
-import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/post_repository.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
@@ -11,7 +10,6 @@ import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/features/exploration/models/travel_post.dart';
 import 'package:tripora/features/exploration/viewmodels/post_section_viewmodel.dart';
 import 'package:tripora/features/exploration/views/widgets/travel_post_card.dart';
-import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
@@ -145,13 +143,17 @@ class PostSection extends StatelessWidget {
                           location: postData.destination,
                           imageUrl: imageUrl,
                           authorImageUrl: authorImageUrl,
-                          likes: 0, // TODO: Implement likes feature
+                          likes: postData.collectsCount,
                         );
                         return GestureDetector(
                           onTap: () {
                             _navigateToPostItinerary(context, postData);
                           },
-                          child: TravelPostCard(post: post),
+                          child: TravelPostCard(
+                            post: post,
+                            postId: postData.postId,
+                            collectsCount: postData.collectsCount,
+                          ),
                         );
                       },
                     );

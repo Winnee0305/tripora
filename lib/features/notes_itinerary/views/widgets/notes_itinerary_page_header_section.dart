@@ -2,23 +2,118 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/core/repositories/collected_post_repository.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class NotesItineraryPageHeaderSection extends StatelessWidget {
+class NotesItineraryPageHeaderSection extends StatefulWidget {
   const NotesItineraryPageHeaderSection({
     super.key,
     required this.userVm,
     this.isViewMode = false,
+    this.postId,
   });
 
   final UserViewModel userVm;
   final bool isViewMode;
+  final String? postId;
+
+  @override
+  State<NotesItineraryPageHeaderSection> createState() =>
+      _NotesItineraryPageHeaderSectionState();
+}
+
+class _NotesItineraryPageHeaderSectionState
+    extends State<NotesItineraryPageHeaderSection> {
+  late final CollectedPostRepository _collectedPostRepo;
+  bool _isCollected = false;
+  bool _isCheckingCollection = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _collectedPostRepo = CollectedPostRepository(FirestoreService());
+    if (widget.isViewMode && widget.postId != null) {
+      _checkIfCollected();
+    }
+  }
+
+  Future<void> _checkIfCollected() async {
+    if (widget.postId == null) return;
+
+    try {
+      final uid = widget.userVm.user?.uid;
+      if (uid == null) return;
+
+      final isCollected = await _collectedPostRepo.isCollected(
+        uid,
+        widget.postId!,
+      );
+      if (mounted) {
+        setState(() {
+          _isCollected = isCollected;
+          _isCheckingCollection = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error checking collection status: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingCollection = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (widget.postId == null) return;
+
+    final uid = widget.userVm.user?.uid;
+    if (uid == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to save favorites')),
+      );
+      return;
+    }
+
+    try {
+      final newState = await _collectedPostRepo.toggleCollection(
+        uid,
+        widget.postId!,
+      );
+      if (mounted) {
+        setState(() {
+          _isCollected = newState;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              newState ? 'Added to favorites!' : 'Removed from favorites',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error toggling favorite: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update favorites: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Only watch ItineraryViewModel in edit mode
-    final itineraryVm = isViewMode ? null : context.watch<ItineraryViewModel>();
+    final itineraryVm = widget.isViewMode
+        ? null
+        : context.watch<ItineraryViewModel>();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -33,23 +128,24 @@ class NotesItineraryPageHeaderSection extends StatelessWidget {
             Row(
               children: [
                 // View mode: Show favorite button
-                if (isViewMode)
-                  AppButton.iconOnly(
-                    icon: CupertinoIcons.heart,
-                    minWidth: 80,
-                    minHeight: 40,
-                    onPressed: () {
-                      // TODO: Implement add to favorites
-                      debugPrint('💗 Add to favorites pressed');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Added to favorites!'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
-                  )
+                if (widget.isViewMode)
+                  _isCheckingCollection
+                      ? AppButton.iconOnly(
+                          icon: CupertinoIcons.heart,
+                          minWidth: 80,
+                          minHeight: 40,
+                          onPressed: null,
+                          backgroundVariant: BackgroundVariant.secondaryFilled,
+                        )
+                      : AppButton.iconOnly(
+                          icon: _isCollected
+                              ? CupertinoIcons.heart_fill
+                              : CupertinoIcons.heart,
+                          minWidth: 80,
+                          minHeight: 40,
+                          onPressed: _toggleFavorite,
+                          backgroundVariant: BackgroundVariant.secondaryFilled,
+                        )
                 // Edit mode: Show cloud sync button
                 else if (itineraryVm != null && itineraryVm.isSync)
                   AppButton.iconOnly(
@@ -92,7 +188,7 @@ class NotesItineraryPageHeaderSection extends StatelessWidget {
                 const SizedBox(width: 10),
 
                 // View mode: Show duplicate button
-                if (isViewMode)
+                if (widget.isViewMode)
                   AppButton.iconOnly(
                     icon: CupertinoIcons.doc_on_doc,
                     minWidth: 80,
@@ -154,7 +250,7 @@ class NotesItineraryPageHeaderSection extends StatelessWidget {
 
                       try {
                         // Get user data for post
-                        final user = userVm.user;
+                        final user = widget.userVm.user;
                         if (user == null) {
                           throw Exception('User data not available');
                         }

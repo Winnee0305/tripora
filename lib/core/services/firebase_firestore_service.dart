@@ -582,12 +582,16 @@ class FirestoreService {
   }
 
   Future<List<PostData>> getUserPosts(String userId) async {
+    // Fetch without orderBy to avoid composite index requirement
     final snapshot = await postsCollection
         .where('userId', isEqualTo: userId)
-        .orderBy('lastPublished', descending: true)
         .get();
 
-    return snapshot.docs.map(PostData.fromFirestore).toList();
+    // Sort in memory by lastPublished (descending - newest first)
+    final posts = snapshot.docs.map(PostData.fromFirestore).toList();
+    posts.sort((a, b) => b.lastPublished.compareTo(a.lastPublished));
+
+    return posts;
   }
 
   Future<void> deletePost(String postId) async {
@@ -631,5 +635,49 @@ class FirestoreService {
     if (tripId != null) {
       // Note: This will be handled by the repository layer
     }
+  }
+
+  // ----- Collected Posts -----
+  Future<void> addToCollectedPosts(String uid, String postId) async {
+    // Add to user's collected posts
+    await usersCollection.doc(uid).collection('collectedPosts').doc(postId).set(
+      {'postId': postId, 'collectedAt': DateTime.now().toIso8601String()},
+    );
+
+    // Increment collectsCount on the post
+    await postsCollection.doc(postId).update({
+      'collectsCount': FieldValue.increment(1),
+    });
+  }
+
+  Future<void> removeFromCollectedPosts(String uid, String postId) async {
+    // Remove from user's collected posts
+    await usersCollection
+        .doc(uid)
+        .collection('collectedPosts')
+        .doc(postId)
+        .delete();
+
+    // Decrement collectsCount on the post
+    await postsCollection.doc(postId).update({
+      'collectsCount': FieldValue.increment(-1),
+    });
+  }
+
+  Future<bool> isPostCollected(String uid, String postId) async {
+    final doc = await usersCollection
+        .doc(uid)
+        .collection('collectedPosts')
+        .doc(postId)
+        .get();
+    return doc.exists;
+  }
+
+  Future<List<String>> getCollectedPostIds(String uid) async {
+    final snapshot = await usersCollection
+        .doc(uid)
+        .collection('collectedPosts')
+        .get();
+    return snapshot.docs.map((doc) => doc.id).toList();
   }
 }

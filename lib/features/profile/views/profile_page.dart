@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/repositories/collected_post_repository.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_tab.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
+import 'package:tripora/features/profile/viewmodels/collects_viewmodel.dart';
+import 'package:tripora/features/profile/viewmodels/shared_trips_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_collects_content.dart';
@@ -70,8 +74,21 @@ class ProfilePage extends StatelessWidget {
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
                       child: vm.selectedIndex == 0
-                          ? ProfileSharedTripsContent()
-                          : ProfileCollectsContent(vm: vm),
+                          ? ChangeNotifierProvider(
+                              create: (_) => SharedTripsViewModel(
+                                FirestoreService(),
+                                userVm.user!.uid,
+                              ),
+                              child: const ProfileSharedTripsContent(),
+                            )
+                          : ChangeNotifierProvider(
+                              create: (_) => CollectsViewModel(
+                                CollectedPostRepository(FirestoreService()),
+                                FirestoreService(),
+                                userVm.user!.uid,
+                              ),
+                              child: const ProfileCollectsContent(),
+                            ),
                     ),
                   ),
                 ],

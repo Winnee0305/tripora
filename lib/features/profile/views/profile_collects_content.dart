@@ -1,46 +1,171 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
+import 'package:tripora/core/models/post_data.dart';
+import 'package:tripora/core/repositories/trip_repository.dart';
+import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
+import 'package:tripora/core/services/firebase_storage_service.dart';
+import 'package:tripora/features/exploration/models/travel_post.dart';
 import 'package:tripora/features/exploration/views/widgets/travel_post_card.dart';
+import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
+import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
+import 'package:tripora/features/profile/viewmodels/collects_viewmodel.dart';
+import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class ProfileCollectsContent extends StatelessWidget {
-  const ProfileCollectsContent({super.key, required this.vm});
+  const ProfileCollectsContent({super.key});
 
-  final ProfileViewModel vm;
+  void _navigateToPostItinerary(BuildContext context, PostData postData) async {
+    // Load post itinerary data first
+    final postItineraryVm = PostItineraryViewModel(
+      FirestoreService(),
+      postData.postId,
+    );
+    await postItineraryVm.loadPostData();
+
+    if (!context.mounted) return;
+
+    // Create ViewModels for view mode
+    final firestoreService = FirestoreService();
+    final tripVm = TripViewModel(
+      TripRepository(
+        firestoreService,
+        postData.userId,
+        FirebaseStorageService(),
+      ),
+    )..setSelectedTrip(postItineraryVm.trip!);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            // Provide PostItineraryViewModel (it has the same interface as ItineraryViewModel)
+            ChangeNotifierProvider<PostItineraryViewModel>.value(
+              value: postItineraryVm,
+            ),
+            // Provide TripViewModel with trip data from post
+            ChangeNotifierProvider<TripViewModel>.value(value: tripVm),
+            // DaySelectionViewModel for day navigation
+            ChangeNotifierProvider(
+              create: (_) => DaySelectionViewModel(
+                startDate: postData.startDate,
+                endDate: postData.endDate,
+              )..selectDay(0),
+            ),
+            // Pass UserViewModel from parent
+            ChangeNotifierProvider.value(value: context.read<UserViewModel>()),
+          ],
+          child: const NotesItineraryPage(currentTab: 1, isViewMode: true),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              // Grid for collects
-              Consumer<ProfileViewModel>(
-                builder: (context, vm, _) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: MasonryGridView.count(
-                      crossAxisCount: 2, // number of columns
-                      mainAxisSpacing: 2,
-                      crossAxisSpacing: 2,
-                      itemCount: vm.collects.length,
-                      shrinkWrap: true, // 👈 important
-                      physics: NeverScrollableScrollPhysics(), // 👈 di
-                      itemBuilder: (context, index) {
-                        return TravelPostCard(post: vm.collects[index]);
-                      },
-                    ),
-                  );
-                },
-              ),
+        child: Consumer<CollectsViewModel>(
+          builder: (context, vm, _) {
+            if (vm.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              const SizedBox(height: 40),
-            ],
-          ),
+            if (vm.error != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${vm.error}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => vm.refreshCollectedPosts(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (vm.collectedPosts.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No collected posts yet.\nStart exploring and save your favorites!',
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => vm.refreshCollectedPosts(),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    // Grid for collects
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: MasonryGridView.count(
+                        crossAxisCount: 2, // number of columns
+                        mainAxisSpacing: 2,
+                        crossAxisSpacing: 2,
+                        itemCount: vm.collectedPosts.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final postData = vm.collectedPosts[index];
+
+                          // Handle trip image URL
+                          final imageUrl =
+                              (postData.tripImageUrl == null ||
+                                  postData.tripImageUrl!.isEmpty)
+                              ? 'assets/images/exp_msia.png'
+                              : postData.tripImageUrl!;
+
+                          // Fetch user profile image dynamically
+                          return FutureBuilder<String?>(
+                            future: vm.getUserProfileImage(postData.userId),
+                            builder: (context, snapshot) {
+                              // Use fetched profile image or fallback to default
+                              final authorImageUrl =
+                                  (snapshot.hasData &&
+                                      snapshot.data != null &&
+                                      snapshot.data!.trim().isNotEmpty)
+                                  ? snapshot.data!
+                                  : 'assets/images/exp_profile_picture.png';
+
+                              final post = Post(
+                                title: postData.tripName,
+                                location: postData.destination,
+                                imageUrl: imageUrl,
+                                authorImageUrl: authorImageUrl,
+                                likes: postData.collectsCount,
+                              );
+                              return GestureDetector(
+                                onTap: () {
+                                  _navigateToPostItinerary(context, postData);
+                                },
+                                child: TravelPostCard(
+                                  post: post,
+                                  postId: postData.postId,
+                                  collectsCount: postData.collectsCount,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
