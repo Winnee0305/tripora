@@ -3,11 +3,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/models/flight_data.dart';
+import 'package:tripora/core/models/post_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/ai_agents_repository.dart';
 import 'package:tripora/core/repositories/itinerary_repository.dart';
 import 'package:tripora/core/repositories/lodging_repository.dart';
 import 'package:tripora/core/repositories/flight_repository.dart';
+import 'package:tripora/core/repositories/post_repository.dart';
 import 'package:tripora/core/services/ai_agents_service.dart';
 import 'package:tripora/core/services/place_details_service.dart';
 
@@ -25,13 +27,19 @@ class ItineraryViewModel extends ChangeNotifier {
   final ItineraryRepository _itineraryRepo;
   final LodgingRepository _lodgingRepo;
   final FlightRepository _flightRepo;
+  final PostRepository _postRepo;
   final destinationController = TextEditingController();
   final notesController = TextEditingController();
   String? selectedPlaceId;
 
   bool isEditingInitialized = false;
 
-  ItineraryViewModel(this._itineraryRepo, this._lodgingRepo, this._flightRepo);
+  ItineraryViewModel(
+    this._itineraryRepo,
+    this._lodgingRepo,
+    this._flightRepo,
+    this._postRepo,
+  );
 
   // --- Local states ---
   List<ItineraryData> itineraries = [];
@@ -732,5 +740,101 @@ class ItineraryViewModel extends ChangeNotifier {
 
   List<FlightData> getFlightsForDay(int day) {
     return flightsMap[day] ?? [];
+  }
+
+  // ----- Publish/Share Itinerary -----
+  Future<String?> publishItinerary() async {
+    if (trip == null) return null;
+
+    try {
+      _isUploading = true;
+      notifyListeners();
+
+      // Convert itineraries map to serializable format
+      final Map<int, List<Map<String, dynamic>>> itinerariesByDay = {};
+      for (final entry in itinerariesMap.entries) {
+        itinerariesByDay[entry.key] = entry.value.map((itinerary) {
+          return {
+            'id': itinerary.id,
+            'placeId': itinerary.placeId,
+            'type': itinerary.type,
+            'date': itinerary.date.toIso8601String(),
+            'userNotes': itinerary.userNotes,
+            'sequence': itinerary.sequence,
+            'lastUpdated': itinerary.lastUpdated.toIso8601String(),
+          };
+        }).toList();
+      }
+
+      // Convert lodgings to serializable format
+      final List<Map<String, dynamic>> lodgingsList = lodgings.map((lodging) {
+        return {
+          'id': lodging.id,
+          'name': lodging.name,
+          'placeId': lodging.placeId,
+          'checkInDateTime': lodging.checkInDateTime.toIso8601String(),
+          'checkOutDateTime': lodging.checkOutDateTime.toIso8601String(),
+          'lastUpdated': lodging.lastUpdated.toIso8601String(),
+          'sequence': lodging.sequence,
+        };
+      }).toList();
+
+      // Convert flights to serializable format
+      final List<Map<String, dynamic>> flightsList = flights.map((flight) {
+        return {
+          'id': flight.id,
+          'flightNumber': flight.flightNumber,
+          'airline': flight.airline,
+          'departureAirport': flight.departureAirport,
+          'arrivalAirport': flight.arrivalAirport,
+          'departureDateTime': flight.departureDateTime.toIso8601String(),
+          'arrivalDateTime': flight.arrivalDateTime.toIso8601String(),
+          'lastUpdated': flight.lastUpdated.toIso8601String(),
+          'sequence': flight.sequence,
+        };
+      }).toList();
+
+      // Check if already published
+      final existingPost = await _postRepo.getPostByTripId(trip!.tripId);
+
+      final post = PostData(
+        postId: existingPost?.postId ?? '',
+        userId: _postRepo.userId,
+        tripId: trip!.tripId,
+        tripName: trip!.tripName,
+        destination: trip!.destination,
+        startDate: trip!.startDate!,
+        endDate: trip!.endDate!,
+        travelersCount: trip!.travelersCount,
+        itinerariesByDay: itinerariesByDay,
+        lodgings: lodgingsList,
+        flights: flightsList,
+        lastPublished: DateTime.now(),
+        lastUpdated: DateTime.now(),
+      );
+
+      final postId = await _postRepo.publishPost(post);
+
+      _isUploading = false;
+      notifyListeners();
+
+      return postId;
+    } catch (e) {
+      _error = 'Failed to publish itinerary: $e';
+      print('Error publishing itinerary: $e');
+      _isUploading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<PostData?> getPublishedPost() async {
+    if (trip == null) return null;
+    try {
+      return await _postRepo.getPostByTripId(trip!.tripId);
+    } catch (e) {
+      print('Error getting published post: $e');
+      return null;
+    }
   }
 }

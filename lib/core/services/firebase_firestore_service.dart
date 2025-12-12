@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/packing_data.dart';
+import 'package:tripora/core/models/post_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/features/expense/models/expense.dart';
@@ -404,4 +405,60 @@ class FirestoreService {
   //     'expenseBudget': newBudget,
   //   });
   // }
+
+  // ----- Posts -----
+  CollectionReference<Map<String, dynamic>> get postsCollection =>
+      _firestore.collection('posts');
+
+  Future<String> publishPost(String uid, PostData post) async {
+    final postData = post.toMap();
+
+    // Check if post already exists for this trip
+    final existingPost = await getPostByTripId(uid, post.tripId);
+
+    if (existingPost != null) {
+      // Update existing post
+      await postsCollection.doc(existingPost.postId).update({
+        ...postData,
+        'lastPublished': DateTime.now().toIso8601String(),
+      });
+      return existingPost.postId;
+    } else {
+      // Create new post
+      final docRef = await postsCollection.add({
+        ...postData,
+        'lastPublished': DateTime.now().toIso8601String(),
+      });
+      return docRef.id;
+    }
+  }
+
+  Future<PostData?> getPost(String postId) async {
+    final doc = await postsCollection.doc(postId).get();
+    return doc.exists ? PostData.fromFirestore(doc) : null;
+  }
+
+  Future<List<PostData>> getUserPosts(String userId) async {
+    final snapshot = await postsCollection
+        .where('userId', isEqualTo: userId)
+        .orderBy('lastPublished', descending: true)
+        .get();
+
+    return snapshot.docs.map(PostData.fromFirestore).toList();
+  }
+
+  Future<void> deletePost(String postId) async {
+    await postsCollection.doc(postId).delete();
+  }
+
+  Future<PostData?> getPostByTripId(String uid, String tripId) async {
+    final snapshot = await postsCollection
+        .where('userId', isEqualTo: uid)
+        .where('tripId', isEqualTo: tripId)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isEmpty) return null;
+    return PostData.fromFirestore(snapshot.docs.first);
+  }
 }

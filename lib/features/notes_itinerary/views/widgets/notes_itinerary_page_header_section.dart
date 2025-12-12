@@ -70,7 +70,72 @@ class NotesItineraryPageHeaderSection extends StatelessWidget {
                   icon: CupertinoIcons.share,
                   minWidth: 80,
                   minHeight: 40,
-                  onPressed: () {}, // TODO
+                  onPressed: () async {
+                    debugPrint('📤 Share button pressed');
+
+                    // Check if already published
+                    final existingPost = await itineraryVm.getPublishedPost();
+
+                    if (existingPost != null && context.mounted) {
+                      // Show alert dialog for confirmation
+                      final shouldUpdate = await showCupertinoDialog<bool>(
+                        context: context,
+                        builder: (context) => CupertinoAlertDialog(
+                          title: const Text('Update Published Itinerary?'),
+                          content: const Text(
+                            'This itinerary has already been published. Do you want to update it with your latest changes?',
+                          ),
+                          actions: [
+                            CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel'),
+                            ),
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Update'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (shouldUpdate != true) {
+                        debugPrint('❌ User cancelled update');
+                        return;
+                      }
+                    }
+
+                    try {
+                      final postId = await itineraryVm.publishItinerary();
+                      debugPrint(
+                        '✅ Published successfully with postId: $postId',
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              existingPost != null
+                                  ? 'Itinerary updated successfully!'
+                                  : 'Itinerary published successfully!',
+                            ),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      debugPrint('❌ Error publishing itinerary: $e');
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to publish: $e'),
+                            duration: const Duration(seconds: 3),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  },
                   backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
               ],

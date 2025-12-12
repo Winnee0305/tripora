@@ -6,6 +6,7 @@ import 'package:tripora/core/repositories/itinerary_repository.dart';
 import 'package:tripora/core/repositories/lodging_repository.dart';
 import 'package:tripora/core/repositories/flight_repository.dart';
 import 'package:tripora/core/repositories/packing_repository.dart';
+import 'package:tripora/core/repositories/post_repository.dart';
 import 'package:tripora/core/repositories/trip_repository.dart';
 import 'package:tripora/core/repositories/user_repository.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_page.dart';
@@ -58,6 +59,7 @@ class AuthLayout extends StatelessWidget {
               );
               final expenseRepo = ExpenseRepository(firestore, user.uid);
               final packingRepo = PackingRepository(firestore, user.uid);
+              final postRepo = PostRepository(firestore, user.uid);
 
               widget = MultiProvider(
                 providers: [
@@ -81,6 +83,7 @@ class AuthLayout extends StatelessWidget {
                         itineraryRepo,
                         lodgingRepo,
                         flightRepo,
+                        postRepo,
                       );
                       return vm;
                     },
