@@ -13,11 +13,17 @@ class NotesItineraryPageHeaderSection extends StatefulWidget {
     required this.userVm,
     this.isViewMode = false,
     this.postId,
+    this.authorName,
+    this.authorImageUrl,
+    this.collectsCount = 0,
   });
 
   final UserViewModel userVm;
   final bool isViewMode;
   final String? postId;
+  final String? authorName;
+  final String? authorImageUrl;
+  final int collectsCount;
 
   @override
   State<NotesItineraryPageHeaderSection> createState() =>
@@ -29,11 +35,13 @@ class _NotesItineraryPageHeaderSectionState
   late final CollectedPostRepository _collectedPostRepo;
   bool _isCollected = false;
   bool _isCheckingCollection = true;
+  late int _currentCollectsCount;
 
   @override
   void initState() {
     super.initState();
     _collectedPostRepo = CollectedPostRepository(FirestoreService());
+    _currentCollectsCount = widget.collectsCount;
     if (widget.isViewMode && widget.postId != null) {
       _checkIfCollected();
     }
@@ -85,6 +93,10 @@ class _NotesItineraryPageHeaderSectionState
       if (mounted) {
         setState(() {
           _isCollected = newState;
+          // Update count optimistically
+          _currentCollectsCount = newState
+              ? _currentCollectsCount + 1
+              : _currentCollectsCount - 1;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -110,199 +122,223 @@ class _NotesItineraryPageHeaderSectionState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     // Only watch ItineraryViewModel in edit mode
     final itineraryVm = widget.isViewMode
         ? null
         : context.watch<ItineraryViewModel>();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AppButton.iconOnly(
-              icon: CupertinoIcons.back,
-              onPressed: () => Navigator.pop(context),
-              backgroundVariant: BackgroundVariant.secondaryFilled,
-            ),
-            Row(
+        child: widget.isViewMode
+            ? _buildViewModeHeader(context, theme)
+            : _buildEditModeHeader(context, itineraryVm),
+      ),
+    );
+  }
+
+  Widget _buildViewModeHeader(BuildContext context, ThemeData theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Back button
+        AppButton.iconOnly(
+          icon: CupertinoIcons.back,
+          onPressed: () => Navigator.pop(context, true),
+          backgroundVariant: BackgroundVariant.secondaryFilled,
+        ),
+
+        // Author info (middle)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // View mode: Show favorite button
-                if (widget.isViewMode)
-                  _isCheckingCollection
-                      ? AppButton.iconOnly(
-                          icon: CupertinoIcons.heart,
-                          minWidth: 80,
-                          minHeight: 40,
-                          onPressed: null,
-                          backgroundVariant: BackgroundVariant.secondaryFilled,
-                        )
-                      : AppButton.iconOnly(
-                          icon: _isCollected
-                              ? CupertinoIcons.heart_fill
-                              : CupertinoIcons.heart,
-                          minWidth: 80,
-                          minHeight: 40,
-                          onPressed: _toggleFavorite,
-                          backgroundVariant: BackgroundVariant.secondaryFilled,
-                        )
-                // Edit mode: Show cloud sync button
-                else if (itineraryVm != null && itineraryVm.isSync)
-                  AppButton.iconOnly(
-                    minWidth: 80,
-                    minHeight: 40,
-                    iconWidget: Image.asset(
-                      'assets/icons/cloud_check.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                    onPressed: () {},
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
-                  )
-                else if (itineraryVm != null && itineraryVm.isUploading)
-                  AppButton.iconOnly(
-                    minWidth: 80,
-                    minHeight: 40,
-                    iconWidget: Image.asset(
-                      'assets/icons/cloud_sync.gif',
-                      width: 24,
-                      height: 24,
-                    ),
-                    onPressed: () {},
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
-                  )
-                else
-                  AppButton.iconOnly(
-                    minWidth: 80,
-                    minHeight: 40,
-                    iconWidget: Image.asset(
-                      'assets/icons/cloud_upload.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                    onPressed: () {
-                      itineraryVm?.syncItineraries();
-                    },
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
+                CircleAvatar(
+                  radius: 16,
+                  backgroundImage: _getImageProvider(
+                    widget.authorImageUrl ??
+                        'assets/images/exp_profile_picture.png',
                   ),
-                const SizedBox(width: 10),
-
-                // View mode: Show duplicate button
-                if (widget.isViewMode)
-                  AppButton.iconOnly(
-                    icon: CupertinoIcons.doc_on_doc,
-                    minWidth: 80,
-                    minHeight: 40,
-                    onPressed: () {
-                      // TODO: Implement duplicate itinerary
-                      debugPrint('📋 Duplicate itinerary pressed');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Itinerary duplicated!'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
-                  )
-                // Edit mode: Show share button
-                else
-                  AppButton.iconOnly(
-                    icon: CupertinoIcons.share,
-                    minWidth: 80,
-                    minHeight: 40,
-                    onPressed: () async {
-                      debugPrint('📤 Share button pressed');
-
-                      // Check if already published
-                      final existingPost = await itineraryVm
-                          ?.getPublishedPost();
-
-                      if (existingPost != null && context.mounted) {
-                        // Show alert dialog for confirmation
-                        final shouldUpdate = await showCupertinoDialog<bool>(
-                          context: context,
-                          builder: (context) => CupertinoAlertDialog(
-                            title: const Text('Update Published Itinerary?'),
-                            content: const Text(
-                              'This itinerary has already been published. Do you want to update it with your latest changes?',
-                            ),
-                            actions: [
-                              CupertinoDialogAction(
-                                isDestructiveAction: true,
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancel'),
-                              ),
-                              CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text('Update'),
-                              ),
-                            ],
-                          ),
-                        );
-
-                        if (shouldUpdate != true) {
-                          debugPrint('❌ User cancelled update');
-                          return;
-                        }
-                      }
-
-                      try {
-                        // Get user data for post
-                        final user = widget.userVm.user;
-                        if (user == null) {
-                          throw Exception('User data not available');
-                        }
-
-                        final userName = '${user.firstname} ${user.lastname}';
-                        // Sanitize profile image URL - treat whitespace-only as null
-                        final userImageUrl =
-                            (user.profileImageUrl != null &&
-                                user.profileImageUrl!.trim().isNotEmpty)
-                            ? user.profileImageUrl
-                            : null;
-
-                        debugPrint(
-                          '👤 Publishing with userName: $userName, userImageUrl: $userImageUrl',
-                        );
-
-                        final postId = await itineraryVm?.publishItinerary(
-                          userName: userName,
-                          userImageUrl: userImageUrl,
-                        );
-                        debugPrint(
-                          '✅ Published successfully with postId: $postId',
-                        );
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                existingPost != null
-                                    ? 'Itinerary updated successfully!'
-                                    : 'Itinerary published successfully!',
-                              ),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        debugPrint('❌ Error publishing itinerary: $e');
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Failed to publish: $e'),
-                              duration: const Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    backgroundVariant: BackgroundVariant.secondaryFilled,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    widget.authorName ?? 'Unknown Author',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
+                ),
               ],
             ),
+          ),
+        ),
+
+        // Collects count button
+        AppButton.iconTextSmall(
+          icon: _isCollected ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+          text: '$_currentCollectsCount',
+          minWidth: 80,
+          minHeight: 40,
+          onPressed: _isCheckingCollection ? null : _toggleFavorite,
+          backgroundVariant: BackgroundVariant.secondaryFilled,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditModeHeader(
+    BuildContext context,
+    ItineraryViewModel? itineraryVm,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        AppButton.iconOnly(
+          icon: CupertinoIcons.back,
+          onPressed: () => Navigator.pop(context),
+          backgroundVariant: BackgroundVariant.secondaryFilled,
+        ),
+        Row(
+          children: [
+            // Cloud sync button
+            if (itineraryVm != null && itineraryVm.isSync)
+              AppButton.iconOnly(
+                minWidth: 80,
+                minHeight: 40,
+                iconWidget: Image.asset(
+                  'assets/icons/cloud_check.png',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {},
+                backgroundVariant: BackgroundVariant.secondaryFilled,
+              )
+            else if (itineraryVm != null && itineraryVm.isUploading)
+              AppButton.iconOnly(
+                minWidth: 80,
+                minHeight: 40,
+                iconWidget: Image.asset(
+                  'assets/icons/cloud_sync.gif',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {},
+                backgroundVariant: BackgroundVariant.secondaryFilled,
+              )
+            else
+              AppButton.iconOnly(
+                minWidth: 80,
+                minHeight: 40,
+                iconWidget: Image.asset(
+                  'assets/icons/cloud_upload.png',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {
+                  itineraryVm?.syncItineraries();
+                },
+                backgroundVariant: BackgroundVariant.secondaryFilled,
+              ),
+            const SizedBox(width: 10),
+
+            // Share button
+            AppButton.iconOnly(
+              icon: CupertinoIcons.share,
+              minWidth: 80,
+              minHeight: 40,
+              onPressed: () async {
+                debugPrint('📤 Share button pressed');
+
+                // Check if already published
+                final existingPost = await itineraryVm?.getPublishedPost();
+
+                if (existingPost != null && context.mounted) {
+                  // Show alert dialog for confirmation
+                  final shouldUpdate = await showCupertinoDialog<bool>(
+                    context: context,
+                    builder: (context) => CupertinoAlertDialog(
+                      title: const Text('Update Published Itinerary?'),
+                      content: const Text(
+                        'This itinerary has already been published. Do you want to update it with your latest changes?',
+                      ),
+                      actions: [
+                        CupertinoDialogAction(
+                          isDestructiveAction: true,
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Update'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (shouldUpdate != true) {
+                    debugPrint('❌ User cancelled update');
+                    return;
+                  }
+                }
+
+                try {
+                  // Get user data for post
+                  final user = widget.userVm.user;
+                  if (user == null) {
+                    throw Exception('User data not available');
+                  }
+
+                  final userName = '${user.firstname} ${user.lastname}';
+                  // Sanitize profile image URL - treat whitespace-only as null
+                  final userImageUrl =
+                      (user.profileImageUrl != null &&
+                          user.profileImageUrl!.trim().isNotEmpty)
+                      ? user.profileImageUrl
+                      : null;
+
+                  debugPrint(
+                    '👤 Publishing with userName: $userName, userImageUrl: $userImageUrl',
+                  );
+
+                  final postId = await itineraryVm?.publishItinerary(
+                    userName: userName,
+                    userImageUrl: userImageUrl,
+                  );
+                  debugPrint('✅ Published successfully with postId: $postId');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          existingPost != null
+                              ? 'Itinerary updated successfully!'
+                              : 'Itinerary published successfully!',
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  debugPrint('❌ Error publishing itinerary: $e');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to publish: $e'),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              backgroundVariant: BackgroundVariant.secondaryFilled,
+            ),
+            const SizedBox(width: 10),
 
             AppButton.iconOnly(
               icon: CupertinoIcons.home,
@@ -313,7 +349,18 @@ class _NotesItineraryPageHeaderSectionState
             ),
           ],
         ),
-      ),
+      ],
     );
+  }
+
+  /// Helper method to get the appropriate ImageProvider for author avatar
+  ImageProvider _getImageProvider(String imageUrl) {
+    // Check if it's an asset path
+    if (imageUrl.startsWith('assets/')) {
+      return AssetImage(imageUrl);
+    }
+
+    // Otherwise treat as network URL
+    return NetworkImage(imageUrl);
   }
 }

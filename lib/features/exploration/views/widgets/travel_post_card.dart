@@ -13,12 +13,14 @@ class TravelPostCard extends StatefulWidget {
   final Post post;
   final String postId;
   final int collectsCount;
+  final VoidCallback? onCollectChanged;
 
   const TravelPostCard({
     super.key,
     required this.post,
     required this.postId,
     required this.collectsCount,
+    this.onCollectChanged,
   });
 
   @override
@@ -102,6 +104,8 @@ class _TravelPostCardState extends State<TravelPostCard> {
           _currentCollectsCount += newState ? 1 : -1;
           _isToggling = false;
         });
+        // Notify parent that collection status changed
+        widget.onCollectChanged?.call();
       }
     } catch (e) {
       debugPrint('❌ Error toggling collection: $e');

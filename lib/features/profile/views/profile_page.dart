@@ -14,8 +14,24 @@ import 'package:tripora/features/profile/views/widgets/profile_section.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
 import 'package:tripora/features/settings/views/settings_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late ProfileViewModel _profileVm;
+
+  Future<void> _refreshProfileStats() async {
+    // Refresh the profile stats when returning from itinerary page
+    if (mounted) {
+      debugPrint('📊 Refreshing profile stats...');
+      await _profileVm.refreshCounts();
+      debugPrint('✅ Profile stats refreshed');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +42,9 @@ class ProfilePage extends StatelessWidget {
       create: (_) => ProfileViewModel(user: userVm.user!),
       child: Consumer<ProfileViewModel>(
         builder: (context, vm, _) {
+          // Capture the viewmodel reference
+          _profileVm = vm;
+
           return Scaffold(
             backgroundColor: theme.colorScheme.surface,
             body: SafeArea(
@@ -79,7 +98,9 @@ class ProfilePage extends StatelessWidget {
                                 FirestoreService(),
                                 userVm.user!.uid,
                               ),
-                              child: const ProfileSharedTripsContent(),
+                              child: ProfileSharedTripsContent(
+                                onNavigateBack: _refreshProfileStats,
+                              ),
                             )
                           : ChangeNotifierProvider(
                               create: (_) => CollectsViewModel(
@@ -87,7 +108,9 @@ class ProfilePage extends StatelessWidget {
                                 FirestoreService(),
                                 userVm.user!.uid,
                               ),
-                              child: const ProfileCollectsContent(),
+                              child: ProfileCollectsContent(
+                                onNavigateBack: _refreshProfileStats,
+                              ),
                             ),
                     ),
                   ),

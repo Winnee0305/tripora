@@ -5,10 +5,96 @@ import '../viewmodels/poi_page_viewmodel.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
+import 'package:provider/provider.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class PoiHeaderScreen extends StatelessWidget {
+class PoiHeaderScreen extends StatefulWidget {
   final PoiPageViewmodel vm;
   const PoiHeaderScreen({super.key, required this.vm});
+
+  @override
+  State<PoiHeaderScreen> createState() => _PoiHeaderScreenState();
+}
+
+class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
+  late int _currentCollectsCount;
+  late bool _isCollected;
+  bool _isToggling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentCollectsCount = widget.vm.collectsCount;
+    _isCollected = widget.vm.isCollected;
+  }
+
+  @override
+  void didUpdateWidget(PoiHeaderScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _currentCollectsCount = widget.vm.collectsCount;
+    _isCollected = widget.vm.isCollected;
+  }
+
+  Future<void> _toggleFavorite() async {
+    UserViewModel? userVm;
+    try {
+      userVm = context.read<UserViewModel>();
+    } catch (_) {
+      // UserViewModel not in scope
+    }
+
+    if (userVm?.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to save POIs')),
+      );
+      return;
+    }
+
+    if (_isToggling) return;
+
+    setState(() {
+      _isToggling = true;
+      _isCollected = !_isCollected;
+      _currentCollectsCount += _isCollected ? 1 : -1;
+    });
+
+    try {
+      await widget.vm.toggleCollection(userVm!.user!.uid);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isCollected
+                  ? 'POI saved to your collection'
+                  : 'POI removed from collection',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isCollected = !_isCollected;
+          _currentCollectsCount += _isCollected ? 1 : -1;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isToggling = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +104,7 @@ class PoiHeaderScreen extends StatelessWidget {
           margin: const EdgeInsets.all(10), // outer spacing
           child: ClipRRect(
             borderRadius: BorderRadius.circular(58), // adjust radius
-            child: vm.poi!.imageUrl.isEmpty
+            child: widget.vm.poi!.imageUrl.isEmpty
                 ? Image.asset(
                     'assets/logo/tripora.JPG',
                     height: 400,
@@ -26,7 +112,7 @@ class PoiHeaderScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
                 : Image.network(
-                    vm.poi!.imageUrl,
+                    widget.vm.poi!.imageUrl,
                     height: 400,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -57,8 +143,10 @@ class PoiHeaderScreen extends StatelessWidget {
                   backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
                 AppButton.iconOnly(
-                  icon: CupertinoIcons.heart,
-                  onPressed: () {},
+                  icon: _isCollected
+                      ? CupertinoIcons.heart_fill
+                      : CupertinoIcons.heart,
+                  onPressed: _isToggling ? null : _toggleFavorite,
                   backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
               ],
@@ -92,7 +180,7 @@ class PoiHeaderScreen extends StatelessWidget {
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children: vm.poi!.tags
+                                children: widget.vm.poi!.tags
                                     .map(
                                       (tag) => Padding(
                                         padding: const EdgeInsets.only(
@@ -122,7 +210,7 @@ class PoiHeaderScreen extends StatelessWidget {
                           AppButton.iconTextSmall(
                             icon: CupertinoIcons.star_fill,
                             onPressed: () {},
-                            text: " ${vm.poi!.rating}",
+                            text: " ${widget.vm.poi!.rating}",
                             textStyleOverride: Theme.of(context)
                                 .textTheme
                                 .labelMedium
@@ -143,7 +231,7 @@ class PoiHeaderScreen extends StatelessWidget {
 
                       // ---- Location Name
                       Text(
-                        vm.poi!.name,
+                        widget.vm.poi!.name,
                         style: Theme.of(context).textTheme.headlineLarge
                             ?.copyWith(
                               fontWeight: ManropeFontWeight.bold,
@@ -170,7 +258,26 @@ class PoiHeaderScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                vm.poi!.country,
+                                widget.vm.poi!.country,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: ManropeFontWeight.light,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          // Display collects count
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                CupertinoIcons.heart_fill,
+                                size: 12,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '$_currentCollectsCount',
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       fontWeight: ManropeFontWeight.light,

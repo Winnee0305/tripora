@@ -15,10 +15,20 @@ import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class PostSection extends StatelessWidget {
+class PostSection extends StatefulWidget {
   const PostSection({super.key});
 
-  void _navigateToPostItinerary(BuildContext context, PostData postData) async {
+  @override
+  State<PostSection> createState() => _PostSectionState();
+}
+
+class _PostSectionState extends State<PostSection> {
+  late PostSectionViewmodel _postSectionVm;
+
+  Future<void> _navigateToPostItinerary(
+    BuildContext context,
+    PostData postData,
+  ) async {
     // Load post itinerary data first
     final postItineraryVm = PostItineraryViewModel(
       FirestoreService(),
@@ -38,7 +48,8 @@ class PostSection extends StatelessWidget {
       ),
     )..setSelectedTrip(postItineraryVm.trip!);
 
-    Navigator.push(
+    // Navigate and wait for result
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => MultiProvider(
@@ -63,6 +74,16 @@ class PostSection extends StatelessWidget {
         ),
       ),
     );
+
+    // If we returned from the itinerary page, refresh posts to get updated likes
+    if (mounted && result == true) {
+      _refreshPostsData();
+    }
+  }
+
+  void _refreshPostsData() {
+    // Refresh all posts when returning from itinerary view
+    _postSectionVm.refreshPosts();
   }
 
   @override
@@ -79,6 +100,9 @@ class PostSection extends StatelessWidget {
       child: Scaffold(
         body: Consumer<PostSectionViewmodel>(
           builder: (context, vm, _) {
+            // Capture the viewmodel reference for use in navigation callbacks
+            _postSectionVm = vm;
+
             if (vm.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }

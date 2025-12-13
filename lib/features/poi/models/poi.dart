@@ -24,6 +24,7 @@ class Poi {
   final double lng;
   final String phoneNumber;
   final List<String> tags;
+  int collectsCount;
 
   Poi({
     required this.id,
@@ -41,6 +42,7 @@ class Poi {
     this.lng = 0.0,
     this.phoneNumber = '',
     this.tags = const [],
+    this.collectsCount = 0,
   }) : nearbyAttractions = nearbyAttractions ?? []; // initialize here
 
   static final PlaceDetailsService _service = PlaceDetailsService();

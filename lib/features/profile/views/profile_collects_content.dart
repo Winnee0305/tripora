@@ -14,10 +14,31 @@ import 'package:tripora/features/profile/viewmodels/collects_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class ProfileCollectsContent extends StatelessWidget {
-  const ProfileCollectsContent({super.key});
+class ProfileCollectsContent extends StatefulWidget {
+  const ProfileCollectsContent({super.key, this.onNavigateBack});
 
-  void _navigateToPostItinerary(BuildContext context, PostData postData) async {
+  final VoidCallback? onNavigateBack;
+
+  @override
+  State<ProfileCollectsContent> createState() => _ProfileCollectsContentState();
+}
+
+class _ProfileCollectsContentState extends State<ProfileCollectsContent> {
+  late CollectsViewModel _collectsVm;
+
+  void _onPostCollectChanged() {
+    // Refresh profile stats and collected posts when a post is collected/uncollected
+    debugPrint(
+      '🔄 Post collection status changed, refreshing profile stats and posts...',
+    );
+    _refreshPostsData();
+    widget.onNavigateBack?.call();
+  }
+
+  Future<void> _navigateToPostItinerary(
+    BuildContext context,
+    PostData postData,
+  ) async {
     // Load post itinerary data first
     final postItineraryVm = PostItineraryViewModel(
       FirestoreService(),
@@ -37,7 +58,8 @@ class ProfileCollectsContent extends StatelessWidget {
       ),
     )..setSelectedTrip(postItineraryVm.trip!);
 
-    Navigator.push(
+    // Navigate and wait for result
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => MultiProvider(
@@ -62,6 +84,19 @@ class ProfileCollectsContent extends StatelessWidget {
         ),
       ),
     );
+
+    // If we returned from the itinerary page, refresh posts and profile stats
+    if (mounted && result == true) {
+      debugPrint('✅ Returned from itinerary page in collects section');
+      _refreshPostsData();
+      widget.onNavigateBack?.call();
+    }
+  }
+
+  void _refreshPostsData() {
+    // Refresh all collected posts when returning from itinerary view
+    _collectsVm.refreshCollectedPosts();
+    debugPrint('🔄 Refreshing collected posts and profile stats');
   }
 
   @override
@@ -71,6 +106,9 @@ class ProfileCollectsContent extends StatelessWidget {
       body: SafeArea(
         child: Consumer<CollectsViewModel>(
           builder: (context, vm, _) {
+            // Capture the viewmodel reference for use in navigation callbacks
+            _collectsVm = vm;
+
             if (vm.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -153,6 +191,7 @@ class ProfileCollectsContent extends StatelessWidget {
                                   post: post,
                                   postId: postData.postId,
                                   collectsCount: postData.collectsCount,
+                                  onCollectChanged: _onPostCollectChanged,
                                 ),
                               );
                             },

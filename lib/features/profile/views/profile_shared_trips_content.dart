@@ -14,10 +14,31 @@ import 'package:tripora/features/profile/viewmodels/shared_trips_viewmodel.dart'
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class ProfileSharedTripsContent extends StatelessWidget {
-  const ProfileSharedTripsContent({super.key});
+class ProfileSharedTripsContent extends StatefulWidget {
+  const ProfileSharedTripsContent({super.key, this.onNavigateBack});
 
-  void _navigateToPostItinerary(BuildContext context, PostData postData) async {
+  final VoidCallback? onNavigateBack;
+
+  @override
+  State<ProfileSharedTripsContent> createState() =>
+      _ProfileSharedTripsContentState();
+}
+
+class _ProfileSharedTripsContentState extends State<ProfileSharedTripsContent> {
+  late SharedTripsViewModel _sharedTripsVm;
+
+  void _onPostCollectChanged() {
+    // Refresh profile stats when a post is collected/uncollected
+    debugPrint(
+      '🔄 Post collection status changed, refreshing profile stats...',
+    );
+    widget.onNavigateBack?.call();
+  }
+
+  Future<void> _navigateToPostItinerary(
+    BuildContext context,
+    PostData postData,
+  ) async {
     // Load post itinerary data first
     final postItineraryVm = PostItineraryViewModel(
       FirestoreService(),
@@ -37,7 +58,8 @@ class ProfileSharedTripsContent extends StatelessWidget {
       ),
     )..setSelectedTrip(postItineraryVm.trip!);
 
-    Navigator.push(
+    // Navigate and wait for result
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => MultiProvider(
@@ -62,6 +84,18 @@ class ProfileSharedTripsContent extends StatelessWidget {
         ),
       ),
     );
+
+    // If we returned from the itinerary page, refresh posts and profile stats
+    if (mounted && result == true) {
+      debugPrint('✅ Returned from itinerary page in shared trips section');
+      _refreshPostsData();
+      widget.onNavigateBack?.call();
+    }
+  }
+
+  void _refreshPostsData() {
+    // Refresh all shared posts when returning from itinerary view
+    _sharedTripsVm.refreshSharedPosts();
   }
 
   @override
@@ -71,6 +105,9 @@ class ProfileSharedTripsContent extends StatelessWidget {
       body: SafeArea(
         child: Consumer<SharedTripsViewModel>(
           builder: (context, vm, _) {
+            // Capture the viewmodel reference for use in navigation callbacks
+            _sharedTripsVm = vm;
+
             if (vm.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -153,6 +190,7 @@ class ProfileSharedTripsContent extends StatelessWidget {
                                   post: post,
                                   postId: postData.postId,
                                   collectsCount: postData.collectsCount,
+                                  onCollectChanged: _onPostCollectChanged,
                                 ),
                               );
                             },
