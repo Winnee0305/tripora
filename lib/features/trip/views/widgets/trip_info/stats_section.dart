@@ -31,7 +31,6 @@ class _StatsSectionState extends State<StatsSection> {
       final tripVm = context.read<TripViewModel>();
       final expenseVm = context.read<ExpenseViewModel>();
       final packingVm = context.read<PackingViewModel>();
-      final userVm = context.read<UserViewModel>();
       if (tripVm.trip != null) {
         print("initializing itinerary");
         itineraryVm.setTrip(tripVm.trip!);
@@ -55,254 +54,171 @@ class _StatsSectionState extends State<StatsSection> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 0.9,
-          children: [
-            // ----- NOTES
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                final userVm = context.read<UserViewModel>();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MultiProvider(
-                      providers: [
-                        // Reuse the existing TripViewModel and ItineraryPageViewModel
-                        ChangeNotifierProvider.value(value: tripVm),
-                        ChangeNotifierProvider.value(value: itineraryVm),
-                        ChangeNotifierProvider.value(value: userVm),
-                        // DaySelectionViewModel specific to this page
-                        ChangeNotifierProvider(
-                          create: (_) => DaySelectionViewModel(
-                            startDate: tripVm.trip!.startDate!,
-                            endDate: tripVm.trip!.endDate!,
-                          )..selectDay(0),
-                        ),
-                      ],
-                      child: NotesItineraryPage(currentTab: 0),
-                    ),
+      child: Column(
+        children: [
+          // ----- FIRST ROW: ITINERARY (Full Width)
+          InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              final userVm = context.read<UserViewModel>();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider.value(value: tripVm),
+                      ChangeNotifierProvider.value(value: itineraryVm),
+                      ChangeNotifierProvider.value(value: userVm),
+                      ChangeNotifierProvider(
+                        create: (_) => DaySelectionViewModel(
+                          startDate: tripVm.trip!.startDate!,
+                          endDate: tripVm.trip!.endDate!,
+                        )..selectDay(0),
+                      ),
+                    ],
+                    child: NotesItineraryPage(currentTab: 1),
                   ),
-                );
-              },
-              child: Container(
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design2),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(
-                      CupertinoIcons.doc_on_clipboard,
-                      color: theme.colorScheme.onPrimary,
-                      size: 58,
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
+                ),
+              );
+            },
+            child: Container(
+              height: 150,
+              decoration: AppWidgetStyles.cardDecoration(
+                context,
+              ).copyWith(color: AppColors.design1),
+              padding: const EdgeInsets.all(30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icons/distance_white.png",
+                    width: 64,
+                    height: 64,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Itinerary",
+                        style: theme.textTheme.headlineSmall!.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontWeight: ManropeFontWeight.regular,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "${itineraryVm.itineraries.length} Activities",
+                        style: theme.textTheme.headlineSmall!.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontWeight: ManropeFontWeight.semiBold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // ----- SECOND ROW: EXPENSE & PACKING LIST
+          Row(
+            children: [
+              // Expense Card
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider.value(value: tripVm),
+                            ChangeNotifierProvider.value(value: expenseVm),
+                          ],
+                          child: ExpensePage(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: AppWidgetStyles.cardDecoration(
+                      context,
+                    ).copyWith(color: AppColors.design3),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        Icon(
+                          CupertinoIcons.money_dollar_circle,
+                          color: theme.colorScheme.onPrimary,
+                          size: 58,
+                        ),
+                        const SizedBox(height: 10),
                         Text(
-                          "Notes",
+                          "Expense",
                           style: theme.textTheme.headlineSmall!.copyWith(
                             color: theme.colorScheme.onPrimary,
                             fontWeight: ManropeFontWeight.regular,
                           ),
                         ),
-                        Text(
-                          "5",
-                          style: theme.textTheme.headlineLarge!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
-                            fontSize: 32,
-                          ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "RM",
+                              style: theme.textTheme.labelMedium!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.semiBold,
+                              ),
+                            ),
+                            Text(
+                              expenseVm.totalExpense.toStringAsFixed(2),
+                              style: theme.textTheme.headlineLarge!.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: ManropeFontWeight.semiBold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MultiProvider(
-                      providers: [
-                        // Reuse the existing TripViewModel and ItineraryPageViewModel
-                        ChangeNotifierProvider.value(value: tripVm),
-                        ChangeNotifierProvider.value(value: expenseVm),
-                      ],
-                      child: ExpensePage(),
                     ),
                   ),
-                );
-              }, // Dummy tap
-              child: Container(
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design3),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Center(
-                      child: Icon(
-                        CupertinoIcons.money_dollar_circle,
-                        color: theme.colorScheme.onPrimary,
-                        size: 58,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Expense",
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: ManropeFontWeight.regular,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          "RM",
-                          style: theme.textTheme.labelMedium!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
-                          ),
-                        ),
-                        Text(
-                          expenseVm.totalExpense.toStringAsFixed(2),
-                          style: theme.textTheme.headlineLarge!.copyWith(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: ManropeFontWeight.semiBold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-            ),
+              const SizedBox(width: 16),
 
-            // ----- ITINERARY
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                final userVm = context.read<UserViewModel>();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MultiProvider(
-                      providers: [
-                        // Reuse the existing TripViewModel and ItineraryPageViewModel
-                        ChangeNotifierProvider.value(value: tripVm),
-                        ChangeNotifierProvider.value(value: itineraryVm),
-                        ChangeNotifierProvider.value(value: userVm),
-                        // DaySelectionViewModel specific to this page
-                        ChangeNotifierProvider(
-                          create: (_) => DaySelectionViewModel(
-                            startDate: tripVm.trip!.startDate!,
-                            endDate: tripVm.trip!.endDate!,
-                          )..selectDay(0),
+              // Packing List Card
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider.value(value: tripVm),
+                            ChangeNotifierProvider.value(value: packingVm),
+                          ],
+                          child: PackingPage(),
                         ),
-                      ],
-                      child: NotesItineraryPage(currentTab: 1),
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design1),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Image.asset(
-                        "assets/icons/distance_white.png",
-                        width: 64,
-                        height: 64,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Itinerary",
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: ManropeFontWeight.regular,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "${itineraryVm.itineraries.length} Activities",
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: ManropeFontWeight.semiBold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // ----- PACKING LIST
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MultiProvider(
-                      providers: [
-                        // Reuse the existing TripViewModel and ItineraryPageViewModel
-                        ChangeNotifierProvider.value(value: tripVm),
-                        ChangeNotifierProvider.value(value: packingVm),
-                      ],
-                      child: PackingPage(),
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: AppWidgetStyles.cardDecoration(
-                  context,
-                ).copyWith(color: AppColors.design4),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Smart Packing List",
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: ManropeFontWeight.regular,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    const SizedBox(height: 28),
-                    Row(
+                    );
+                  },
+                  child: Container(
+                    decoration: AppWidgetStyles.cardDecoration(
+                      context,
+                    ).copyWith(color: AppColors.design4),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Icon(
@@ -310,7 +226,17 @@ class _StatsSectionState extends State<StatsSection> {
                           color: theme.colorScheme.onPrimary,
                           size: 52,
                         ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Packing",
+                          style: theme.textTheme.headlineSmall!.copyWith(
+                            color: theme.colorScheme.onPrimary,
+                            fontWeight: ManropeFontWeight.regular,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
@@ -333,12 +259,12 @@ class _StatsSectionState extends State<StatsSection> {
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

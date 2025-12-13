@@ -8,7 +8,6 @@ import 'package:tripora/core/models/packing_data.dart';
 import 'package:tripora/core/models/post_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/models/user_data.dart';
-import 'package:tripora/features/expense/models/expense.dart';
 
 class FirestoreService {
   final _firestore = FirebaseFirestore.instance;
@@ -396,29 +395,6 @@ class FirestoreService {
         .update(packing.toMap());
   }
 
-  // Future<double> getExpenseBudget(String uid, String tripId) async {
-  //   final tripDoc = await usersCollection
-  //       .doc(uid)
-  //       .collection('trips')
-  //       .doc(tripId)
-  //       .get();
-  //   final data = tripDoc.data();
-  //   if (data != null && data.containsKey('expenseBudget')) {
-  //     return (data['expenseBudget'] as num).toDouble();
-  //   }
-  //   return 0.0; // Default budget if not set
-  // }
-
-  // Future<void> updateExpenseBudget(
-  //   String uid,
-  //   double newBudget,
-  //   String tripId,
-  // ) async {
-  //   await usersCollection.doc(uid).collection('trips').doc(tripId).update({
-  //     'expenseBudget': newBudget,
-  //   });
-  // }
-
   // ----- Posts -----
   CollectionReference<Map<String, dynamic>> get postsCollection =>
       _firestore.collection('posts');
@@ -731,5 +707,43 @@ class FirestoreService {
         .collection('collectedPois')
         .get();
     return snapshot.docs.map((doc) => doc.id).toList();
+  }
+
+  // ----- Place Details Cache -----
+  /// Saves place details to Firestore
+  Future<void> savePlaceDetails(
+    String placeId,
+    Map<String, dynamic> details,
+  ) async {
+    try {
+      await _firestore.collection('pois').doc(placeId).set({
+        'details': details,
+        'cachedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+      if (kDebugMode)
+        print('✅ Place details saved in Firestore for: $placeId');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to save place details to Firestore: $e');
+    }
+  }
+
+  /// Fetches place details from Firestore (without cache expiration logic)
+  Future<Map<String, dynamic>?> getPlaceDetails(String placeId) async {
+    try {
+      final doc = await _firestore.collection('pois').doc(placeId).get();
+
+      if (doc.exists && doc.data()?['details'] != null) {
+        if (kDebugMode)
+          print('✅ Fetched place details from Firestore: $placeId');
+        return {
+          'details': doc.data()?['details'] as Map<String, dynamic>,
+          'cachedAt': doc.data()?['cachedAt'] as Timestamp?,
+        };
+      }
+    } catch (e) {
+      if (kDebugMode)
+        print('⚠️ Failed to fetch place details from Firestore: $e');
+    }
+    return null;
   }
 }

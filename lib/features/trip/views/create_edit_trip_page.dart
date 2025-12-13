@@ -83,16 +83,19 @@ class _CreateEditTripPageState extends State<CreateEditTripPage> {
                     CalendarRangePicker(
                       startDate: startDate,
                       endDate: endDate,
-                      onDateRangeChanged: (start, end) {
-                        setState(() {
-                          startDate = start;
-                          endDate = end;
-                          draftTrip = draftTrip.copyWith(
-                            startDate: start,
-                            endDate: end,
-                          );
-                        });
-                      },
+                      readOnly: isEditing,
+                      onDateRangeChanged: isEditing
+                          ? null
+                          : (start, end) {
+                              setState(() {
+                                startDate = start;
+                                endDate = end;
+                                draftTrip = draftTrip.copyWith(
+                                  startDate: start,
+                                  endDate: end,
+                                );
+                              });
+                            },
                     ),
                     const SizedBox(height: 30),
 

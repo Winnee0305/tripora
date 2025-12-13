@@ -9,7 +9,8 @@ import 'package:tripora/core/theme/app_text_style.dart';
 class CalendarRangePicker extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
-  final void Function(DateTime?, DateTime?) onDateRangeChanged;
+  final void Function(DateTime?, DateTime?)? onDateRangeChanged;
+  final bool readOnly;
 
   final DateTime firstDay;
   final DateTime lastDay;
@@ -21,6 +22,7 @@ class CalendarRangePicker extends StatefulWidget {
     required this.onDateRangeChanged,
     DateTime? firstDay,
     DateTime? lastDay,
+    this.readOnly = false,
   }) : firstDay = firstDay ?? DateTime(2024, 1, 1),
        lastDay = lastDay ?? DateTime(2030, 12, 31);
 
@@ -49,80 +51,91 @@ class _CalendarRangePickerState extends State<CalendarRangePicker> {
         context,
       ).copyWith(borderRadius: BorderRadius.circular(20)),
 
-      child: TableCalendar(
-        rowHeight: 40,
-        calendarFormat: CalendarFormat.month,
-        firstDay: widget.firstDay,
-        lastDay: widget.lastDay,
-        focusedDay: _focusedDay,
-        rangeStartDay: widget.startDate,
-        rangeEndDay: widget.endDate,
-        rangeSelectionMode: RangeSelectionMode.toggledOn,
-        selectedDayPredicate: (day) =>
-            isSameDay(day, widget.startDate) || isSameDay(day, widget.endDate),
-        onRangeSelected: (start, end, focused) {
-          widget.onDateRangeChanged(start, end);
-          setState(() => _focusedDay = focused);
-        },
-        onPageChanged: (focused) => setState(() => _focusedDay = focused),
-        headerStyle: HeaderStyle(
-          headerPadding: const EdgeInsets.symmetric(vertical: 4),
-          headerMargin: const EdgeInsets.only(),
-          formatButtonVisible: false,
-          titleCentered: true,
-          titleTextStyle: (theme.textTheme.titleMedium ?? const TextStyle())
-              .copyWith(
-                fontWeight: ManropeFontWeight.semiBold,
+      child: Opacity(
+        opacity: widget.readOnly ? 0.6 : 1.0,
+        child: IgnorePointer(
+          ignoring: widget.readOnly,
+          child: TableCalendar(
+            rowHeight: 40,
+            calendarFormat: CalendarFormat.month,
+            firstDay: widget.firstDay,
+            lastDay: widget.lastDay,
+            focusedDay: _focusedDay,
+            rangeStartDay: widget.startDate,
+            rangeEndDay: widget.endDate,
+            rangeSelectionMode: RangeSelectionMode.toggledOn,
+            selectedDayPredicate: (day) =>
+                isSameDay(day, widget.startDate) ||
+                isSameDay(day, widget.endDate),
+            onRangeSelected: widget.readOnly
+                ? null
+                : (start, end, focused) {
+                    widget.onDateRangeChanged?.call(start, end);
+                    setState(() => _focusedDay = focused);
+                  },
+            onPageChanged: widget.readOnly
+                ? null
+                : (focused) => setState(() => _focusedDay = focused),
+            headerStyle: HeaderStyle(
+              headerPadding: const EdgeInsets.symmetric(vertical: 4),
+              headerMargin: const EdgeInsets.only(),
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: (theme.textTheme.titleMedium ?? const TextStyle())
+                  .copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                    color: theme.colorScheme.secondary,
+                  ),
+              leftChevronIcon: Icon(
+                CupertinoIcons.chevron_left,
                 color: theme.colorScheme.secondary,
               ),
-          leftChevronIcon: Icon(
-            CupertinoIcons.chevron_left,
-            color: theme.colorScheme.secondary,
-          ),
-          rightChevronIcon: Icon(
-            CupertinoIcons.chevron_right,
-            color: theme.colorScheme.secondary,
-          ),
-        ),
-        calendarStyle: CalendarStyle(
-          rangeHighlightColor: highlightColor,
-          rangeStartDecoration: BoxDecoration(
-            color: primaryColor,
-            shape: BoxShape.circle,
-          ),
-          rangeEndDecoration: BoxDecoration(
-            color: primaryColor,
-            shape: BoxShape.circle,
-          ),
-          todayDecoration: BoxDecoration(
-            color: primaryColor.withOpacity(0),
-            shape: BoxShape.circle,
-          ),
+              rightChevronIcon: Icon(
+                CupertinoIcons.chevron_right,
+                color: theme.colorScheme.secondary,
+              ),
+            ),
+            calendarStyle: CalendarStyle(
+              rangeHighlightColor: highlightColor,
+              rangeStartDecoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              rangeEndDecoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              todayDecoration: BoxDecoration(
+                color: primaryColor.withOpacity(0),
+                shape: BoxShape.circle,
+              ),
 
-          selectedDecoration: BoxDecoration(
-            color: primaryColor,
-            shape: BoxShape.circle,
+              selectedDecoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              todayTextStyle: (theme.textTheme.bodyMedium ?? const TextStyle())
+                  .copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                    color: theme.colorScheme.primary,
+                  ),
+              weekendTextStyle:
+                  (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+              defaultTextStyle:
+                  (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+              selectedTextStyle:
+                  (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
+                    fontWeight: ManropeFontWeight.semiBold,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+            ),
           ),
-          todayTextStyle: (theme.textTheme.bodyMedium ?? const TextStyle())
-              .copyWith(
-                fontWeight: ManropeFontWeight.semiBold,
-                color: theme.colorScheme.primary,
-              ),
-          weekendTextStyle: (theme.textTheme.bodyMedium ?? const TextStyle())
-              .copyWith(
-                fontWeight: ManropeFontWeight.semiBold,
-                color: theme.colorScheme.onSurface,
-              ),
-          defaultTextStyle: (theme.textTheme.bodyMedium ?? const TextStyle())
-              .copyWith(
-                fontWeight: ManropeFontWeight.semiBold,
-                color: theme.colorScheme.onSurface,
-              ),
-          selectedTextStyle: (theme.textTheme.titleLarge ?? const TextStyle())
-              .copyWith(
-                fontWeight: ManropeFontWeight.semiBold,
-                color: theme.colorScheme.onPrimary,
-              ),
         ),
       ),
     );

@@ -3,16 +3,24 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/utils/constants.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
 
 class PlaceDetailsService {
   final String apiKey;
+  final FirestoreService _firestoreService;
 
-  PlaceDetailsService({this.apiKey = mapApiKey});
+  PlaceDetailsService({
+    this.apiKey = mapApiKey,
+    FirestoreService? firestoreService,
+  }) : _firestoreService = firestoreService ?? FirestoreService();
 
   Future<Map<String, dynamic>?> fetchPlaceDetails(String placeId) async {
     if (placeId.isEmpty) return null;
-    final cachedData = await _readRawPlaceJson(placeId);
+    
+    // Check Firestore cache first with expiration logic
+    final cachedData = await _readPlaceDetailsWithExpiration(placeId);
     if (cachedData != null) return cachedData;
 
     final fields =
@@ -27,11 +35,9 @@ class PlaceDetailsService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        // ✅ Save entire raw data for testing
-        if (!kIsWeb) {
-          await _saveRawPlaceJson(placeId, data);
-        } else {
-          if (kDebugMode) print('Skipping file save (web build).');
+        // Save to Firestore via service
+        if (data['result'] != null) {
+          await _firestoreService.savePlaceDetails(placeId, data['result']);
         }
 
         return data['result'];
@@ -44,21 +50,28 @@ class PlaceDetailsService {
     }
   }
 
-  /// Saves the raw JSON from Google to a writable app directory.
-  Future<void> _saveRawPlaceJson(
-    String placeId,
-    Map<String, dynamic> data,
-  ) async {
-    try {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/raw_place_$placeId.json');
-      await file.writeAsString(
-        const JsonEncoder.withIndent('  ').convert(data),
-      );
-      if (kDebugMode) print('✅ Raw place JSON saved at: ${file.path}');
-    } catch (e) {
-      if (kDebugMode) print('⚠️ Failed to save place JSON: $e');
+  /// Reads place details from Firestore with cache expiration check (14 days)
+  Future<Map<String, dynamic>?> _readPlaceDetailsWithExpiration(String placeId) async {
+    final cachedData = await _firestoreService.getPlaceDetails(placeId);
+    
+    if (cachedData != null) {
+      final details = cachedData['details'] as Map<String, dynamic>?;
+      final cachedAt = cachedData['cachedAt'] as Timestamp?;
+      
+      // Check if cache is older than 14 days
+      if (cachedAt != null) {
+        final cacheAge = DateTime.now().difference(cachedAt.toDate());
+        if (cacheAge.inDays >= 14) {
+          if (kDebugMode) print('⏰ Place details cache expired (${cacheAge.inDays} days old) for: $placeId');
+          return null; // Return null to trigger refetch
+        }
+      }
+      
+      if (kDebugMode) print('✅ Loaded place details from cache: $placeId');
+      return details;
     }
+    
+    return null;
   }
 
   Future<List<Map<String, String>>> fetchNearbyAttractions(
@@ -140,20 +153,6 @@ class PlaceDetailsService {
     } catch (e) {
       if (kDebugMode) print('⚠️ Failed to read nearby cache: $e');
     }
-    return null;
-  }
-
-  Future<Map<String, dynamic>?> _readRawPlaceJson(String placeId) async {
-    try {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/raw_place_$placeId.json');
-      if (await file.exists()) {
-        final data = jsonDecode(await file.readAsString());
-        print('✅ Raw place JSON loaded from: ${file.path}');
-
-        return data['result'];
-      }
-    } catch (_) {}
     return null;
   }
 }
