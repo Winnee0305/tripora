@@ -18,11 +18,27 @@ class PlaceDetailsService {
 
   Future<Map<String, dynamic>?> fetchPlaceDetails(String placeId) async {
     if (placeId.isEmpty) return null;
-    
-    // Check Firestore cache first with expiration logic
-    final cachedData = await _readPlaceDetailsWithExpiration(placeId);
-    if (cachedData != null) return cachedData;
 
+    // Step 1: Check local cache first
+    var details = await _readLocalPlaceDetailsCache(placeId);
+    if (details != null) {
+      if (kDebugMode)
+        print('✅ [LOCAL] Loaded POI details from local cache: $placeId');
+      return details;
+    }
+
+    // Step 2: Check Firestore cache with expiration logic
+    details = await _readPlaceDetailsWithExpiration(placeId);
+    if (details != null) {
+      if (kDebugMode)
+        print('✅ [DATABASE] Loaded POI details from database cache: $placeId');
+      // Save to local cache for next time
+      await _saveLocalPlaceDetailsCache(placeId, details);
+      return details;
+    }
+
+    // Step 3: Fetch from Google Places API
+    if (kDebugMode) print('🌐 [API] Fetching POI details from API: $placeId');
     final fields =
         'name,geometry,formatted_address,formatted_phone_number,website,rating,opening_hours,photos,reviews,user_ratings_total,international_phone_number,types';
     final url =
@@ -35,12 +51,21 @@ class PlaceDetailsService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        // Save to Firestore via service
         if (data['result'] != null) {
-          await _firestoreService.savePlaceDetails(placeId, data['result']);
-        }
+          final result = data['result'] as Map<String, dynamic>;
 
-        return data['result'];
+          // Cache in both local and database
+          await Future.wait([
+            _saveLocalPlaceDetailsCache(placeId, result),
+            _firestoreService.savePlaceDetails(placeId, result),
+          ]);
+
+          if (kDebugMode)
+            print(
+              '💾 [CACHE] Saved POI details to both local and database: $placeId',
+            );
+          return result;
+        }
       } else {
         throw Exception("Failed to fetch place details");
       }
@@ -48,29 +73,90 @@ class PlaceDetailsService {
       if (kDebugMode) print("PlaceDetailsService error: $e");
       return null;
     }
+
+    return null;
+  }
+
+  /// Reads place details from local file cache
+  Future<Map<String, dynamic>?> _readLocalPlaceDetailsCache(
+    String placeId,
+  ) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/poi_${placeId}.json');
+
+      if (await file.exists()) {
+        final raw = jsonDecode(await file.readAsString());
+
+        // Check cache validity (14 days)
+        final cachedAtStr = raw['cachedAt'] as String?;
+        if (cachedAtStr != null) {
+          final cachedAt = DateTime.parse(cachedAtStr);
+          final cacheAge = DateTime.now().difference(cachedAt);
+
+          if (cacheAge.inDays >= 14) {
+            if (kDebugMode)
+              print(
+                '⏰ Local cache expired (${cacheAge.inDays} days old) for: $placeId',
+              );
+            await file.delete(); // Clean up expired cache
+            return null;
+          }
+        }
+
+        return raw['details'] as Map<String, dynamic>?;
+      }
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to read local POI cache: $e');
+    }
+    return null;
+  }
+
+  /// Saves place details to local file cache
+  Future<void> _saveLocalPlaceDetailsCache(
+    String placeId,
+    Map<String, dynamic> details,
+  ) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/poi_${placeId}.json');
+      await file.writeAsString(
+        jsonEncode({
+          'cachedAt': DateTime.now().toIso8601String(),
+          'details': details,
+        }),
+      );
+      if (kDebugMode) print('✅ Local POI cache saved: ${file.path}');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to save local POI cache: $e');
+    }
   }
 
   /// Reads place details from Firestore with cache expiration check (14 days)
-  Future<Map<String, dynamic>?> _readPlaceDetailsWithExpiration(String placeId) async {
+  Future<Map<String, dynamic>?> _readPlaceDetailsWithExpiration(
+    String placeId,
+  ) async {
     final cachedData = await _firestoreService.getPlaceDetails(placeId);
-    
+
     if (cachedData != null) {
       final details = cachedData['details'] as Map<String, dynamic>?;
       final cachedAt = cachedData['cachedAt'] as Timestamp?;
-      
+
       // Check if cache is older than 14 days
       if (cachedAt != null) {
         final cacheAge = DateTime.now().difference(cachedAt.toDate());
         if (cacheAge.inDays >= 14) {
-          if (kDebugMode) print('⏰ Place details cache expired (${cacheAge.inDays} days old) for: $placeId');
+          if (kDebugMode)
+            print(
+              '⏰ Database cache expired (${cacheAge.inDays} days old) for: $placeId',
+            );
           return null; // Return null to trigger refetch
         }
       }
-      
-      if (kDebugMode) print('✅ Loaded place details from cache: $placeId');
+
       return details;
     }
-    
+
     return null;
   }
 

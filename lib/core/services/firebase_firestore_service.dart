@@ -720,8 +720,7 @@ class FirestoreService {
         'details': details,
         'cachedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      if (kDebugMode)
-        print('✅ Place details saved in Firestore for: $placeId');
+      if (kDebugMode) print('✅ Place details saved in Firestore for: $placeId');
     } catch (e) {
       if (kDebugMode) print('⚠️ Failed to save place details to Firestore: $e');
     }
