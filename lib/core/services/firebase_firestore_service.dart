@@ -684,19 +684,22 @@ class FirestoreService {
   // ----- Collected POIs -----
   Future<void> addToCollectedPois(String uid, String poiId) async {
     // Add to user's collected POIs
-    await usersCollection.doc(uid).collection('collectedPois').doc(poiId).set(
-      {'poiId': poiId, 'collectedAt': DateTime.now().toIso8601String()},
-    );
+    await usersCollection.doc(uid).collection('collectedPois').doc(poiId).set({
+      'poiId': poiId,
+      'collectedAt': DateTime.now().toIso8601String(),
+    });
 
     // Increment collectsCount on the POI
-    await _firestore.collection('pois').doc(poiId).update({
-      'collectsCount': FieldValue.increment(1),
-    }).catchError((_) {
-      // If POI document doesn't exist, create it with collectsCount
-      return _firestore.collection('pois').doc(poiId).set({
-        'collectsCount': 1,
-      }, SetOptions(merge: true));
-    });
+    await _firestore
+        .collection('pois')
+        .doc(poiId)
+        .update({'collectsCount': FieldValue.increment(1)})
+        .catchError((_) {
+          // If POI document doesn't exist, create it with collectsCount
+          return _firestore.collection('pois').doc(poiId).set({
+            'collectsCount': 1,
+          }, SetOptions(merge: true));
+        });
   }
 
   Future<void> removeFromCollectedPois(String uid, String poiId) async {

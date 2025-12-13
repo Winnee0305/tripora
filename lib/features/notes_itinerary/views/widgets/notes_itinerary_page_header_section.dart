@@ -338,16 +338,14 @@ class _NotesItineraryPageHeaderSectionState
               },
               backgroundVariant: BackgroundVariant.secondaryFilled,
             ),
-            const SizedBox(width: 10),
-
-            AppButton.iconOnly(
-              icon: CupertinoIcons.home,
-              onPressed: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              backgroundVariant: BackgroundVariant.secondaryFilled,
-            ),
           ],
+        ),
+        AppButton.iconOnly(
+          icon: CupertinoIcons.home,
+          onPressed: () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          },
+          backgroundVariant: BackgroundVariant.secondaryFilled,
         ),
       ],
     );

@@ -1,11 +1,139 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 
+// class AppTab extends StatelessWidget {
+//   final List<String> tabs;
+//   final int selectedIndex;
+//   final ValueChanged<int> onTabSelected;
+//   final double spacing;
+//   final double underlineHeight;
+//   final double underlineSpacing;
+//   final TextStyle? textStyle;
+//   final Color activeColor;
+//   final Color inactiveColor;
+
+//   const AppTab({
+//     super.key,
+//     required this.tabs,
+//     required this.selectedIndex,
+//     required this.onTabSelected,
+//     this.spacing = 2,
+//     this.underlineHeight = 2,
+//     this.underlineSpacing = 28,
+//     this.textStyle,
+//     required this.activeColor,
+//     required this.inactiveColor,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return LayoutBuilder(
+//       builder: (context, constraints) {
+//         final tabWidths = <double>[];
+//         for (var label in tabs) {
+//           final painter = TextPainter(
+//             text: TextSpan(
+//               text: label,
+//               style:
+//                   textStyle ??
+//                   const TextStyle(
+//                     fontSize: 16,
+//                     fontWeight: ManropeFontWeight.regular,
+//                   ),
+//             ),
+//             maxLines: 1,
+//             textDirection: TextDirection.ltr,
+//           )..layout();
+//           tabWidths.add(painter.width);
+//         }
+
+//         final totalTextWidth = tabWidths.reduce((a, b) => a + b);
+//         const double tabSpacing = 90; // 👈 adjustable spacing between tabs
+//         final totalWidth = totalTextWidth + tabSpacing * (tabs.length - 1);
+//         final double startOffset =
+//             (constraints.maxWidth - totalWidth) / 2; // 👈 center align
+
+//         // Compute underline left offset
+//         double leftOffset = startOffset;
+//         for (int i = 0; i < selectedIndex; i++) {
+//           leftOffset += tabWidths[i] + tabSpacing;
+//         }
+
+//         return SizedBox(
+//           height: 60,
+//           child: Stack(
+//             alignment: Alignment.topCenter,
+//             children: [
+//               // Tabs row
+//               Padding(
+//                 padding: const EdgeInsets.only(top: 2.0),
+//                 child: Row(
+//                   mainAxisAlignment:
+//                       MainAxisAlignment.center, // 👈 center the row
+//                   children: List.generate(
+//                     tabs.length,
+//                     (index) => Padding(
+//                       padding: EdgeInsets.symmetric(horizontal: tabSpacing / 2),
+//                       child: GestureDetector(
+//                         onTap: () => onTabSelected(index),
+//                         child: Text(
+//                           tabs[index],
+//                           style:
+//                               (textStyle ??
+//                                       const TextStyle(
+//                                         fontSize: 16,
+//                                         fontWeight: ManropeFontWeight.regular,
+//                                       ))
+//                                   .copyWith(
+//                                     color: selectedIndex == index
+//                                         ? activeColor
+//                                         : inactiveColor,
+//                                   ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+
+//               // Sliding underline
+//               AnimatedPositioned(
+//                 duration: const Duration(milliseconds: 300),
+//                 curve: Curves.easeInOut,
+//                 left: leftOffset,
+//                 bottom: underlineSpacing,
+//                 child: AnimatedContainer(
+//                   duration: const Duration(milliseconds: 300),
+//                   curve: Curves.easeInOut,
+//                   height: underlineHeight,
+//                   width: tabWidths[selectedIndex],
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(2),
+//                     gradient: LinearGradient(
+//                       begin: Alignment.centerLeft,
+//                       end: Alignment.centerRight,
+//                       colors: [
+//                         activeColor.withOpacity(0.0),
+//                         activeColor,
+//                         activeColor.withOpacity(0.0),
+//                       ],
+//                       stops: const [0.0, 0.5, 1.0],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
 class AppTab extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;
   final ValueChanged<int> onTabSelected;
-  final double spacing;
   final double underlineHeight;
   final double underlineSpacing;
   final TextStyle? textStyle;
@@ -17,9 +145,8 @@ class AppTab extends StatelessWidget {
     required this.tabs,
     required this.selectedIndex,
     required this.onTabSelected,
-    this.spacing = 2,
     this.underlineHeight = 2,
-    this.underlineSpacing = 28,
+    this.underlineSpacing = 10,
     this.textStyle,
     required this.activeColor,
     required this.inactiveColor,
@@ -29,53 +156,21 @@ class AppTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final tabWidths = <double>[];
-        for (var label in tabs) {
-          final painter = TextPainter(
-            text: TextSpan(
-              text: label,
-              style:
-                  textStyle ??
-                  const TextStyle(
-                    fontSize: 16,
-                    fontWeight: ManropeFontWeight.regular,
-                  ),
-            ),
-            maxLines: 1,
-            textDirection: TextDirection.ltr,
-          )..layout();
-          tabWidths.add(painter.width);
-        }
-
-        final totalTextWidth = tabWidths.reduce((a, b) => a + b);
-        const double tabSpacing = 90; // 👈 adjustable spacing between tabs
-        final totalWidth = totalTextWidth + tabSpacing * (tabs.length - 1);
-        final double startOffset =
-            (constraints.maxWidth - totalWidth) / 2; // 👈 center align
-
-        // Compute underline left offset
-        double leftOffset = startOffset;
-        for (int i = 0; i < selectedIndex; i++) {
-          leftOffset += tabWidths[i] + tabSpacing;
-        }
+        final tabWidth = constraints.maxWidth / tabs.length;
 
         return SizedBox(
           height: 60,
           child: Stack(
-            alignment: Alignment.topCenter,
             children: [
-              // Tabs row
-              Padding(
-                padding: const EdgeInsets.only(top: 2.0),
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // 👈 center the row
-                  children: List.generate(
-                    tabs.length,
-                    (index) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: tabSpacing / 2),
-                      child: GestureDetector(
-                        onTap: () => onTabSelected(index),
+              // Tabs
+              Row(
+                children: List.generate(
+                  tabs.length,
+                  (index) => Expanded(
+                    child: GestureDetector(
+                      onTap: () => onTabSelected(index),
+                      behavior: HitTestBehavior.opaque,
+                      child: Center(
                         child: Text(
                           tabs[index],
                           style:
@@ -96,28 +191,27 @@ class AppTab extends StatelessWidget {
                 ),
               ),
 
-              // Sliding underline
+              // Underline
               AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 250),
                 curve: Curves.easeInOut,
-                left: leftOffset,
+                left: tabWidth * selectedIndex,
                 bottom: underlineSpacing,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  height: underlineHeight,
-                  width: tabWidths[selectedIndex],
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2),
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        activeColor.withOpacity(0.0),
-                        activeColor,
-                        activeColor.withOpacity(0.0),
-                      ],
-                      stops: const [0.0, 0.5, 1.0],
+                child: Container(
+                  width: tabWidth,
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: underlineHeight,
+                    width: tabWidth * 0.45, // underline relative to tab
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2),
+                      gradient: LinearGradient(
+                        colors: [
+                          activeColor.withOpacity(0.0),
+                          activeColor,
+                          activeColor.withOpacity(0.0),
+                        ],
+                      ),
                     ),
                   ),
                 ),

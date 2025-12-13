@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/repositories/collected_post_repository.dart';
+import 'package:tripora/core/repositories/collected_poi_repository.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_tab.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/profile/viewmodels/collects_viewmodel.dart';
+import 'package:tripora/features/profile/viewmodels/collects_poi_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/shared_trips_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_collects_content.dart';
+import 'package:tripora/features/profile/views/profile_places_collects_content.dart';
 import 'package:tripora/features/profile/views/profile_shared_trips_content.dart';
 import 'package:tripora/features/profile/views/widgets/profile_section.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
@@ -72,13 +75,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // ----- Profile section
                   ProfileSection(vm: vm),
-                  const SizedBox(height: 0),
+
+                  const SizedBox(height: 18),
 
                   // ----- Tabs
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: AppTab(
-                      tabs: ["Shared Trips", "Collects"],
+                      // tabs: ["Shared Trips", "Collects"],
+                      tabs: ["Shared Trips", "Collects", "Places"],
                       selectedIndex: vm.selectedIndex,
                       onTabSelected: vm.selectTab,
                       activeColor: theme.colorScheme.primary,
@@ -88,6 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
+                  const SizedBox(height: 18),
                   // ----- Tab content area
                   Expanded(
                     child: AnimatedSwitcher(
@@ -102,13 +108,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onNavigateBack: _refreshProfileStats,
                               ),
                             )
-                          : ChangeNotifierProvider(
+                          : vm.selectedIndex == 1
+                          ? ChangeNotifierProvider(
                               create: (_) => CollectsViewModel(
                                 CollectedPostRepository(FirestoreService()),
                                 FirestoreService(),
                                 userVm.user!.uid,
                               ),
                               child: ProfileCollectsContent(
+                                onNavigateBack: _refreshProfileStats,
+                              ),
+                            )
+                          : ChangeNotifierProvider(
+                              create: (_) => CollectsPoiViewModel(
+                                CollectedPoiRepository(FirestoreService()),
+                                FirestoreService(),
+                                userVm.user!.uid,
+                              ),
+                              child: ProfilePlacesCollectsContent(
                                 onNavigateBack: _refreshProfileStats,
                               ),
                             ),

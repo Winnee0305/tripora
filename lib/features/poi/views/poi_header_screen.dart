@@ -5,8 +5,6 @@ import '../viewmodels/poi_page_viewmodel.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:provider/provider.dart';
-import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class PoiHeaderScreen extends StatefulWidget {
   final PoiPageViewmodel vm;
@@ -36,14 +34,7 @@ class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
   }
 
   Future<void> _toggleFavorite() async {
-    UserViewModel? userVm;
-    try {
-      userVm = context.read<UserViewModel>();
-    } catch (_) {
-      // UserViewModel not in scope
-    }
-
-    if (userVm?.user == null) {
+    if (widget.vm.userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please log in to save POIs')),
       );
@@ -59,7 +50,7 @@ class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
     });
 
     try {
-      await widget.vm.toggleCollection(userVm!.user!.uid);
+      await widget.vm.toggleCollection(widget.vm.userId!);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,12 +133,14 @@ class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
                   },
                   backgroundVariant: BackgroundVariant.secondaryFilled,
                 ),
-                AppButton.iconOnly(
+                AppButton.iconTextSmall(
+                  minWidth: 64,
                   icon: _isCollected
                       ? CupertinoIcons.heart_fill
                       : CupertinoIcons.heart,
                   onPressed: _isToggling ? null : _toggleFavorite,
                   backgroundVariant: BackgroundVariant.secondaryFilled,
+                  text: '$_currentCollectsCount',
                 ),
               ],
             ),
@@ -259,25 +252,6 @@ class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
                               const SizedBox(width: 4),
                               Text(
                                 widget.vm.poi!.country,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: ManropeFontWeight.light,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          // Display collects count
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                CupertinoIcons.heart_fill,
-                                size: 12,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '$_currentCollectsCount',
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       fontWeight: ManropeFontWeight.light,

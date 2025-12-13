@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/reusable_widgets/app_expandable_text.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
@@ -7,6 +8,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class ItineraryCard extends StatelessWidget {
   const ItineraryCard({
@@ -87,11 +89,14 @@ class ItineraryCard extends StatelessWidget {
               GestureDetector(
                 onTap: itinerary.place != null
                     ? () {
+                        final userVm = context.read<UserViewModel>();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                PoiPage(placeId: itinerary.place!.id),
+                            builder: (context) => PoiPage(
+                              placeId: itinerary.place!.id,
+                              userId: userVm.user?.uid,
+                            ),
                           ),
                         );
                       }

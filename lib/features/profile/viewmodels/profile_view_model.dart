@@ -44,11 +44,20 @@ class ProfileViewModel extends ChangeNotifier {
       final sharedPosts = await _firestoreService.getUserPosts(user.uid);
       _sharedTripsCount = sharedPosts.length;
 
-      // Load collections count
+      // Load post collections count
       final collectedPostIds = await _firestoreService.getCollectedPostIds(
         user.uid,
       );
-      _collectionsCount = collectedPostIds.length;
+      int postCollectionsCount = collectedPostIds.length;
+
+      // Load POI collections count
+      final collectedPoiIds = await _firestoreService.getCollectedPoiIds(
+        user.uid,
+      );
+      int poiCollectionsCount = collectedPoiIds.length;
+
+      // Total collections = posts + POIs
+      _collectionsCount = postCollectionsCount + poiCollectionsCount;
 
       _isLoadingCounts = false;
       notifyListeners();

@@ -7,27 +7,17 @@ import '../viewmodels/poi_page_viewmodel.dart';
 import 'poi_header_screen.dart';
 import 'poi_reviews_screen.dart';
 import 'poi_nearby_screen.dart';
-import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class PoiPage extends StatelessWidget {
   final String placeId;
-  const PoiPage({super.key, required this.placeId});
+  final String? userId;
+
+  const PoiPage({super.key, required this.placeId, this.userId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) {
-        // Try to read UserViewModel if available, otherwise pass null
-        String? userId;
-        try {
-          final userVm = context.read<UserViewModel>();
-          userId = userVm.user?.uid;
-        } catch (_) {
-          // UserViewModel not in scope, proceed without it
-          userId = null;
-        }
-        return PoiPageViewmodel(placeId, userId: userId);
-      },
+      create: (_) => PoiPageViewmodel(placeId, userId: userId),
       child: Consumer<PoiPageViewmodel>(
         builder: (context, vm, child) {
           if (vm.isLoading) {

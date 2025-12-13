@@ -9,23 +9,27 @@ class PoiPageViewmodel extends ChangeNotifier {
   late CollectedPoiRepository _collectedPoiRepository;
   bool _isCollected = false;
   int _collectsCount = 0;
+  final String? userId;
 
   bool get isCollected => _isCollected;
   int get collectsCount => _collectsCount;
 
-  PoiPageViewmodel(String placeId, {String? userId}) {
+  PoiPageViewmodel(String placeId, {this.userId}) {
     _collectedPoiRepository = CollectedPoiRepository(FirestoreService());
-    _init(placeId, userId);
+    _init(placeId);
   }
 
-  Future<void> _init(String placeId, String? userId) async {
+  Future<void> _init(String placeId) async {
     try {
       // Load POI details immediately
       poi = await Poi.fromPlaceId(placeId);
 
       // Load collection status if user is provided
       if (userId != null && poi != null) {
-        _isCollected = await _collectedPoiRepository.isCollected(userId, placeId);
+        _isCollected = await _collectedPoiRepository.isCollected(
+          userId!,
+          placeId,
+        );
       }
 
       // Initialize collects count from POI if available

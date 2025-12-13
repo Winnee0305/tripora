@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripora/core/services/ai_agents_service.dart';
 import 'package:tripora/core/utils/constants.dart';
 import 'package:tripora/core/utils/format_utils.dart';
@@ -57,7 +58,7 @@ class Poi {
       final lng = data['geometry']?['location']?['lng'] ?? 0.0;
       final address = data['formatted_address'] ?? '';
 
-      return Poi(
+      final poi = Poi(
         id: placeId,
         name: data['name'] ?? '',
         country: _parseCountry(address),
@@ -74,9 +75,30 @@ class Poi {
 
         // nearbyAttractions: await _service.fetchNearbyAttractions(lat, lng),
       );
+
+      // Fetch collectsCount from Firestore
+      await poi._loadCollectsCount();
+
+      return poi;
     } catch (e) {
       if (kDebugMode) print("Poi.fromPlaceId error: $e");
       return Poi(id: placeId); // Return empty safe Poi object on error
+    }
+  }
+
+  /// Load collectsCount from Firestore
+  Future<void> _loadCollectsCount() async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final doc = await firestore.collection('pois').doc(id).get();
+      if (doc.exists) {
+        collectsCount = doc.data()?['collectsCount'] ?? 0;
+        if (kDebugMode) {
+          print('Loaded collectsCount for $id: $collectsCount');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print("Error loading collectsCount: $e");
     }
   }
 

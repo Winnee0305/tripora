@@ -113,7 +113,8 @@ class ProfileSection extends StatelessWidget {
         const SizedBox(height: 18),
 
         // ----- Stats -----
-        SizedBox(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           height: 84,
           child: vm.isLoadingCounts
               ? const Center(child: CupertinoActivityIndicator())
@@ -130,13 +131,12 @@ class ProfileSection extends StatelessWidget {
                       value: '${vm.sharedTripsCount}',
                     ),
                     StatCard(
-                      label: 'Collection',
+                      label: 'Collections',
                       value: '${vm.collectionsCount}',
                     ),
                   ],
                 ),
         ),
-        const SizedBox(height: 22),
       ],
     );
   }

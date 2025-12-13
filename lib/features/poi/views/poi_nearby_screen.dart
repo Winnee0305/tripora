@@ -57,7 +57,8 @@ class PoiNearbyScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => PoiPage(placeId: attraction.poi.id),
+            builder: (_) =>
+                PoiPage(placeId: attraction.poi.id, userId: vm.userId),
           ),
         );
       },

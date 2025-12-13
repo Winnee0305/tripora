@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
-import 'package:tripora/features/poi/models/poi.dart';
 import 'destination_card.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class ForYouSection extends StatelessWidget {
   const ForYouSection({super.key});
@@ -12,6 +12,8 @@ class ForYouSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ForYouViewModel>(
       builder: (context, vm, child) {
+        final userVm = context.read<UserViewModel>();
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,6 +71,7 @@ class ForYouSection extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (_) => PoiPage(
                                       placeId: "ChIJo6WcDR7u0TERGv9VNkNQRDo",
+                                      userId: userVm.user?.uid,
                                     ),
                                   ),
                                 );
