@@ -8,16 +8,21 @@ import 'poi_header_screen.dart';
 import 'poi_reviews_screen.dart';
 import 'poi_nearby_screen.dart';
 
-class PoiPage extends StatelessWidget {
+class PoiPage extends StatefulWidget {
   final String placeId;
   final String? userId;
 
   const PoiPage({super.key, required this.placeId, this.userId});
 
   @override
+  State<PoiPage> createState() => _PoiPageState();
+}
+
+class _PoiPageState extends State<PoiPage> {
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PoiPageViewmodel(placeId, userId: userId),
+      create: (_) => PoiPageViewmodel(widget.placeId, userId: widget.userId),
       child: Consumer<PoiPageViewmodel>(
         builder: (context, vm, child) {
           if (vm.isLoading) {

@@ -5,6 +5,7 @@ import 'package:tripora/core/models/flight_data.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/models/packing_data.dart';
+import 'package:tripora/core/models/poi_history_data.dart';
 import 'package:tripora/core/models/post_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/models/user_data.dart';
@@ -744,5 +745,122 @@ class FirestoreService {
         print('⚠️ Failed to fetch place details from Firestore: $e');
     }
     return null;
+  }
+
+  // ----- POI View History -----
+  /// Records a POI view to user's history
+  Future<void> recordPoiViewHistory({
+    required String uid,
+    required String placeId,
+    required String poiName,
+    required String address,
+    required List<String> tags,
+  }) async {
+    try {
+      await usersCollection.doc(uid).collection('poiViewHistory').add({
+        'placeId': placeId,
+        'poiName': poiName,
+        'address': address,
+        'tags': tags,
+        'viewedAt': FieldValue.serverTimestamp(),
+      });
+      if (kDebugMode) print('✅ POI view recorded for user $uid: $poiName');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to record POI view: $e');
+    }
+  }
+
+  /// Fetches POI view history for a user
+  Future<List<PoiHistoryData>> getPoiViewHistory(
+    String uid, {
+    int limit = 50,
+  }) async {
+    try {
+      final snapshot = await usersCollection
+          .doc(uid)
+          .collection('poiViewHistory')
+          .orderBy('viewedAt', descending: true)
+          .limit(limit)
+          .get();
+
+      return snapshot.docs.map(PoiHistoryData.fromFirestore).toList();
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to fetch POI view history: $e');
+      return [];
+    }
+  }
+
+  /// Deletes a specific POI history entry
+  Future<void> deletePoiHistoryEntry(String uid, String historyId) async {
+    try {
+      await usersCollection
+          .doc(uid)
+          .collection('poiViewHistory')
+          .doc(historyId)
+          .delete();
+      if (kDebugMode) print('✅ POI history entry deleted: $historyId');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to delete POI history entry: $e');
+    }
+  }
+
+  /// Clears all POI view history for a user
+  Future<void> clearAllPoiHistory(String uid) async {
+    try {
+      final snapshot = await usersCollection
+          .doc(uid)
+          .collection('poiViewHistory')
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      if (kDebugMode) print('✅ All POI view history cleared for user $uid');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to clear POI view history: $e');
+    }
+  }
+
+  /// Maintains POI view history to only keep the latest 50 entries
+  Future<void> maintainPoiHistoryLimit(String uid, {int limit = 50}) async {
+    try {
+      final viewedPoisRef = usersCollection
+          .doc(uid)
+          .collection('poiViewHistory');
+
+      // Get the latest 50 entries
+      final latest50 = await viewedPoisRef
+          .orderBy('viewedAt', descending: true)
+          .limit(limit)
+          .get();
+
+      if (latest50.docs.length < limit) {
+        // No need to clean up if we have less than limit entries
+        return;
+      }
+
+      // Get all entries after the 50th one
+      final oldSnap = await viewedPoisRef
+          .orderBy('viewedAt', descending: true)
+          .startAfterDocument(latest50.docs.last)
+          .get();
+
+      // Delete older entries
+      if (oldSnap.docs.isNotEmpty) {
+        final batch = _firestore.batch();
+        for (final doc in oldSnap.docs) {
+          batch.delete(doc.reference);
+        }
+        await batch.commit();
+        if (kDebugMode)
+          print(
+            '🧹 Cleaned up ${oldSnap.docs.length} old POI history entries for user $uid',
+          );
+      }
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Failed to maintain POI history limit: $e');
+    }
   }
 }

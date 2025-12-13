@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:tripora/core/repositories/collected_poi_repository.dart';
+import 'package:tripora/core/repositories/poi_history_repository.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/poi/models/poi.dart';
 
@@ -7,6 +8,7 @@ class PoiPageViewmodel extends ChangeNotifier {
   Poi? poi;
   bool isLoading = true;
   late CollectedPoiRepository _collectedPoiRepository;
+  late PoiHistoryRepository _historyRepository;
   bool _isCollected = false;
   int _collectsCount = 0;
   final String? userId;
@@ -15,7 +17,9 @@ class PoiPageViewmodel extends ChangeNotifier {
   int get collectsCount => _collectsCount;
 
   PoiPageViewmodel(String placeId, {this.userId}) {
-    _collectedPoiRepository = CollectedPoiRepository(FirestoreService());
+    final firestoreService = FirestoreService();
+    _collectedPoiRepository = CollectedPoiRepository(firestoreService);
+    _historyRepository = PoiHistoryRepository(firestoreService);
     _init(placeId);
   }
 
@@ -42,6 +46,11 @@ class PoiPageViewmodel extends ChangeNotifier {
       notifyListeners(); // rebuild UI with POI info
     }
 
+    // Record POI view to history if user is logged in
+    if (userId != null && poi != null) {
+      await recordPoiView(userId!);
+    }
+
     // Fetch AI description separately, after init
     if (poi != null) {
       poi!.loadDesc().then((_) {
@@ -50,6 +59,25 @@ class PoiPageViewmodel extends ChangeNotifier {
       poi!.loadNearbyAttractions().then((_) {
         notifyListeners(); // rebuild UI when nearby attractions are ready
       });
+    }
+  }
+
+  /// Record POI view to user's history
+  Future<void> recordPoiView(String uid) async {
+    try {
+      if (poi == null) return;
+
+      await _historyRepository.recordPoiView(
+        uid: uid,
+        placeId: poi!.id,
+        poiName: poi!.name,
+        address: poi!.address,
+        tags: poi!.tags,
+      );
+
+      if (kDebugMode) print('✅ POI view recorded: ${poi!.name}');
+    } catch (e) {
+      if (kDebugMode) print('⚠️ Error recording POI view: $e');
     }
   }
 

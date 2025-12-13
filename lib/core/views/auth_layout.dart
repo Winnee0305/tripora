@@ -61,6 +61,9 @@ class AuthLayout extends StatelessWidget {
               final packingRepo = PackingRepository(firestore, user.uid);
               final postRepo = PostRepository(firestore, user.uid);
 
+              // Maintain POI view history limit (keep only latest 50)
+              firestore.maintainPoiHistoryLimit(user.uid);
+
               widget = MultiProvider(
                 providers: [
                   ChangeNotifierProvider<UserViewModel>(
