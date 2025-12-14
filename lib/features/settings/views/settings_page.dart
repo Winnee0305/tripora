@@ -1,15 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
+import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
 import 'package:tripora/features/settings/views/widgets/settings_tile.dart';
+import 'package:tripora/features/settings/views/account_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
+import 'package:tripora/features/feedback/views/tam_form.dart';
+import 'package:tripora/features/feedback/viewmodels/tam_viewmodel.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class SettingsPage extends StatefulWidget {
+  final UserData user;
+
+  const SettingsPage({super.key, required this.user});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Check feedback status on page load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settingsVm = context.read<SettingsViewModel>();
+      settingsVm.checkUserFeedbackStatus(widget.user.uid);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<SettingsViewModel>(context);
+    final settingsVm = Provider.of<SettingsViewModel>(context);
+    final userVm = Provider.of<UserViewModel>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -28,7 +52,18 @@ class SettingsPage extends StatelessWidget {
                     SettingsTile(
                       icon: Icons.person,
                       title: 'Account',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AccountPage(
+                              user: widget.user,
+                              settingsViewModel: settingsVm,
+                              userViewModel: userVm,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
 
@@ -36,8 +71,8 @@ class SettingsPage extends StatelessWidget {
                       icon: Icons.notifications,
                       title: 'Notification settings',
                       trailing: Switch(
-                        value: vm.notifications,
-                        onChanged: (v) => vm.toggleNotifications(v),
+                        value: settingsVm.notifications,
+                        onChanged: (v) => settingsVm.toggleNotifications(v),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -46,6 +81,62 @@ class SettingsPage extends StatelessWidget {
                       icon: Icons.tune,
                       title: 'User preferences',
                       onTap: () {},
+                    ),
+                    const SizedBox(height: 12),
+
+                    Stack(
+                      children: [
+                        SettingsTile(
+                          icon: Icons.feedback_outlined,
+                          title: 'Feedback & suggestions',
+                          onTap: () {
+                            if (settingsVm.hasCompletedFeedback) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'You have already completed the survey. Thank you for your feedback!',
+                                  ),
+                                  backgroundColor: Colors.blue,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                              return;
+                            }
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChangeNotifierProvider(
+                                  create: (_) => TAMViewModel(),
+                                  child: TAMForm(
+                                    userId: widget.user.uid,
+                                    onComplete: () {
+                                      // Update feedback status after completion
+                                      settingsVm.checkUserFeedbackStatus(
+                                        widget.user.uid,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (!settingsVm.hasCompletedFeedback)
+                          Positioned(
+                            // Red dot indicator
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 26),
                   ],
@@ -97,7 +188,7 @@ class SettingsPage extends StatelessWidget {
                   );
 
                   if (shouldLogout == true) {
-                    await vm.logout();
+                    await settingsVm.logout();
                     Navigator.popUntil(
                       context,
                       (route) => route.isFirst,

@@ -12,6 +12,9 @@ class UserData {
   final String? profileStoragePath;
   final DateTime createdAt;
   final DateTime? lastUpdated;
+  final String? gender;
+  final DateTime? dateOfBirth;
+  final String? nationality;
   // final Map<String, dynamic>? preferences;
 
   UserData({
@@ -24,6 +27,9 @@ class UserData {
     this.profileStoragePath,
     required this.createdAt,
     this.lastUpdated,
+    this.gender,
+    this.dateOfBirth,
+    this.nationality,
     // this.preferences,
   });
 
@@ -40,6 +46,9 @@ class UserData {
       profileImageUrl: data['profileImageUrl'] ?? ' ',
       profileStoragePath: data['profileStoragePath'] ?? ' ',
       lastUpdated: (data['lastUpdated'] as Timestamp?)?.toDate(),
+      gender: data['gender'],
+      dateOfBirth: (data['dateOfBirth'] as Timestamp?)?.toDate(),
+      nationality: data['nationality'],
       // bio: data['bio'],
       // joinedAt: (data['joinedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       // preferences: data['preferences'] != null
@@ -59,6 +68,11 @@ class UserData {
       'profileImageUrl': profileImageUrl,
       'profileStoragePath': profileStoragePath,
       'lastUpdated': Timestamp.fromDate(lastUpdated ?? DateTime.now()),
+      'gender': gender,
+      'dateOfBirth': dateOfBirth != null
+          ? Timestamp.fromDate(dateOfBirth!)
+          : null,
+      'nationality': nationality,
       // 'avatarUrl': avatarUrl,
       // 'bio': bio,
       // 'joinedAt': Timestamp.fromDate(joinedAt),
@@ -72,7 +86,9 @@ class UserData {
     String? email,
     String? profileImageUrl,
     String? profileStoragePath,
-
+    String? gender,
+    DateTime? dateOfBirth,
+    String? nationality,
     String? bio,
     DateTime? joinedAt,
     Map<String, dynamic>? preferences,
@@ -86,6 +102,9 @@ class UserData {
       createdAt: createdAt,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       profileStoragePath: profileStoragePath ?? this.profileStoragePath,
+      gender: gender ?? this.gender,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      nationality: nationality ?? this.nationality,
 
       // bio: bio ?? this.bio,
       // joinedAt: joinedAt ?? this.joinedAt,

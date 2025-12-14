@@ -873,4 +873,30 @@ class FirestoreService {
       if (kDebugMode) print('⚠️ Failed to maintain POI history limit: $e');
     }
   }
+
+  // ----- TAM (Technology Acceptance Model) -----
+  Future<void> saveTAMResponse(Map<String, dynamic> tamData) async {
+    try {
+      await _firestore.collection('tam_responses').add(tamData);
+      debugPrint('✅ TAM response saved successfully');
+    } catch (e) {
+      debugPrint('❌ Failed to save TAM response: $e');
+      rethrow;
+    }
+  }
+
+  /// Check if a user has already completed the TAM survey
+  Future<bool> hasUserCompletedTAM(String userId) async {
+    try {
+      final query = await _firestore
+          .collection('tam_responses')
+          .where('userId', isEqualTo: userId)
+          .limit(1)
+          .get();
+      return query.docs.isNotEmpty;
+    } catch (e) {
+      debugPrint('⚠️ Failed to check TAM completion status: $e');
+      return false;
+    }
+  }
 }

@@ -60,15 +60,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     showRightButton: true,
                     rightButtonIcon: const Icon(Icons.settings),
                     onRightButtonPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ChangeNotifierProvider(
-                            create: (_) => SettingsViewModel(),
-                            child: const SettingsPage(),
+                      final user = userVm.user;
+                      if (user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider.value(
+                                  value: userVm,
+                                ), // pass existing UserViewModel
+                                ChangeNotifierProvider(
+                                  create: (_) =>
+                                      SettingsViewModel(), // create SettingsViewModel with dependency
+                                ),
+                              ],
+                              child: SettingsPage(user: user),
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: 18),

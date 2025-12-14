@@ -58,6 +58,8 @@ dependencies:
   marquee: ^2.3.0
   google_maps_flutter: ^2.14.0
   flutter_polyline_points: ^3.1.0
+  package_info_plus: ^9.0.0
+  packages_info: ^0.0.1-dev.1
 
 dev_dependencies:
   flutter_test:
