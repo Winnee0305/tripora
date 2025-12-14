@@ -24,6 +24,7 @@ class AppTextField2 extends StatelessWidget {
 
   final IconData icon;
   final FocusNode? focusNode;
+  final bool enabled;
 
   const AppTextField2({
     this.focusNode,
@@ -35,60 +36,69 @@ class AppTextField2 extends StatelessWidget {
     this.onSearchPressed,
     this.showSearchIcon = true,
     required this.icon,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return SizedBox(
       width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.only(left: 24),
-        decoration: AppWidgetStyles.cardDecoration(
-          context,
-        ).copyWith(borderRadius: BorderRadius.circular(30)),
-        child: Row(
-          children: [
-            /// Text Input
-            Expanded(
-              child: TextField(
-                focusNode: focusNode,
-                controller: controller,
-                onChanged: onChanged,
-                onSubmitted: onSubmitted,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                    fontWeight: ManropeFontWeight.light,
+      child: Opacity(
+        opacity: enabled ? 1.0 : 0.5, // ✅ visual disabled state
+        child: Container(
+          padding: const EdgeInsets.only(left: 24),
+          decoration: AppWidgetStyles.cardDecoration(
+            context,
+          ).copyWith(borderRadius: BorderRadius.circular(30)),
+          child: Row(
+            children: [
+              /// Text Input
+              Expanded(
+                child: TextField(
+                  enabled: enabled, // ✅ critical
+                  focusNode: enabled ? focusNode : null,
+                  controller: controller,
+                  onChanged: enabled ? onChanged : null,
+                  onSubmitted: enabled ? onSubmitted : null,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      fontWeight: ManropeFontWeight.light,
+                    ),
+                    border: InputBorder.none,
                   ),
-                  border: InputBorder.none,
-                ),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: ManropeFontWeight.medium,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: ManropeFontWeight.medium,
+                  ),
                 ),
               ),
-            ),
 
-            /// Search Icon (optional)
-            if (showSearchIcon)
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: theme.colorScheme.primary,
-                child: IconButton(
-                  icon: Icon(icon, color: Colors.white, size: 18),
-                  onPressed:
-                      onSearchPressed ??
-                      () {
-                        if (onSubmitted != null) {
-                          final query = controller?.text ?? '';
-                          onSubmitted!(query);
-                        }
-                      },
+              /// Search Icon (optional)
+              if (showSearchIcon)
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: enabled
+                      ? theme.colorScheme.primary
+                      : theme.disabledColor, // ✅ disabled color
+                  child: IconButton(
+                    icon: Icon(icon, color: Colors.white, size: 18),
+                    onPressed: enabled
+                        ? (onSearchPressed ??
+                              () {
+                                if (onSubmitted != null) {
+                                  final query = controller?.text ?? '';
+                                  onSubmitted!(query);
+                                }
+                              })
+                        : null, // ✅ disables tap
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

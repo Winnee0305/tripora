@@ -34,7 +34,7 @@ void main() async {
         Provider(create: (_) => FirebaseStorageService()),
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        ChangeNotifierProvider(create: (_) => ChatViewModel()),
+        ChangeNotifierProvider(create: (_) => ChatViewModel(null)),
       ],
       child: const TriporaApp(),
     ),
