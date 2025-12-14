@@ -106,7 +106,7 @@ class AuthService {
   }) async {
     try {
       final normalizedUsername = username.trim().toLowerCase();
-      
+
       // Create user document
       await firebaseFirestore.collection('users').doc(uid).set({
         'uid': uid,
@@ -121,14 +121,17 @@ class AuthService {
         'nationality': nationality,
         'createdAt': FieldValue.serverTimestamp(),
       });
-      
+
       // Claim username in usernames collection
-      await firebaseFirestore.collection('usernames').doc(normalizedUsername).set({
-        'uid': uid,
-        'username': username, // Store original casing
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      
+      await firebaseFirestore
+          .collection('usernames')
+          .doc(normalizedUsername)
+          .set({
+            'uid': uid,
+            'username': username, // Store original casing
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
       debugPrint("✅ User record created in Firestore for $username");
     } catch (e) {
       debugPrint("❌ Failed to create Firestore user record: $e");

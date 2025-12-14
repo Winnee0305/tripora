@@ -43,7 +43,7 @@ class AuthLayout extends StatelessWidget {
       });
       debugPrint('✅ Basic user document created');
     }
-    
+
     // Wait for Firestore rules propagation and document availability
     debugPrint('⏳ Waiting for Firestore initialization...');
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -97,21 +97,29 @@ class AuthLayout extends StatelessWidget {
               widget = FutureBuilder(
                 future: _ensureUserDocumentExists(firestore, user),
                 builder: (context, userDocSnapshot) {
-                  if (userDocSnapshot.connectionState == ConnectionState.waiting) {
+                  if (userDocSnapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return const AppLoadingPage();
                   }
-                  
+
                   if (userDocSnapshot.hasError) {
                     return Scaffold(
                       body: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                            const Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.red,
+                            ),
                             const SizedBox(height: 16),
                             const Text('Failed to load user profile'),
                             const SizedBox(height: 8),
-                            Text('${userDocSnapshot.error}', textAlign: TextAlign.center),
+                            Text(
+                              '${userDocSnapshot.error}',
+                              textAlign: TextAlign.center,
+                            ),
                             const SizedBox(height: 24),
                             ElevatedButton(
                               onPressed: () => authServiceValue.signOut(),
@@ -132,36 +140,36 @@ class AuthLayout extends StatelessWidget {
                           return vm;
                         },
                       ),
-                  ChangeNotifierProvider<TripViewModel>(
-                    create: (_) {
-                      final vm = TripViewModel(tripRepo);
-                      vm.loadTrips();
-                      return vm;
-                    },
-                  ),
-                  ChangeNotifierProvider<ItineraryViewModel>(
-                    create: (_) {
-                      final vm = ItineraryViewModel(
-                        itineraryRepo,
-                        lodgingRepo,
-                        flightRepo,
-                        postRepo,
-                      );
-                      return vm;
-                    },
-                  ),
-                  ChangeNotifierProvider<ExpenseViewModel>(
-                    create: (_) {
-                      final vm = ExpenseViewModel(expenseRepo);
-                      return vm;
-                    },
-                  ),
-                  ChangeNotifierProvider<PackingViewModel>(
-                    create: (_) {
-                      final vm = PackingViewModel(packingRepo);
-                      return vm;
-                    },
-                  ),
+                      ChangeNotifierProvider<TripViewModel>(
+                        create: (_) {
+                          final vm = TripViewModel(tripRepo);
+                          vm.loadTrips();
+                          return vm;
+                        },
+                      ),
+                      ChangeNotifierProvider<ItineraryViewModel>(
+                        create: (_) {
+                          final vm = ItineraryViewModel(
+                            itineraryRepo,
+                            lodgingRepo,
+                            flightRepo,
+                            postRepo,
+                          );
+                          return vm;
+                        },
+                      ),
+                      ChangeNotifierProvider<ExpenseViewModel>(
+                        create: (_) {
+                          final vm = ExpenseViewModel(expenseRepo);
+                          return vm;
+                        },
+                      ),
+                      ChangeNotifierProvider<PackingViewModel>(
+                        create: (_) {
+                          final vm = PackingViewModel(packingRepo);
+                          return vm;
+                        },
+                      ),
                     ],
                     child: const NavigationShell(),
                   );

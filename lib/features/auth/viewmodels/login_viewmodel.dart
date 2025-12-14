@@ -78,17 +78,41 @@ class LoginViewModel extends AuthFormViewModel {
     }
   }
 
-  Future<void> forgotPassword() async {
-    if (!AuthValidators.isEmailValid(_email)) {
-      setAuthError("Please enter a valid email before resetting password.");
-      return;
+  Future<Map<String, dynamic>> sendPasswordResetEmail(String email) async {
+    if (!AuthValidators.isEmailValid(email)) {
+      return {
+        'success': false,
+        'message': 'Please enter a valid email address.',
+      };
     }
 
     try {
-      await authService.value.resetPassword(email: _email);
-      debugPrint("📧 Password reset email sent to $_email");
+      await authService.value.resetPassword(email: email);
+      debugPrint("📧 Password reset email sent to $email");
+      return {
+        'success': true,
+        'message': 'Password reset email sent! Please check your inbox.',
+      };
+    } on FirebaseAuthException catch (e) {
+      debugPrint("❌ Password reset error: ${e.code} — ${e.message}");
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No account found with this email address.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Invalid email address format.';
+          break;
+        default:
+          errorMessage = 'Failed to send reset email. Please try again.';
+      }
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
-      setAuthError("Failed to send reset email. Try again later.");
+      debugPrint("❌ Unknown password reset error: $e");
+      return {
+        'success': false,
+        'message': 'An unexpected error occurred. Please try again.',
+      };
     }
   }
 

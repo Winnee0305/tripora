@@ -12,6 +12,81 @@ class LoginScreen extends StatelessWidget {
 
   const LoginScreen({super.key, required this.onToggleToRegister});
 
+  void _showForgotPasswordDialog(BuildContext context, LoginViewModel vm) {
+    String resetEmail = '';
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(
+            'Reset Password',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Enter your email address and we\'ll send you a link to reset your password.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              AppTextField(
+                label: 'Email Address',
+                icon: CupertinoIcons.mail_solid,
+                onChanged: (value) => resetEmail = value.trim(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading
+                  ? null
+                  : () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      setState(() => isLoading = true);
+
+                      final result = await vm.sendPasswordResetEmail(
+                        resetEmail,
+                      );
+
+                      setState(() => isLoading = false);
+
+                      if (dialogContext.mounted) {
+                        Navigator.of(dialogContext).pop();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result['message']),
+                            backgroundColor: result['success']
+                                ? Colors.green
+                                : Colors.red,
+                            duration: const Duration(seconds: 4),
+                          ),
+                        );
+                      }
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Send Reset Link'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<LoginViewModel>(); // observe VM
@@ -77,7 +152,7 @@ class LoginScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: vm.forgotPassword,
+                      onPressed: () => _showForgotPasswordDialog(context, vm),
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(

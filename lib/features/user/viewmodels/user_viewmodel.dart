@@ -32,11 +32,11 @@ class UserViewModel extends ChangeNotifier {
       for (int i = 0; i < 3; i++) {
         userData = await _userRepo.getUserProfile();
         if (userData != null) break;
-        
+
         // Wait before retrying (Firestore propagation delay)
         if (i < 2) await Future.delayed(const Duration(milliseconds: 500));
       }
-      
+
       _user = userData;
       debugPrint("✅ User loaded: ${_user?.firstname} ${_user?.lastname}");
     } catch (e) {
