@@ -19,7 +19,6 @@ class PoiPageViewmodel extends ChangeNotifier {
   PoiPageViewmodel(String placeId, {this.userId}) {
     final firestoreService = FirestoreService();
     _collectedPoiRepository = CollectedPoiRepository(firestoreService);
-    _historyRepository = PoiHistoryRepository(firestoreService);
     _init(placeId);
   }
 

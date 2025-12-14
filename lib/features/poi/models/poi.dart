@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tripora/core/services/ai_agents_service.dart';
+import 'package:tripora/core/services/ai_desc_service.dart';
 import 'package:tripora/core/utils/constants.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 import 'package:tripora/core/utils/math_utils.dart';
@@ -161,8 +161,10 @@ class Poi {
   }
 
   Future<void> loadDesc() async {
-    // final aiDesc = await getPoiDesc(name, address);
-    // description = aiDesc; // updates this POI's description
+    final aiDescService = AiDescService();
+    final aiDesc = await aiDescService.fetchPoiDescription(name, address);
+    print('AI-generated description for $name: $aiDesc');
+    description = aiDesc; // updates this POI's description
   }
 
   static List<Review> _parseReviews(List<dynamic>? reviewsData) {

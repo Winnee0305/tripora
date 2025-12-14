@@ -1,6 +1,9 @@
 /// Google Maps API Key
 const String mapApiKey = "AIzaSyAquCucR9tQRpi4WiEKKsq6POjOj1NG5EY";
 
+/// Gemini API Key for AI description generation
+const String geminiApiKey = "AIzaSyDTieZnqz7d2xkYdIJgts_SX7SF3Kz-taY";
+
 final destinationsImageCoordinates = [
   {
     "destination": "Selangor",

@@ -83,30 +83,7 @@ class HomeHeaderSection extends StatelessWidget {
               ),
             ],
           ),
-          const Spacer(),
-          Stack(
-            children: [
-              AppButton.iconOnly(
-                icon: CupertinoIcons.bell,
-                onPressed: () {},
-                backgroundVariant: BackgroundVariant.primaryTrans,
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: AppButton.textOnly(
-                  minWidth: 16,
-                  minHeight: 16,
-                  text: "3",
-                  textStyleOverride: Theme.of(
-                    context,
-                  ).textTheme.labelMedium?.copyWith(color: Colors.white),
-                  backgroundColorOverride: Colors.red,
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
+          //
         ],
       ),
     );
