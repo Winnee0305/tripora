@@ -1,0 +1,51 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "basic_etiquette",
+    "title": "Basic Etiquette",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Basic etiquette in Malaysia is strongly influenced by respect for elders, religious values, and social harmony.",
+    "guidelines": [
+        {
+            "id": "etq_01",
+            "text": "Give or receive anything with two hands. If something must be passed with one hand, use the right hand, as the left hand is traditionally reserved for cleansing."
+        },
+        {
+            "id": "etq_02",
+            "text": "It is considered disrespectful to smoke around elderly individuals."
+        },
+        {
+            "id": "etq_03",
+            "text": "Avoid touching or passing objects over the top of someone’s head, as the head is considered sacred by some Malaysians."
+        },
+        {
+            "id": "etq_04",
+            "text": "Pointing, especially with the right hand, is viewed as poor manners. Use the right thumb with fingers folded instead."
+        },
+        {
+            "id": "etq_05",
+            "text": "Do not walk over someone’s crossed legs or cross your own legs in front of elders."
+        },
+        {
+            "id": "etq_06",
+            "text": "When walking past an elder, it is respectful to bow or bend slightly so that your head is lowered."
+        },
+        {
+            "id": "etq_07",
+            "text": "Some Malaysians do not consume alcohol due to Islamic, Hindu, or Buddhist beliefs, and this should be respected."
+        },
+        {
+            "id": "etq_08",
+            "text": "Smoking cigarettes around Malays may be considered impolite, as many abstain for religious reasons."
+        },
+        {
+            "id": "etq_09",
+            "text": "Malaysians generally have a relaxed attitude toward time, although punctuality may vary across ethnic groups and between urban and rural areas."
+        }
+    ]
+}

@@ -175,6 +175,14 @@ flutter:
     - assets/icons/cloud_check.png
     - assets/icons/cloud_sync.gif
     - assets/icons/cloud_upload.png
+    - assets/data/culture/malaysia/basic_etiquette.json
+    - assets/data/culture/malaysia/dos.json
+    - assets/data/culture/malaysia/donts.json
+    - assets/data/culture/malaysia/eating.json
+    - assets/data/culture/malaysia/gift_giving.json
+    - assets/data/culture/malaysia/greetings.json
+    - assets/data/culture/malaysia/visiting.json
+
 
 
 

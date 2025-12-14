@@ -1,0 +1,66 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "greetings",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Greetings are highly important in Malaysia and are viewed as an indication of the respect one shows to others.",
+    "guidelines": [
+        {
+            "id": "greet_01",
+            "text": "Greetings are very important in Malaysia and are thought to indicate the respect you will show an individual from then on."
+        },
+        {
+            "id": "greet_02",
+            "text": "When greeting a group of people, the oldest person should be greeted first."
+        },
+        {
+            "id": "greet_03",
+            "text": "Always address individuals using appropriate titles (e.g., Mr, Mrs, Doctor) unless invited to speak more casually."
+        },
+        {
+            "id": "greet_04",
+            "text": "The common Malay verbal greeting is “Salaam”."
+        },
+        {
+            "id": "greet_05",
+            "text": "Elders may be addressed as “pakcik” (uncle) or “makcik” (aunty) as a sign of respect."
+        },
+        {
+            "id": "greet_06",
+            "text": "Handshakes are common across ethnicities; however, physical contact between men and women is often avoided."
+        },
+        {
+            "id": "greet_07",
+            "text": "When greeting a Malaysian woman, wait for her to extend her hand before offering a handshake."
+        },
+        {
+            "id": "greet_08",
+            "text": "Some people may place a hand over their chest and nod slightly as a non-contact greeting."
+        },
+        {
+            "id": "greet_09",
+            "text": "Muslim Malays may greet people of the same gender by grasping the other person’s hands with both hands."
+        },
+        {
+            "id": "greet_10",
+            "text": "Formal greetings may involve extending both hands to the recipient’s right hand, followed by a slight bow and placing the right hand on the heart."
+        },
+        {
+            "id": "greet_11",
+            "text": "When greeting someone older, it is respectful to bow the head slightly."
+        },
+        {
+            "id": "greet_12",
+            "text": "In formal settings, some may touch the forehead or tip of the nose to the back of an elder’s hand."
+        },
+        {
+            "id": "greet_13",
+            "text": "Older Malaysian Chinese individuals may lower their gaze during greetings as a sign of respect."
+        }
+    ]
+}

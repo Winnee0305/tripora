@@ -1,0 +1,47 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "dos",
+    "title": "Do’s",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Recommended behaviours that support respectful and harmonious social interactions in Malaysian cultural contexts.",
+    "guidelines": [
+        {
+            "id": "do_01",
+            "text": "Smile when meeting people, as Malaysians value warmth and friendliness in social interactions."
+        },
+        {
+            "id": "do_02",
+            "text": "Maintain harmony in conversations and address problems indirectly and graciously when they arise."
+        },
+        {
+            "id": "do_03",
+            "text": "Offer sincere compliments when appropriate, as this helps give others ‘face’ and shows respect."
+        },
+        {
+            "id": "do_04",
+            "text": "Be open to discussing personal background and show genuine interest in family, as this is appreciated."
+        },
+        {
+            "id": "do_05",
+            "text": "Wear modest clothing by covering shoulders and ensuring skirts or shorts extend past the knees."
+        },
+        {
+            "id": "do_06",
+            "text": "Show respect and maintain appropriate distance when interacting with people of the opposite gender, particularly among Malays."
+        },
+        {
+            "id": "do_07",
+            "text": "Recognise and respect social hierarchy by deferring to elders or those of higher status and using appropriate honorifics."
+        },
+        {
+            "id": "do_08",
+            "text": "Compliment hospitality, as it is considered a reflection of character and highly valued, especially among Malays."
+        }
+    ]
+}

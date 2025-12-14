@@ -1,0 +1,54 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "eating",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Eating etiquette in Malaysia reflects religious values, cultural diversity, and shared dining practices across different ethnic groups.",
+    "guidelines": [
+        {
+            "id": "eat_01",
+            "text": "Food is commonly cut into bite-sized pieces, so knives are rarely used during meals."
+        },
+        {
+            "id": "eat_02",
+            "text": "People often eat with their hands. Restaurants may provide a water pitcher for washing hands instead of utensils."
+        },
+        {
+            "id": "eat_03",
+            "text": "Always wash your hands before eating or serving food."
+        },
+        {
+            "id": "eat_04",
+            "text": "The right hand should be used to bring food to the mouth and to offer food to others."
+        },
+        {
+            "id": "eat_05",
+            "text": "When dining at a restaurant, the host usually orders all the dishes."
+        },
+        {
+            "id": "eat_06",
+            "text": "Leaving a small amount of food on your plate indicates that the meal was satisfying. Emptying the plate may suggest that you want more."
+        },
+        {
+            "id": "eat_07",
+            "text": "It is considered poor etiquette to walk while eating."
+        },
+        {
+            "id": "eat_08",
+            "text": "Malay meals are commonly eaten with the hands or with a spoon and fork. Pork is generally avoided."
+        },
+        {
+            "id": "eat_09",
+            "text": "Malaysian Indian meals are commonly eaten with a spoon or with the hands. Beef is typically avoided."
+        },
+        {
+            "id": "eat_10",
+            "text": "Malaysian Chinese meals often use spoons, forks, or chopsticks. Chopsticks should not be placed vertically in a rice bowl as this is associated with mourning."
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+  "country": "Malaysia",
+  "category": "etiquette",
+  "subcategory": "gift_giving",
+  "title": "Gift Giving",
+  "metadata": {
+    "author": "Nina Evason",
+    "year": 2016,
+    "source": "Mosaica",
+    "note": "All research and editorial content is developed and curated by Mosaica."
+  },
+  "description": "Gift-giving in Malaysia reflects values of respect, modesty, and social reciprocity, with attention to cultural sensitivity and symbolic meanings.",
+  "guidelines": [
+    {
+      "id": "gift_01",
+      "text": "Gifts are given and received using both hands as a sign of respect."
+    },
+    {
+      "id": "gift_02",
+      "text": "Recipients may initially refuse a gift before accepting it, which is considered polite and shows modesty."
+    },
+    {
+      "id": "gift_03",
+      "text": "Avoid giving overly expensive or grand gifts, as recipients may feel uncomfortable if they cannot reciprocate."
+    },
+    {
+      "id": "gift_04",
+      "text": "Gifts should not be opened immediately or in front of the giver to prevent loss of face."
+    },
+    {
+      "id": "gift_05",
+      "text": "Money should generally be avoided as a gift. If given, it should be in an even amount."
+    },
+    {
+      "id": "gift_06",
+      "text": "Knives or scissors should not be given as gifts, as they symbolise the severing of relationships."
+    }
+  ]
+}

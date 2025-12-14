@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info/header_section.dart';
 import 'package:tripora/features/trip/views/widgets/trip_info/stats_section.dart';
+import 'package:tripora/features/trip/views/widgets/etiquette_education_section.dart';
 
 class TripDashboardPage extends StatelessWidget {
   const TripDashboardPage({super.key});
@@ -18,7 +19,12 @@ class TripDashboardPage extends StatelessWidget {
               width: double.infinity,
               child: HeaderSection(),
             ),
+            const SizedBox(height: 20),
             const StatsSection(),
+            const SizedBox(height: 20),
+
+            /// Etiquette Education Section
+            const EtiquetteEducationSection(),
             // You can add more sections here that consume the providers
           ],
         ),

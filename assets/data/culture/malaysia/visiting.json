@@ -1,0 +1,38 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "visiting",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Visiting etiquette in Malaysia emphasizes hospitality, flexibility with time, and respect for household customs.",
+    "guidelines": [
+        {
+            "id": "visit_01",
+            "text": "Although hosts may specify a visiting time, punctuality is generally flexible and guests are not always expected to arrive exactly on time."
+        },
+        {
+            "id": "visit_02",
+            "text": "It is common for people to visit without prior arrangements, as informal visits are socially acceptable."
+        },
+        {
+            "id": "visit_03",
+            "text": "Shoes should be removed before entering a person’s home, and sometimes before entering public buildings where shoes are left outside."
+        },
+        {
+            "id": "visit_04",
+            "text": "Offering a small gift such as fruits, sweets, or crafts is appreciated. These gifts are known as ‘buah tangan’, meaning “fruit of the hands”."
+        },
+        {
+            "id": "visit_05",
+            "text": "Hosts often prepare refreshments such as tea, coffee, or snacks. Guests should wait for the host’s invitation before eating."
+        },
+        {
+            "id": "visit_06",
+            "text": "Guests are expected to graciously taste the refreshments offered as a sign of respect and appreciation."
+        }
+    ]
+}

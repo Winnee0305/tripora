@@ -1,0 +1,39 @@
+{
+    "country": "Malaysia",
+    "category": "etiquette",
+    "subcategory": "donts",
+    "title": "Don’ts",
+    "metadata": {
+        "author": "Nina Evason",
+        "year": 2016,
+        "source": "Mosaica",
+        "note": "All research and editorial content is developed and curated by Mosaica."
+    },
+    "description": "Behaviours to avoid in order to maintain respect and harmony in Malaysian social and cultural contexts.",
+    "guidelines": [
+        {
+            "id": "dont_01",
+            "text": "Avoid directly criticising someone, pointing out mistakes, or giving insincere compliments, as these actions can cause a Malaysian to lose ‘face’."
+        },
+        {
+            "id": "dont_02",
+            "text": "Do not publicly humiliate anyone; this conflicts with cultural principles of respect and can severely damage relationships."
+        },
+        {
+            "id": "dont_03",
+            "text": "Avoid publicly displaying anger, raising your voice, or shouting in front of elders or superiors; confrontational behaviour is seen as ‘kasar’ (crass/rough) and is strongly disapproved."
+        },
+        {
+            "id": "dont_04",
+            "text": "Refrain from interrupting or filling silences during conversation; patience and listening are valued."
+        },
+        {
+            "id": "dont_05",
+            "text": "Do not criticise Malaysia or the Malay royal family; even if a local does so, it is best to listen without indicating agreement or disagreement."
+        },
+        {
+            "id": "dont_06",
+            "text": "Avoid discussing the sensitive topic of ethnic relations in Malaysia; opinions can vary widely depending on personal background and experience."
+        }
+    ]
+}

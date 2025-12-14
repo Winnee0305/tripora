@@ -53,7 +53,7 @@ class _StatsSectionState extends State<StatsSection> {
     final packingVm = context.watch<PackingViewModel>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
         children: [
           // ----- FIRST ROW: ITINERARY (Full Width)
@@ -108,12 +108,25 @@ class _StatsSectionState extends State<StatsSection> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        "${itineraryVm.itineraries.length} Activities",
-                        style: theme.textTheme.headlineSmall!.copyWith(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: ManropeFontWeight.semiBold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${itineraryVm.itineraries.length}",
+                            style: theme.textTheme.headlineLarge!.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: ManropeFontWeight.semiBold,
+                            ),
+                          ),
+                          Text(
+                            "   Activities",
+                            style: theme.textTheme.headlineSmall!.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: ManropeFontWeight.semiBold,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

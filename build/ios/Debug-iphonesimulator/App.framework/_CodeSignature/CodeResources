@@ -6,7 +6,7 @@
 	<dict>
 		<key>.DS_Store</key>
 		<data>
-		ZuSsXesZwjo5ogNZMXM8yS/gmYk=
+		etn31rMCIgO8P7l0o/ts9vp6kzo=
 		</data>
 		<key>Info.plist</key>
 		<data>
@@ -14,11 +14,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		yh0ToEKbtihhcV67YWk+WpOuTd8=
+		L2Ic0Fk23RnOosgykKErVr+CVgU=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		nYGTFjW+bAilQsHTIOosHdUmTUo=
+		moR6UqcczUfdoopdWAsnm03qB2s=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -31,6 +31,34 @@
 		<key>flutter_assets/NativeAssetsManifest.json</key>
 		<data>
 		re4p7E8rPLLsN+wzaPN/+AVpXTY=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/basic_etiquette.json</key>
+		<data>
+		qshce/Fa/JImn0/3OH1C7/AFrYs=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/donts.json</key>
+		<data>
+		6oCzxY+lmMmfsB+LMuNYh872v+8=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/dos.json</key>
+		<data>
+		HTIcGKBiUPbcK5EHgSui6FRTE2I=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/eating.json</key>
+		<data>
+		jqwx617YNu4NALYqUGs5k9SoQck=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/gift_giving.json</key>
+		<data>
+		jFIyqsaxk+W1udhidEmq3klmbRw=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/greetings.json</key>
+		<data>
+		6kUV5qm168lXeJvGNeG6CjlC/VI=
+		</data>
+		<key>flutter_assets/assets/data/culture/malaysia/visiting.json</key>
+		<data>
+		yn9JEDNp8IW7QCzo6XwL1N32cq0=
 		</data>
 		<key>flutter_assets/assets/fonts/Manrope-Bold.ttf</key>
 		<data>
@@ -318,7 +346,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		iT7siQbBepALh7EQNEJ4vgn85W4=
+		P42GWFLcxjDXh4lxnj1+mVMBkUg=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -343,14 +371,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+AJujWiqrjsJhj9XPWeOlLwy+f1P1yw/S+6wrqKRqNc=
+			bxgLaq05mpIhhbBUSGtLHwhr4fu69sss3aPrauHeHrk=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			rTbZV0O63/ZOXkuyR0P+9+q9HqZdR94q2IZRduazYmU=
+			T4yZAyqTQf5W+ddQ6HhjMFAjN8e9b9EC+8D1MrEYifE=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -372,6 +400,55 @@
 			<key>hash2</key>
 			<data>
 			lUijHkoEgTXB2U+Rkyi/tirix7s8q5ZVfHlB2ql3dss=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/basic_etiquette.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			d+F5cru0ZuJR4n3oBOidB0A0KzjdwUZ6YIDw46rxWc8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/donts.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cmafMtKY/h4T/JKU9/mLIlQogHRfHdSvDwXsIVuNUUA=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/dos.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FNwaZJEtm/j8jhLb2mPilTFRvJkpe9kvkwwjqhS44Cg=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/eating.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bZlYdOctLP7OL+Urv3wtxIGxMqh/YJu/ryxZP2Ha0TE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/gift_giving.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kdpgA/5ifFFzaub+Ce8JfnZgaESvCccijpxVWOW91eA=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/greetings.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aTesGuNbZahSkRYb5S+4MLjFzCwqL7D+tjq+YFDSHI8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/data/culture/malaysia/visiting.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			eVr4qLREtVPD31H5MWETSAZ4lnSNFDkcQxM/YxCC5YE=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/fonts/Manrope-Bold.ttf</key>
@@ -875,7 +952,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Yh2IlB80fIctdRlTBX9JKxKtY2cHLqqPdJ1YugVsVOM=
+			5i0MY5XDDg1tnaacnoNCkUtfkd/vJQnXRKvLk241tLw=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
