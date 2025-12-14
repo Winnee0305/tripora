@@ -301,7 +301,14 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                           .sublist(0, index)
                           .where((i) => i.isDestination)
                           .length;
+                      // Use a unique key for proper widget identity
+                      final uniqueKey = item.id.isEmpty
+                          ? ValueKey(
+                              'day${day}_idx${index}_${item.placeId}_${item.sequence}',
+                            )
+                          : ValueKey(item.id);
                       return GestureDetector(
+                        key: uniqueKey,
                         onTap: null, //         No tap action in view mode
                         child: ItineraryItem(
                           itinerary: item,
@@ -329,8 +336,14 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                           .where((i) => i.isDestination)
                           .length;
                       // Each item is both draggable and a drop target
+                      // Use a unique key combining day, index, and id to handle items without IDs
+                      final uniqueKey = item.id.isEmpty
+                          ? ValueKey(
+                              'day${day}_idx${index}_${item.placeId}_${item.sequence}',
+                            )
+                          : ValueKey(item.id);
                       return DragTarget<_DraggedItinerary>(
-                        key: ValueKey(item.id),
+                        key: uniqueKey,
                         builder: (context, candidateData, rejectedData) {
                           final isActive = candidateData.isNotEmpty;
                           // Highlight drop target when active

@@ -51,74 +51,60 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
     LatLng(2.1920, 102.2495),
   ];
 
-  void _handleAIPlan(BuildContext context, TripViewModel tripVm) async {
-    try {
-      final itineraryVm = context.read<ItineraryViewModel>();
+  void _handleAIPlan(BuildContext context) async {
+    final itineraryVm = context.read<ItineraryViewModel>();
 
-      // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(
-                'Generating AI itinerary plan...',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-        ),
-      );
-
-      // Generate AI plan using ViewModel
-      final result = await itineraryVm.generateAIPlan();
-
-      // Close loading dialog
-      if (context.mounted) Navigator.of(context).pop();
-
-      // Process the AI result and update itineraries
-      if (result != null && context.mounted) {
-        await itineraryVm.processAIPlanResult(result);
-
-        // Show success message
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('AI itinerary plan generated successfully!'),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              action: SnackBarAction(
-                label: 'SYNC',
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                onPressed: () {
-                  itineraryVm.syncItineraries();
-                },
-              ),
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(
+              'Generating AI itinerary plan...',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-          );
-        }
-      } else if (context.mounted) {
-        // Show error if no result
+          ],
+        ),
+      ),
+    );
+
+    // Generate and apply AI plan using ViewModel
+    final success = await itineraryVm.generateAndApplyAIPlan();
+
+    // Close loading dialog and wait for frame to complete
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+
+    // Wait for next frame before showing result to avoid layout conflicts
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // Show result message
+    if (context.mounted) {
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to generate AI plan'),
-            backgroundColor: Theme.of(context).colorScheme.error,
+            content: const Text('AI itinerary plan generated successfully!'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            action: SnackBarAction(
+              label: 'SYNC',
+              textColor: Theme.of(context).colorScheme.onPrimary,
+              onPressed: () {
+                itineraryVm.syncItineraries();
+              },
+            ),
           ),
         );
-      }
-    } catch (e) {
-      // Close loading dialog
-      if (context.mounted) Navigator.of(context).pop();
-
-      // Show error message
-      if (context.mounted) {
-        print("Failed to generate AI plan: $e");
+      } else {
+        final errorMsg = itineraryVm.error ?? 'Failed to generate AI plan';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to generate AI plan: $e'),
+            content: Text(errorMsg),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -337,12 +323,7 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
                     );
                   });
                 },
-                child: AIPlanButton(
-                  onPressed: () {
-                    final tripVm = context.read<TripViewModel>();
-                    _handleAIPlan(context, tripVm);
-                  },
-                ),
+                child: AIPlanButton(onPressed: () => _handleAIPlan(context)),
               ),
             ),
         ],

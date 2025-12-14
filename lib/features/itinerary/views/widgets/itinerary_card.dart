@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
-import 'package:tripora/core/reusable_widgets/app_expandable_text.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
@@ -167,11 +166,11 @@ class ItineraryCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12),
-          AppExpandableText(
+          Text(
             itinerary.userNotes,
-            trimLines: 4,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: ManropeFontWeight.light,
+              height: 1.4,
             ),
           ),
         ],

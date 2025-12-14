@@ -41,6 +41,13 @@ class ItineraryViewModel extends ChangeNotifier {
     this._postRepo,
   );
 
+  @override
+  void dispose() {
+    destinationController.dispose();
+    notesController.dispose();
+    super.dispose();
+  }
+
   // --- Local states ---
   List<ItineraryData> itineraries = [];
   Map<int, List<ItineraryData>> itinerariesMap = {};
@@ -135,8 +142,9 @@ class ItineraryViewModel extends ChangeNotifier {
   void listToMap(
     List<ItineraryData> itineraries,
     DateTime tripStartDate,
-    DateTime tripEndDate,
-  ) {
+    DateTime tripEndDate, {
+    bool notify = true,
+  }) {
     final Map<int, List<ItineraryData>> dailyMap = {};
 
     // 1. Initialize all days with empty lists
@@ -159,12 +167,15 @@ class ItineraryViewModel extends ChangeNotifier {
     }
 
     itinerariesMap = dailyMap;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   /// Helper: compute day number starting from 1
   int getDayNumber(DateTime itemDate, DateTime tripStartDate) {
-    return itemDate.difference(tripStartDate).inDays + 1;
+    final day = itemDate.difference(tripStartDate).inDays + 1;
+    return day.clamp(1, getTotalDays());
   }
 
   /// Flatten a per-day map of itineraries back into a list
@@ -227,6 +238,7 @@ class ItineraryViewModel extends ChangeNotifier {
     itinerariesMap.forEach((day, itemList) {
       itemList.removeWhere((item) => item.id == itinerary.id);
     });
+    notifyListeners();
   }
 
   void clearForm() {
@@ -351,22 +363,47 @@ class ItineraryViewModel extends ChangeNotifier {
     notifyListeners(); // now the UI will rebuild
   }
 
-  Future<Map<String, dynamic>?> generateAIPlan() async {
-    if (trip == null) return null;
+  /// Extract POI names from current itinerary map
+  List<String> getPreferredPoiNames() {
+    final List<String> poiNames = [];
+
+    for (final dayItineraries in itinerariesMap.values) {
+      for (final itinerary in dayItineraries) {
+        // Only include destination type items, skip notes
+        if (!itinerary.isNote && itinerary.place != null) {
+          final poiName = itinerary.place!.name;
+          if (poiName.isNotEmpty && !poiNames.contains(poiName)) {
+            poiNames.add(poiName);
+          }
+        }
+      }
+    }
+
+    return poiNames;
+  }
+
+  /// Generate AI plan and automatically process it
+  Future<bool> generateAndApplyAIPlan() async {
+    if (trip == null) return false;
 
     try {
+      _error = null;
+
       final aiRepo = AIAgentRepository(service: AIAgentService());
 
       // Calculate trip duration in days
       final tripDuration =
           trip!.endDate!.difference(trip!.startDate!).inDays + 1;
 
+      // Get preferred POI names from current itinerary
+      final preferredPoiNames = getPreferredPoiNames();
+
       // Prepare the request body
       final body = {
         'destination_state': trip!.destination,
-        'max_pois_per_day': 6,
+        'max_pois_per_day': 10,
         'number_of_travelers': trip!.travelersCount,
-        'preferred_poi_names': [],
+        'preferred_poi_names': preferredPoiNames,
         'trip_duration_days': tripDuration,
         'user_preferences': [trip!.travelStyle, trip!.travelPartnerType],
       };
@@ -379,16 +416,34 @@ class ItineraryViewModel extends ChangeNotifier {
       print('=== AI Plan Result ===');
       print('Result: $result');
 
-      return result;
+      if (result == null) {
+        _error = 'No result returned from AI service';
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
+        return false;
+      }
+
+      // Process the result internally without triggering notifications
+      await _processAIPlanResultInternal(result);
+
+      // Notify listeners after processing is complete
+      notifyListeners();
+
+      return true;
     } catch (e) {
       _error = 'Failed to generate AI plan: $e';
-      print('Error in generateAIPlan: $e');
+      print('Error in generateAndApplyAIPlan: $e');
+
+      // Notify listeners about the error
       notifyListeners();
-      return null;
+
+      return false;
     }
   }
 
-  Future<void> processAIPlanResult(dynamic result) async {
+  /// Internal method to process AI plan result without triggering notifications
+  Future<void> _processAIPlanResultInternal(dynamic result) async {
     if (result == null || trip == null) return;
 
     try {
@@ -430,14 +485,15 @@ class ItineraryViewModel extends ChangeNotifier {
         final dayNumber = entry.key;
         final pois = entry.value;
 
-        final List<ItineraryData> dayItineraries = [];
-
         // Sort by sequence_number
         pois.sort(
           (a, b) => (a['sequence_number'] as int).compareTo(
             b['sequence_number'] as int,
           ),
         );
+
+        // Create all itineraries for this day
+        final dayItineraries = <ItineraryData>[];
 
         for (int i = 0; i < pois.length; i++) {
           final poi = pois[i];
@@ -456,9 +512,8 @@ class ItineraryViewModel extends ChangeNotifier {
             lastUpdated: DateTime.now(),
           );
 
-          // Load place details asynchronously
+          // Load place details sequentially to ensure each itinerary gets the correct place data
           await itinerary.loadPlaceDetails();
-
           dayItineraries.add(itinerary);
         }
 
@@ -466,17 +521,22 @@ class ItineraryViewModel extends ChangeNotifier {
       }
 
       // Update the itineraries map using the proper method
+      // Don't notify during the update, we'll notify once at the end after frame completes
       listToMap(
         newItinerariesMap.values.expand((list) => list).toList(),
         trip!.startDate!,
         trip!.endDate!,
+        notify: false,
       );
 
       print('Successfully processed ${poisByDay.length} days of itinerary');
+
+      // No notification here - caller will handle it
     } catch (e) {
       _error = 'Error processing AI result: $e';
-      print('Error in processAIPlanResult: $e');
-      notifyListeners();
+      print('Error in _processAIPlanResultInternal: $e');
+
+      // Don't notify here - caller will handle it
       rethrow;
     }
   }

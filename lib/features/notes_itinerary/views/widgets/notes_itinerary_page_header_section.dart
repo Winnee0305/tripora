@@ -200,7 +200,7 @@ class _NotesItineraryPageHeaderSectionState
       children: [
         AppButton.iconOnly(
           icon: CupertinoIcons.back,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => _handleBackPress(context, itineraryVm),
           backgroundVariant: BackgroundVariant.secondaryFilled,
         ),
         Row(
@@ -342,9 +342,7 @@ class _NotesItineraryPageHeaderSectionState
         ),
         AppButton.iconOnly(
           icon: CupertinoIcons.home,
-          onPressed: () {
-            Navigator.popUntil(context, (route) => route.isFirst);
-          },
+          onPressed: () => _handleHomePress(context, itineraryVm),
           backgroundVariant: BackgroundVariant.secondaryFilled,
         ),
       ],
@@ -360,5 +358,95 @@ class _NotesItineraryPageHeaderSectionState
 
     // Otherwise treat as network URL
     return NetworkImage(imageUrl);
+  }
+
+  /// Handle back button press with sync check
+  Future<void> _handleBackPress(
+    BuildContext context,
+    ItineraryViewModel? itineraryVm,
+  ) async {
+    if (itineraryVm == null || itineraryVm.isSync) {
+      // If synced or no viewmodel, just pop
+      Navigator.pop(context);
+      return;
+    }
+
+    // Show alert dialog
+    final shouldSync = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Unsaved Changes'),
+        content: const Text(
+          'Your itinerary has unsaved changes. Do you want to save them before leaving?',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Discard'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSync == true && context.mounted) {
+      // Trigger sync
+      await itineraryVm.syncItineraries();
+    }
+
+    // Pop the page
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  /// Handle home button press with sync check
+  Future<void> _handleHomePress(
+    BuildContext context,
+    ItineraryViewModel? itineraryVm,
+  ) async {
+    if (itineraryVm == null || itineraryVm.isSync) {
+      // If synced or no viewmodel, just navigate home
+      Navigator.popUntil(context, (route) => route.isFirst);
+      return;
+    }
+
+    // Show alert dialog
+    final shouldSync = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Unsaved Changes'),
+        content: const Text(
+          'Your itinerary has unsaved changes. Do you want to save them before leaving?',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Discard'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSync == true && context.mounted) {
+      // Trigger sync
+      await itineraryVm.syncItineraries();
+    }
+
+    // Navigate to home
+    if (context.mounted) {
+      Navigator.popUntil(context, (route) => route.isFirst);
+    }
   }
 }
