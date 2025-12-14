@@ -22,8 +22,18 @@ class FirestoreService {
   }
 
   Future<UserData?> getUser(String uid) async {
-    final doc = await usersCollection.doc(uid).get();
-    return doc.exists ? UserData.fromFirestore(doc) : null;
+    try {
+      debugPrint("🔍 Fetching user document for UID: $uid");
+      final doc = await usersCollection.doc(uid).get();
+      debugPrint("📄 Document exists: ${doc.exists}");
+      if (doc.exists) {
+        debugPrint("📋 Document data: ${doc.data()}");
+      }
+      return doc.exists ? UserData.fromFirestore(doc) : null;
+    } catch (e) {
+      debugPrint("❌ Error fetching user document: $e");
+      rethrow;
+    }
   }
 
   // Future<void> updateUser(UserData user) async {

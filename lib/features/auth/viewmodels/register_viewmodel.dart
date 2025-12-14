@@ -11,6 +11,9 @@ class RegisterViewModel extends AuthFormViewModel {
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
+  String _gender = ''; // 'male', 'female', 'other'
+  DateTime? _dateOfBirth;
+  String _nationality = ''; // ISO 3166-1 alpha-2 country code
 
   bool _touchedFirstName = false;
   bool _touchedLastName = false;
@@ -18,6 +21,9 @@ class RegisterViewModel extends AuthFormViewModel {
   bool _touchedEmail = false;
   bool _touchedPassword = false;
   bool _touchedConfirm = false;
+  bool _touchedGender = false;
+  bool _touchedDateOfBirth = false;
+  bool _touchedNationality = false;
 
   // ---- Setters ----
   void setFirstName(String value) {
@@ -62,6 +68,27 @@ class RegisterViewModel extends AuthFormViewModel {
     notifyListeners();
   }
 
+  void setGender(String value) {
+    _gender = value;
+    _touchedGender = true;
+    clearAuthError();
+    notifyListeners();
+  }
+
+  void setDateOfBirth(DateTime? value) {
+    _dateOfBirth = value;
+    _touchedDateOfBirth = true;
+    clearAuthError();
+    notifyListeners();
+  }
+
+  void setNationality(String value) {
+    _nationality = value;
+    _touchedNationality = true;
+    clearAuthError();
+    notifyListeners();
+  }
+
   // ---- Validation ----
   String? get firstnameMessage =>
       _touchedFirstName ? AuthValidators.validateFirstName(_firstname) : null;
@@ -76,6 +103,14 @@ class RegisterViewModel extends AuthFormViewModel {
   String? get confirmPasswordMessage => _touchedConfirm
       ? AuthValidators.validateConfirmPassword(_password, _confirmPassword)
       : null;
+  String? get genderMessage =>
+      _touchedGender ? AuthValidators.validateGender(_gender) : null;
+  String? get dateOfBirthMessage => _touchedDateOfBirth
+      ? AuthValidators.validateDateOfBirth(_dateOfBirth)
+      : null;
+  String? get nationalityMessage => _touchedNationality
+      ? AuthValidators.validateNationality(_nationality)
+      : null;
 
   bool get isFirstNameValid =>
       _touchedFirstName && AuthValidators.isFirstNameValid(_firstname);
@@ -89,6 +124,17 @@ class RegisterViewModel extends AuthFormViewModel {
   bool get isConfirmValid =>
       _touchedConfirm &&
       AuthValidators.isConfirmPasswordValid(_password, _confirmPassword);
+  bool get isGenderValid =>
+      _touchedGender && AuthValidators.isGenderValid(_gender);
+  bool get isDateOfBirthValid =>
+      _touchedDateOfBirth && AuthValidators.isDateOfBirthValid(_dateOfBirth);
+  bool get isNationalityValid =>
+      _touchedNationality && AuthValidators.isNationalityValid(_nationality);
+
+  // Getters for UI access
+  String get gender => _gender;
+  DateTime? get dateOfBirth => _dateOfBirth;
+  String get nationality => _nationality;
 
   @override
   bool get isFormValid =>
@@ -97,7 +143,10 @@ class RegisterViewModel extends AuthFormViewModel {
       AuthValidators.isUsernameValid(_username) &&
       AuthValidators.isEmailValid(_email) &&
       AuthValidators.isPasswordValid(_password) &&
-      AuthValidators.isConfirmPasswordValid(_password, _confirmPassword);
+      AuthValidators.isConfirmPasswordValid(_password, _confirmPassword) &&
+      AuthValidators.isGenderValid(_gender) &&
+      AuthValidators.isDateOfBirthValid(_dateOfBirth) &&
+      AuthValidators.isNationalityValid(_nationality);
 
   @override
   void touchAllFields() {
@@ -107,6 +156,9 @@ class RegisterViewModel extends AuthFormViewModel {
     _touchedEmail = true;
     _touchedPassword = true;
     _touchedConfirm = true;
+    _touchedGender = true;
+    _touchedDateOfBirth = true;
+    _touchedNationality = true;
   }
 
   // ---- Register ----
@@ -144,7 +196,13 @@ class RegisterViewModel extends AuthFormViewModel {
         lastname: _lastname,
         username: _username,
         email: _email,
+        gender: _gender,
+        dateOfBirth: _dateOfBirth,
+        nationality: _nationality,
       );
+
+      // Wait for Firestore to propagate the document
+      await Future.delayed(const Duration(milliseconds: 500));
 
       debugPrint("✅ Registration success for user: $_username");
       await authService.value.signIn(email: _email, password: _password);

@@ -74,14 +74,18 @@ class AuthService {
   /// Checks if a username is already taken.
   Future<bool> isUsernameUnique(String username) async {
     try {
-      final result = await firebaseFirestore
-          .collection('users')
-          .where('username', isEqualTo: username.trim().toLowerCase())
-          .limit(1)
+      final normalizedUsername = username.trim().toLowerCase();
+      final usernameDoc = await firebaseFirestore
+          .collection('usernames')
+          .doc(normalizedUsername)
           .get();
 
-      // ✅ Return true if no user found with this username
-      return result.docs.isEmpty;
+      // ✅ Return true if username document doesn't exist
+      final isAvailable = !usernameDoc.exists;
+      if (!isAvailable) {
+        debugPrint("⚠️ Username '$username' is already used.");
+      }
+      return isAvailable;
     } catch (e) {
       debugPrint("❌ Error checking username uniqueness: $e");
       // 🚨 Return false on any error to avoid accidental duplicates
@@ -96,16 +100,35 @@ class AuthService {
     required String lastname,
     required String username,
     required String email,
+    required String gender,
+    required DateTime? dateOfBirth,
+    required String nationality,
   }) async {
     try {
+      final normalizedUsername = username.trim().toLowerCase();
+      
+      // Create user document
       await firebaseFirestore.collection('users').doc(uid).set({
         'uid': uid,
         'firstname': firstname,
         'lastname': lastname,
         'username': username,
         'email': email,
+        'gender': gender,
+        'dateOfBirth': dateOfBirth != null
+            ? Timestamp.fromDate(dateOfBirth)
+            : null,
+        'nationality': nationality,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      
+      // Claim username in usernames collection
+      await firebaseFirestore.collection('usernames').doc(normalizedUsername).set({
+        'uid': uid,
+        'username': username, // Store original casing
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      
       debugPrint("✅ User record created in Firestore for $username");
     } catch (e) {
       debugPrint("❌ Failed to create Firestore user record: $e");

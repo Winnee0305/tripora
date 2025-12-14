@@ -24,7 +24,31 @@ import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 class AuthLayout extends StatelessWidget {
   const AuthLayout({super.key});
 
-  // final Widget? pageIfNotConnected;
+  /// Ensures user document exists in Firestore, creates basic one if missing
+  /// Adds a delay to allow Firestore rules and document propagation
+  Future<void> _ensureUserDocumentExists(
+    FirestoreService firestore,
+    dynamic user,
+  ) async {
+    final doc = await firestore.getUserDoc(user.uid);
+    if (!doc.exists) {
+      debugPrint('⚠️ User document missing, creating basic profile...');
+      await firestore.usersCollection.doc(user.uid).set({
+        'uid': user.uid,
+        'email': user.email ?? '',
+        'username': user.displayName ?? 'user',
+        'firstname': user.displayName ?? '',
+        'lastname': '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      debugPrint('✅ Basic user document created');
+    }
+    
+    // Wait for Firestore rules propagation and document availability
+    debugPrint('⏳ Waiting for Firestore initialization...');
+    await Future.delayed(const Duration(milliseconds: 1000));
+    debugPrint('✅ Firestore ready, proceeding to load data');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +63,14 @@ class AuthLayout extends StatelessWidget {
           builder: (context, snapshot) {
             Widget widget;
             debugPrint('🔁 Auth state changed: ${snapshot.data}');
+
+            // --- Error state fallback ---
+            if (snapshot.hasError) {
+              debugPrint('❌ Auth stream error: ${snapshot.error}');
+              widget = const AuthPage();
+            }
             // --- Loading auth state ---
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            else if (snapshot.connectionState == ConnectionState.waiting) {
               widget = const AppLoadingPage();
             }
             // --- User logged in ---
@@ -64,15 +94,44 @@ class AuthLayout extends StatelessWidget {
               // Maintain POI view history limit (keep only latest 50)
               firestore.maintainPoiHistoryLimit(user.uid);
 
-              widget = MultiProvider(
-                providers: [
-                  ChangeNotifierProvider<UserViewModel>(
-                    create: (_) {
-                      final vm = UserViewModel(userRepo);
-                      vm.loadUser(context);
-                      return vm;
-                    },
-                  ),
+              widget = FutureBuilder(
+                future: _ensureUserDocumentExists(firestore, user),
+                builder: (context, userDocSnapshot) {
+                  if (userDocSnapshot.connectionState == ConnectionState.waiting) {
+                    return const AppLoadingPage();
+                  }
+                  
+                  if (userDocSnapshot.hasError) {
+                    return Scaffold(
+                      body: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                            const SizedBox(height: 16),
+                            const Text('Failed to load user profile'),
+                            const SizedBox(height: 8),
+                            Text('${userDocSnapshot.error}', textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            ElevatedButton(
+                              onPressed: () => authServiceValue.signOut(),
+                              child: const Text('Sign Out'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider<UserViewModel>(
+                        create: (_) {
+                          final vm = UserViewModel(userRepo);
+                          vm.loadUser(context);
+                          return vm;
+                        },
+                      ),
                   ChangeNotifierProvider<TripViewModel>(
                     create: (_) {
                       final vm = TripViewModel(tripRepo);
@@ -103,8 +162,10 @@ class AuthLayout extends StatelessWidget {
                       return vm;
                     },
                   ),
-                ],
-                child: const NavigationShell(),
+                    ],
+                    child: const NavigationShell(),
+                  );
+                },
               );
             } else {
               debugPrint("returning AuthPage");

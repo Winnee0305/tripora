@@ -156,7 +156,7 @@ class LoginScreen extends StatelessWidget {
 
           // ----- Footer
           Text(
-            "Copyright © 2024 Tripora. All rights reserved.",
+            "Copyright © 2025 Tripora. All rights reserved.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: ManropeFontWeight.light,

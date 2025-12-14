@@ -6,6 +6,7 @@ import 'package:tripora/features/auth/viewmodels/register_viewmodel.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
+import 'package:tripora/core/reusable_widgets/app_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/navigation/views/navigation_shell.dart';
 
@@ -108,6 +109,145 @@ class RegisterScreen extends StatelessWidget {
                     helperText: vm.confirmPasswordMessage,
                     isValid: vm.isConfirmValid,
                   ),
+                  const SizedBox(height: 28),
+
+                  // Gender Selection
+                  AppTextField(
+                    label: "Gender",
+                    text: vm.gender.isEmpty ? "" : _getGenderLabel(vm.gender),
+                    readOnly: true,
+                    chooseButton: true,
+                    icon: CupertinoIcons.person_fill,
+                    helperText: vm.genderMessage,
+                    isValid: vm.isGenderValid,
+                    onTap: () async {
+                      final selected = await showModalBottomSheet<String>(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          const genders = [
+                            {'label': 'Male', 'value': 'male'},
+                            {'label': 'Female', 'value': 'female'},
+                            {'label': 'Other', 'value': 'other'},
+                          ];
+                          return ListView(
+                            padding: const EdgeInsets.all(20),
+                            shrinkWrap: true,
+                            children: genders.map((gender) {
+                              return ListTile(
+                                title: Text(gender['label']!),
+                                onTap: () {
+                                  Navigator.pop(context, gender['value']);
+                                },
+                              );
+                            }).toList(),
+                          );
+                        },
+                      );
+                      if (selected != null) {
+                        vm.setGender(selected);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Date of Birth Selection
+                  AppTextField(
+                    label: "Date of Birth",
+                    text: vm.dateOfBirth != null
+                        ? '${vm.dateOfBirth!.day}/${vm.dateOfBirth!.month}/${vm.dateOfBirth!.year}'
+                        : "",
+                    readOnly: true,
+                    chooseButton: true,
+                    icon: CupertinoIcons.calendar,
+                    helperText: vm.dateOfBirthMessage,
+                    isValid: vm.isDateOfBirthValid,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
+                          ),
+                        ),
+                        builder: (context) => AppCalendarPicker(
+                          initialDate: vm.dateOfBirth ?? DateTime(2000),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          title: "Select Date of Birth",
+                          onDateSelected: vm.setDateOfBirth,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Nationality Selection
+                  AppTextField(
+                    label: "Nationality",
+                    text: vm.nationality.isEmpty
+                        ? ""
+                        : _getNationalityLabel(vm.nationality),
+                    readOnly: true,
+                    chooseButton: true,
+                    icon: CupertinoIcons.globe,
+                    helperText: vm.nationalityMessage,
+                    isValid: vm.isNationalityValid,
+                    onTap: () async {
+                      const countries = [
+                        {'label': 'Malaysia', 'value': 'MY'},
+                        {'label': 'Singapore', 'value': 'SG'},
+                        {'label': 'Indonesia', 'value': 'ID'},
+                        {'label': 'Thailand', 'value': 'TH'},
+                        {'label': 'Philippines', 'value': 'PH'},
+                        {'label': 'Vietnam', 'value': 'VN'},
+                        {'label': 'Cambodia', 'value': 'KH'},
+                        {'label': 'Laos', 'value': 'LA'},
+                        {'label': 'Myanmar', 'value': 'MM'},
+                        {'label': 'Brunei', 'value': 'BN'},
+                        {'label': 'United States', 'value': 'US'},
+                        {'label': 'United Kingdom', 'value': 'GB'},
+                        {'label': 'Canada', 'value': 'CA'},
+                        {'label': 'Australia', 'value': 'AU'},
+                        {'label': 'China', 'value': 'CN'},
+                        {'label': 'Japan', 'value': 'JP'},
+                        {'label': 'India', 'value': 'IN'},
+                        {'label': 'Germany', 'value': 'DE'},
+                        {'label': 'France', 'value': 'FR'},
+                        {'label': 'Other', 'value': 'XX'},
+                      ];
+                      final selected = await showModalBottomSheet<String>(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          return ListView(
+                            padding: const EdgeInsets.all(20),
+                            shrinkWrap: true,
+                            children: countries.map((country) {
+                              return ListTile(
+                                title: Text(country['label']!),
+                                onTap: () {
+                                  Navigator.pop(context, country['value']);
+                                },
+                              );
+                            }).toList(),
+                          );
+                        },
+                      );
+                      if (selected != null) {
+                        vm.setNationality(selected);
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -174,7 +314,7 @@ class RegisterScreen extends StatelessWidget {
           const Spacer(),
 
           Text(
-            "Copyright © 2024 Tripora. All rights reserved.",
+            "Copyright © 2025 Tripora. All rights reserved.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: ManropeFontWeight.light,
@@ -184,5 +324,36 @@ class RegisterScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getGenderLabel(String genderValue) {
+    const genders = {'male': 'Male', 'female': 'Female', 'other': 'Other'};
+    return genders[genderValue] ?? '';
+  }
+
+  String _getNationalityLabel(String countryCode) {
+    const countries = {
+      'MY': 'Malaysia',
+      'SG': 'Singapore',
+      'ID': 'Indonesia',
+      'TH': 'Thailand',
+      'PH': 'Philippines',
+      'VN': 'Vietnam',
+      'KH': 'Cambodia',
+      'LA': 'Laos',
+      'MM': 'Myanmar',
+      'BN': 'Brunei',
+      'US': 'United States',
+      'GB': 'United Kingdom',
+      'CA': 'Canada',
+      'AU': 'Australia',
+      'CN': 'China',
+      'JP': 'Japan',
+      'IN': 'India',
+      'DE': 'Germany',
+      'FR': 'France',
+      'XX': 'Other',
+    };
+    return countries[countryCode] ?? '';
   }
 }

@@ -88,4 +88,56 @@ class AuthValidators {
 
   static bool isConfirmPasswordValid(String password, String confirm) =>
       validateConfirmPassword(password, confirm) == null;
+
+  // ---- Gender ----
+  static String? validateGender(String? gender) {
+    if (gender == null || gender.trim().isEmpty) {
+      return 'Please select a gender';
+    }
+    if (!['male', 'female', 'other'].contains(gender.toLowerCase())) {
+      return 'Invalid gender selection';
+    }
+    return null;
+  }
+
+  static bool isGenderValid(String gender) => validateGender(gender) == null;
+
+  // ---- Date of Birth ----
+  static String? validateDateOfBirth(DateTime? dateOfBirth) {
+    if (dateOfBirth == null) {
+      return 'Please select your date of birth';
+    }
+
+    final now = DateTime.now();
+    final age = now.year - dateOfBirth.year;
+
+    if (age < 13) {
+      return 'You must be at least 13 years old';
+    }
+    if (age > 120) {
+      return 'Please enter a valid date of birth';
+    }
+    if (dateOfBirth.isAfter(now)) {
+      return 'Date of birth cannot be in the future';
+    }
+
+    return null;
+  }
+
+  static bool isDateOfBirthValid(DateTime? dateOfBirth) =>
+      validateDateOfBirth(dateOfBirth) == null;
+
+  // ---- Nationality ----
+  static String? validateNationality(String? nationality) {
+    if (nationality == null || nationality.trim().isEmpty) {
+      return 'Please select your nationality';
+    }
+    if (nationality.trim().length != 2) {
+      return 'Invalid nationality code';
+    }
+    return null;
+  }
+
+  static bool isNationalityValid(String nationality) =>
+      validateNationality(nationality) == null;
 }
