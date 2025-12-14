@@ -37,17 +37,19 @@ class TAMQuestionsScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Question ${currentQuestion + 1} of $totalQuestions',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
                           Text(
                             '${((currentQuestion + 1) / totalQuestions * 100).toStringAsFixed(0)}%',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
                         ],
                       ),
@@ -76,10 +78,11 @@ class TAMQuestionsScreen extends StatelessWidget {
                       children: [
                         Text(
                           questionText,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            height: 1.4,
-                          ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                              ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 48),
@@ -89,25 +92,34 @@ class TAMQuestionsScreen extends StatelessWidget {
                           children: [
                             // Scale labels
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Strongly\nDisagree',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: Colors.grey[600],
-                                      fontSize: 10,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Colors.grey[600],
+                                          fontSize: 10,
+                                        ),
                                   ),
                                   Text(
                                     'Strongly\nAgree',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: Colors.grey[600],
-                                      fontSize: 10,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Colors.grey[600],
+                                          fontSize: 10,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -118,24 +130,32 @@ class TAMQuestionsScreen extends StatelessWidget {
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
                                 child: Row(
                                   children: List.generate(7, (index) {
                                     final value = index + 1;
                                     final isSelected = currentResponse == value;
 
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
                                       child: GestureDetector(
-                                      onTap: () {
-                                        tamVm.setResponse(value);
-                                        // Auto-advance to next question if not on last question
-                                        if (currentQuestion < TAMViewModel.totalQuestions - 1) {
-                                          Future.delayed(const Duration(milliseconds: 300), () {
-                                            tamVm.nextQuestion();
-                                          });
-                                        }
-                                      },
+                                        onTap: () {
+                                          tamVm.setResponse(value);
+                                          // Auto-advance to next question if not on last question
+                                          if (currentQuestion <
+                                              TAMViewModel.totalQuestions - 1) {
+                                            Future.delayed(
+                                              const Duration(milliseconds: 300),
+                                              () {
+                                                tamVm.nextQuestion();
+                                              },
+                                            );
+                                          }
+                                        },
                                         child: Column(
                                           children: [
                                             Container(
@@ -145,12 +165,18 @@ class TAMQuestionsScreen extends StatelessWidget {
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
                                                   color: isSelected
-                                                      ? Theme.of(context).colorScheme.primary
-                                                      : Colors.grey[300] ?? Colors.grey,
+                                                      ? Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary
+                                                      : Colors.grey[300] ??
+                                                            Colors.grey,
                                                   width: isSelected ? 2 : 1.5,
                                                 ),
                                                 color: isSelected
-                                                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                                                    ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                          .withOpacity(0.1)
                                                     : Colors.transparent,
                                               ),
                                               child: isSelected
@@ -159,8 +185,11 @@ class TAMQuestionsScreen extends StatelessWidget {
                                                         width: 12,
                                                         height: 12,
                                                         decoration: BoxDecoration(
-                                                          shape: BoxShape.circle,
-                                                          color: Theme.of(context).colorScheme.primary,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary,
                                                         ),
                                                       ),
                                                     )
@@ -169,12 +198,19 @@ class TAMQuestionsScreen extends StatelessWidget {
                                             const SizedBox(height: 8),
                                             Text(
                                               '$value',
-                                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                color: isSelected
-                                                    ? Theme.of(context).colorScheme.primary
-                                                    : Colors.grey[600],
-                                              ),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelSmall
+                                                  ?.copyWith(
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    color: isSelected
+                                                        ? Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary
+                                                        : Colors.grey[600],
+                                                  ),
                                             ),
                                           ],
                                         ),
@@ -194,12 +230,17 @@ class TAMQuestionsScreen extends StatelessWidget {
 
                 // Navigation buttons
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 24.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26.0,
+                    vertical: 24.0,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
                         child: TextButton(
-                          onPressed: currentQuestion > 0 ? () => tamVm.previousQuestion() : null,
+                          onPressed: currentQuestion > 0
+                              ? () => tamVm.previousQuestion()
+                              : null,
                           child: Text(
                             'Back',
                             style: TextStyle(
@@ -214,8 +255,11 @@ class TAMQuestionsScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: AppButton.primary(
-                          onPressed: isAnswered ? () => tamVm.nextQuestion() : null,
-                          text: currentQuestion == TAMViewModel.totalQuestions - 1
+                          onPressed: isAnswered
+                              ? () => tamVm.nextQuestion()
+                              : null,
+                          text:
+                              currentQuestion == TAMViewModel.totalQuestions - 1
                               ? 'Submit'
                               : 'Next',
                         ),

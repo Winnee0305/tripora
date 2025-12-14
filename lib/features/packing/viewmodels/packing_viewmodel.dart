@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/models/packing_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/packing_repository.dart';
+import 'package:tripora/core/services/packing_service.dart';
 
 class PackingViewModel extends ChangeNotifier {
   final PackingRepository _packingRepo;
+  final PackingService _packingService = PackingService();
   bool _isLoading = false;
+  String? _error;
+  List<String>? _smartTips;
 
   PackingViewModel(this._packingRepo);
 
@@ -34,6 +38,10 @@ class PackingViewModel extends ChangeNotifier {
       .toList();
 
   int get packedItemCount => packingItems.where((item) => item.isPacked).length;
+
+  String? get error => _error;
+
+  List<String>? get smartTips => _smartTips;
 
   // =======================
   // Setup
@@ -205,5 +213,99 @@ class PackingViewModel extends ChangeNotifier {
   void renameItem(PackingData item, String newName) {
     item.name = newName;
     notifyListeners();
+  }
+
+  // =======================
+  // AI Packing List
+  // =======================
+  Future<void> generateAIPackingList() async {
+    if (trip == null) {
+      _error = 'Trip data not available';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      // Delete all existing items from Firestore
+      for (final item in packingItems) {
+        if (item.id.isNotEmpty) {
+          await _packingRepo.deletePackingItems(item.id, trip!.tripId);
+        }
+      }
+
+      // Clear all local data
+      packingItems.clear();
+      _categories.clear();
+      disposeControllers();
+      _smartTips = null;
+
+      final response = await _packingService.generatePackingList(trip!);
+
+      if (response['success'] != true) {
+        _error = 'Failed to generate packing list';
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // Extract smart tips
+      _smartTips = List<String>.from(response['smart_tips'] ?? []);
+
+      // Process categories and items
+      final categories = response['categories'] as List<dynamic>? ?? [];
+
+      for (final categoryData in categories) {
+        final categoryName = categoryData['name'] as String;
+        _categories.add(categoryName);
+        initControllersForCategory(categoryName);
+
+        // Add placeholder for category
+        if (!packingItems.any((item) => item.category == categoryName)) {
+          final placeholder = PackingData.empty().copyWith(
+            category: categoryName,
+            name: null,
+          );
+          packingItems.add(placeholder);
+        }
+
+        // Add items
+        final items = categoryData['items'] as List<dynamic>? ?? [];
+        for (final itemData in items) {
+          final itemName = itemData['item'] as String?;
+          if (itemName == null || itemName.isEmpty) continue;
+
+          final quantity = itemData['quantity'];
+          final reason = itemData['reason'] as String? ?? '';
+          final priority = itemData['priority'] as String? ?? 'optional';
+
+          // Remove placeholder if this is the first item
+          packingItems.removeWhere(
+            (item) => item.category == categoryName && item.isPlaceholder,
+          );
+
+          final newItem = PackingData.empty().copyWith(
+            name: itemName,
+            category: categoryName,
+            quantity: quantity is int ? quantity : null,
+            notes: reason,
+            priority: priority,
+          );
+
+          packingItems.add(newItem);
+          await _packingRepo.addPackingItem(newItem, trip!.tripId);
+        }
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Error generating packing list: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

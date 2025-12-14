@@ -13,6 +13,7 @@ import 'package:tripora/features/exploration/views/widgets/travel_post_card.dart
 import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
 import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
+import 'package:tripora/features/trip/views/widgets/etiquette_education_section.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class PostSection extends StatefulWidget {
@@ -133,56 +134,66 @@ class _PostSectionState extends State<PostSection> {
 
             return RefreshIndicator(
               onRefresh: () => vm.refreshPosts(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: MasonryGridView.count(
-                  crossAxisCount: 2, // number of columns
-                  mainAxisSpacing: 2,
-                  crossAxisSpacing: 2,
-                  itemCount: vm.posts.length,
-                  itemBuilder: (context, index) {
-                    final postData = vm.posts[index];
+              child: ListView(
+                children: [
+                  // ---------- Etiquette Education Section ----------
+                  EtiquetteEducationSection(),
+                  const SizedBox(height: 16),
+                  // ---------- Posts Grid ----------
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: MasonryGridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2, // number of columns
+                      mainAxisSpacing: 2,
+                      crossAxisSpacing: 2,
+                      itemCount: vm.posts.length,
+                      itemBuilder: (context, index) {
+                        final postData = vm.posts[index];
 
-                    // Handle trip image URL
-                    final imageUrl =
-                        (postData.tripImageUrl == null ||
-                            postData.tripImageUrl!.isEmpty)
-                        ? 'assets/images/exp_msia.png'
-                        : postData.tripImageUrl!;
+                        // Handle trip image URL
+                        final imageUrl =
+                            (postData.tripImageUrl == null ||
+                                postData.tripImageUrl!.isEmpty)
+                            ? 'assets/images/exp_msia.png'
+                            : postData.tripImageUrl!;
 
-                    // Fetch user profile image dynamically
-                    return FutureBuilder<String?>(
-                      future: vm.getUserProfileImage(postData.userId),
-                      builder: (context, snapshot) {
-                        // Use fetched profile image or fallback to default
-                        final authorImageUrl =
-                            (snapshot.hasData &&
-                                snapshot.data != null &&
-                                snapshot.data!.trim().isNotEmpty)
-                            ? snapshot.data!
-                            : 'assets/images/exp_profile_picture.png';
+                        // Fetch user profile image dynamically
+                        return FutureBuilder<String?>(
+                          future: vm.getUserProfileImage(postData.userId),
+                          builder: (context, snapshot) {
+                            // Use fetched profile image or fallback to default
+                            final authorImageUrl =
+                                (snapshot.hasData &&
+                                    snapshot.data != null &&
+                                    snapshot.data!.trim().isNotEmpty)
+                                ? snapshot.data!
+                                : 'assets/images/exp_profile_picture.png';
 
-                        final post = Post(
-                          title: postData.tripName,
-                          location: postData.destination,
-                          imageUrl: imageUrl,
-                          authorImageUrl: authorImageUrl,
-                          likes: postData.collectsCount,
-                        );
-                        return GestureDetector(
-                          onTap: () {
-                            _navigateToPostItinerary(context, postData);
+                            final post = Post(
+                              title: postData.tripName,
+                              location: postData.destination,
+                              imageUrl: imageUrl,
+                              authorImageUrl: authorImageUrl,
+                              likes: postData.collectsCount,
+                            );
+                            return GestureDetector(
+                              onTap: () {
+                                _navigateToPostItinerary(context, postData);
+                              },
+                              child: TravelPostCard(
+                                post: post,
+                                postId: postData.postId,
+                                collectsCount: postData.collectsCount,
+                              ),
+                            );
                           },
-                          child: TravelPostCard(
-                            post: post,
-                            postId: postData.postId,
-                            collectsCount: postData.collectsCount,
-                          ),
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
             );
           },

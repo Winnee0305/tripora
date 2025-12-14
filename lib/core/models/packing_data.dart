@@ -5,12 +5,18 @@ class PackingData {
   String category;
   String? name; // <-- nullable to allow placeholder for category
   bool isPacked;
+  int? quantity; // AI-generated quantity
+  String? notes; // AI-generated reason/notes
+  String? priority; // essential, recommended, optional
 
   PackingData({
     required this.id,
     required this.category,
     this.name,
     required this.isPacked,
+    this.quantity,
+    this.notes,
+    this.priority,
   });
 
   // ----- Factory from Firestore -----
@@ -21,6 +27,9 @@ class PackingData {
       category: data['category'] ?? '',
       name: data['name'], // can be null
       isPacked: data['isPacked'] ?? false,
+      quantity: data['quantity'],
+      notes: data['notes'],
+      priority: data['priority'],
     );
   }
 
@@ -29,6 +38,9 @@ class PackingData {
     'category': category,
     'name': name, // can be null
     'isPacked': isPacked,
+    'quantity': quantity,
+    'notes': notes,
+    'priority': priority,
   };
 
   // ----- Copy With -----
@@ -37,12 +49,18 @@ class PackingData {
     String? category,
     String? name,
     bool? isPacked,
+    int? quantity,
+    String? notes,
+    String? priority,
   }) {
     return PackingData(
       id: id ?? this.id,
       category: category ?? this.category,
       name: name ?? this.name,
       isPacked: isPacked ?? this.isPacked,
+      quantity: quantity ?? this.quantity,
+      notes: notes ?? this.notes,
+      priority: priority ?? this.priority,
     );
   }
 
