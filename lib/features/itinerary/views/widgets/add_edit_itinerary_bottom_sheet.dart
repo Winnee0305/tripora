@@ -11,7 +11,8 @@ import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart'
 
 class AddEditItineraryBottomSheet extends StatefulWidget {
   final ItineraryData? itinerary;
-  const AddEditItineraryBottomSheet({super.key, this.itinerary});
+  final bool isEditing;
+  const AddEditItineraryBottomSheet({super.key, this.itinerary, this.isEditing = false});
 
   @override
   State<AddEditItineraryBottomSheet> createState() =>
@@ -26,8 +27,8 @@ class _AddEditItineraryBottomSheetState
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).viewInsets;
 
-    // Check if editing: for destinations check placeId, for notes check id
-    final isEditing = widget.itinerary?.id.isNotEmpty ?? false;
+    // Use explicit isEditing parameter passed from caller
+    final isEditing = widget.isEditing;
 
     // Populate form if editing
     if (widget.itinerary != null && !vm.isEditingInitialized) {
@@ -96,6 +97,7 @@ class _AddEditItineraryBottomSheetState
                     child: AppTextField(
                       label: "Destination",
                       controller: vm.destinationController,
+                      readOnly: isEditing,
                     ),
                   ),
                 ),

@@ -24,29 +24,13 @@ class HomeHeaderSection extends StatelessWidget {
         children: [
           // ----- Profile Picture
           GestureDetector(
-            // child: Stack(
-            //   alignment: Alignment.center,
-            //   children: [
-            //     CircleAvatar(radius: 32, backgroundImage: userVm.profileImage),
-
-            //     if (userVm.isImageLoading)
-            //       const CircleAvatar(
-            //         radius: 32,
-            //         backgroundColor: Colors.white70,
-            //         child: SizedBox(
-            //           width: 28,
-            //           height: 28,
-            //           child: CupertinoActivityIndicator(radius: 14),
-            //         ),
-            //       ),
-            //   ],
-            // ),
             child: ClipOval(
               child: SizedBox(
                 width: 62,
                 height: 62,
                 child: AppLoadingNetworkImage(
-                  imageUrl: userVm.user!.profileImageUrl ?? "",
+                  imageUrl:
+                      userVm.user!.profileImageUrl ?? "assets/logo/tripora.JPG",
                   radius: 32,
                 ),
               ),

@@ -39,6 +39,7 @@ class _ChooseDestinationPageState extends State<ChooseDestinationPage> {
 
               Expanded(
                 child: GridView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     mainAxisSpacing: 16,

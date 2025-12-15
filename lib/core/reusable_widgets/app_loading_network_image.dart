@@ -69,7 +69,7 @@ class _AppLoadingNetworkImageState extends State<AppLoadingNetworkImage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.imageUrl.isEmpty) {
+    if (widget.imageUrl.isEmpty || widget.imageUrl == " ") {
       return Image.asset('assets/logo/tripora.JPG', fit: BoxFit.cover);
     }
 

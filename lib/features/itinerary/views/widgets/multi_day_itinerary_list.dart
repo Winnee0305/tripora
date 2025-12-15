@@ -571,6 +571,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                   value: vm,
                                   child: AddEditItineraryBottomSheet(
                                     itinerary: draftNote,
+                                    isEditing: false,
                                   ),
                                 ),
                               );
@@ -669,7 +670,10 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider.value(
         value: vm,
-        child: AddEditItineraryBottomSheet(itinerary: itinerary),
+        child: AddEditItineraryBottomSheet(
+          itinerary: itinerary,
+          isEditing: itinerary != null && itinerary.id.isNotEmpty,
+        ),
       ),
     );
   }

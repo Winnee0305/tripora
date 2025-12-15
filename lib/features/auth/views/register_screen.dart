@@ -57,6 +57,7 @@ class RegisterScreen extends StatelessWidget {
               physics: const ClampingScrollPhysics(),
               child: Column(
                 children: [
+                  SizedBox(height: 4),
                   AppTextField(
                     label: "First Name",
                     onChanged: vm.setFirstName,
