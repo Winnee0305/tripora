@@ -20,23 +20,26 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              HomeHeaderSection(),
-              const SizedBox(height: 30),
-              BookNowSection(),
-              const SizedBox(height: 30),
-              ChangeNotifierProvider(
-                create: (_) => ForYouViewModel(),
-                child: const ForYouSection(),
-              ),
-              const SizedBox(height: 30),
-              ContinueTripSection(),
-              const SizedBox(height: 24),
-            ],
+        child: RefreshIndicator(
+          onRefresh: vm.refreshHome,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                HomeHeaderSection(),
+                const SizedBox(height: 30),
+                BookNowSection(),
+                const SizedBox(height: 30),
+                ChangeNotifierProvider.value(
+                  value: vm.forYouViewModel,
+                  child: const ForYouSection(),
+                ),
+                const SizedBox(height: 30),
+                ContinueTripSection(),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),

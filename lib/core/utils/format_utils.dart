@@ -119,3 +119,45 @@ DateTime dateFromIndex(DateTime startDate, int index) {
   final date = DateTime(startDate.year, startDate.month, startDate.day + index);
   return DateTime(date.year, date.month, date.day); // normalize to midnight
 }
+
+const Map<String, List<String>> _malaysiaStateAliases = {
+  'Johor': ['johor'],
+  'Kedah': ['kedah'],
+  'Kelantan': ['kelantan'],
+  'Melaka': ['melaka', 'malacca'],
+  'Negeri Sembilan': ['negeri sembilan', 'n. sembilan'],
+  'Pahang': ['pahang'],
+  'Perak': ['perak'],
+  'Perlis': ['perlis'],
+  'Pulau Pinang': ['pulau pinang', 'penang'],
+  'Sabah': ['sabah'],
+  'Sarawak': ['sarawak'],
+  'Selangor': ['selangor'],
+  'Terengganu': ['terengganu'],
+
+  // Federal Territories
+  'Kuala Lumpur': [
+    'kuala lumpur',
+    'wilayah persekutuan kuala lumpur',
+    'wp kuala lumpur',
+    'kl',
+  ],
+  'Putrajaya': ['putrajaya', 'wilayah persekutuan putrajaya', 'wp putrajaya'],
+  'Labuan': ['labuan', 'wilayah persekutuan labuan', 'wp labuan'],
+};
+
+String? extractMalaysiaState(String address) {
+  if (address.trim().isEmpty) return null;
+
+  final normalized = address.toLowerCase();
+
+  for (final entry in _malaysiaStateAliases.entries) {
+    for (final alias in entry.value) {
+      if (normalized.contains(alias)) {
+        return entry.key; // return canonical name
+      }
+    }
+  }
+
+  return null; // state not found
+}

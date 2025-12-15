@@ -42,8 +42,23 @@ class _TAMFormState extends State<TAMForm> {
     if (!mounted) return;
 
     if (success) {
-      // Call completion callback if provided
-      widget.onComplete?.call();
+      // Show success snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Feedback submitted successfully, thank you for your time!',
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      // Pop the form after snackbar is shown
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          widget.onComplete?.call();
+          Navigator.pop(context);
+        }
+      });
     } else {
       // Defer error display to after current frame completes
       WidgetsBinding.instance.addPostFrameCallback((_) {

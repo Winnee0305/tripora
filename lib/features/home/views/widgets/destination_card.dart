@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import 'package:tripora/features/home/models/destination.dart';
+import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
+import 'package:tripora/core/utils/format_utils.dart';
+import 'package:tripora/features/poi/models/poi.dart';
 import 'package:tripora/core/theme/app_shadow_theme.dart';
 import 'package:flutter/cupertino.dart';
 
 class DestinationCard extends StatelessWidget {
-  final Destination destination;
+  final Poi destination;
+  final bool isCollected;
+  final VoidCallback onHeartPressed;
+  final bool isLoading;
 
-  const DestinationCard({super.key, required this.destination});
+  const DestinationCard({
+    super.key,
+    required this.destination,
+    this.isCollected = false,
+    required this.onHeartPressed,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +37,46 @@ class DestinationCard extends StatelessWidget {
           // ---------- Image Section ----------
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                child: Image.asset(
-                  destination.imagePath,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              SizedBox(
+                height: 160,
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  child: destination.imageUrl.isNotEmpty
+                      ? AppLoadingNetworkImage(imageUrl: destination.imageUrl)
+                      : Image.asset(
+                          'assets/images/exp_placeholder.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Positioned(
                 right: 10,
                 top: 10,
-                child: AppButton.iconOnly(
-                  icon: CupertinoIcons.heart,
-                  onPressed: () {},
-                  backgroundVariant: BackgroundVariant.secondaryTrans,
-                ),
+                child: isLoading
+                    ? SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : AppButton.iconOnly(
+                        icon: isCollected
+                            ? CupertinoIcons.heart_fill
+                            : CupertinoIcons.heart,
+                        onPressed: onHeartPressed,
+                        backgroundVariant: BackgroundVariant.secondaryTrans,
+                      ),
               ),
             ],
           ),
@@ -57,35 +91,46 @@ class DestinationCard extends StatelessWidget {
                 crossAxisAlignment:
                     CrossAxisAlignment.center, // <-- centers vertically
                 children: [
-                  // Left text block
-                  Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // <-- centers text vertically
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        destination.name,
-                        style: theme.textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 12,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            destination.location,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: ManropeFontWeight.light,
+                  // Left text block - constrained width to prevent overflow
+                  Flexible(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // <-- centers text vertically
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          destination.name,
+                          style: theme.textTheme.headlineMedium,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 12,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.7,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                "${extractMalaysiaState(destination.address)}, ${destination.country}",
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: ManropeFontWeight.light,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 12),
 
                   // Rating button
                   AppButton.iconTextSmall(

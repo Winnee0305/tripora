@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 
 /// ===========================
 /// VIEWMODEL
@@ -6,6 +7,8 @@ import 'package:flutter/material.dart';
 class HomeViewModel extends ChangeNotifier {
   int _selectedIndex = 0;
   int _currentIndex = 0;
+
+  final ForYouViewModel forYouViewModel = ForYouViewModel();
 
   int get selectedIndex => _selectedIndex;
   int get currentIndex => _currentIndex;
@@ -18,5 +21,9 @@ class HomeViewModel extends ChangeNotifier {
   void updateIndex(int index) {
     _currentIndex = index;
     notifyListeners();
+  }
+
+  Future<void> refreshHome() async {
+    await forYouViewModel.refreshRecommendations();
   }
 }
