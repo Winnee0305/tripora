@@ -19,6 +19,30 @@ import 'package:tripora/features/itinerary/views/widgets/flight_card.dart';
 import 'package:tripora/features/itinerary/views/widgets/weather_card.dart';
 
 @immutable
+class _EditItineraryModal extends StatelessWidget {
+  final ItineraryData? itinerary;
+  final bool isEditing;
+  final ItineraryViewModel vm;
+
+  const _EditItineraryModal({
+    required this.itinerary,
+    required this.isEditing,
+    required this.vm,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ItineraryViewModel>.value(
+      value: vm,
+      child: AddEditItineraryBottomSheet(
+        itinerary: itinerary,
+        isEditing: isEditing,
+      ),
+    );
+  }
+}
+
+@immutable
 class _DraggedItinerary {
   const _DraggedItinerary({required this.itinerary, required this.fromDay});
   final ItineraryData itinerary;
@@ -567,14 +591,13 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                               await showModalBottomSheet<ItineraryData>(
                                 context: context,
                                 isScrollControlled: true,
-                                builder: (_) => ChangeNotifierProvider.value(
-                                  value: vm,
-                                  child: AddEditItineraryBottomSheet(
-                                    itinerary: draftNote,
-                                    isEditing: false,
-                                  ),
+                                builder: (_) => _EditItineraryModal(
+                                  itinerary: draftNote,
+                                  isEditing: false,
+                                  vm: vm,
                                 ),
                               );
+
                           if (result != null && mounted) {
                             try {
                               vm.addItinerary(result);
@@ -654,7 +677,8 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
     ItineraryData? itinerary,
     dynamic viewModel,
   ) {
-    final vm = viewModel is ItineraryViewModel
+    // Ensure we have the ItineraryViewModel
+    final vm = (viewModel is ItineraryViewModel)
         ? viewModel
         : context.read<ItineraryViewModel>();
 
@@ -668,13 +692,13 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ChangeNotifierProvider.value(
-        value: vm,
-        child: AddEditItineraryBottomSheet(
+      builder: (bottomSheetContext) {
+        return _EditItineraryModal(
           itinerary: itinerary,
           isEditing: itinerary != null && itinerary.id.isNotEmpty,
-        ),
-      ),
+          vm: vm,
+        );
+      },
     );
   }
 }

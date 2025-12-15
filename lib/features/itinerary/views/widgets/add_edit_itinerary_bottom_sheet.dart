@@ -12,7 +12,11 @@ import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart'
 class AddEditItineraryBottomSheet extends StatefulWidget {
   final ItineraryData? itinerary;
   final bool isEditing;
-  const AddEditItineraryBottomSheet({super.key, this.itinerary, this.isEditing = false});
+  const AddEditItineraryBottomSheet({
+    super.key,
+    this.itinerary,
+    this.isEditing = false,
+  });
 
   @override
   State<AddEditItineraryBottomSheet> createState() =>
