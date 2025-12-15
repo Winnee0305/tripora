@@ -7,7 +7,7 @@ import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
 import 'package:tripora/core/utils/format_utils.dart';
-import 'package:tripora/features/notes_itinerary/views/widgets/notes_itinerary_page_header_section.dart';
+import 'package:tripora/features/itinerary/views/widgets/itinerary_page_header_section.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/app_special_tab_n_day_selection_bar.dart';
 import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
@@ -17,8 +17,8 @@ import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_lis
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class NotesItineraryPage extends StatefulWidget {
-  const NotesItineraryPage({
+class ItineraryPage extends StatefulWidget {
+  const ItineraryPage({
     super.key,
     required this.currentTab,
     this.isViewMode = false,
@@ -28,10 +28,10 @@ class NotesItineraryPage extends StatefulWidget {
   final bool isViewMode;
 
   @override
-  State<NotesItineraryPage> createState() => _NotesItineraryPageState();
+  State<ItineraryPage> createState() => _ItineraryPageState();
 }
 
-class _NotesItineraryPageState extends State<NotesItineraryPage> {
+class _ItineraryPageState extends State<ItineraryPage> {
   // The listKey is final, so it can be used inside a StatelessWidget
   final GlobalKey<MultiDayItineraryListState> _listKey =
       GlobalKey<MultiDayItineraryListState>();
@@ -144,7 +144,7 @@ class _NotesItineraryPageState extends State<NotesItineraryPage> {
           // ),
 
           // ----- Header (Back, Home, etc.)
-          NotesItineraryPageHeaderSection(
+          ItineraryPageHeaderSection(
             userVm: userVm,
             isViewMode: widget.isViewMode,
             postId: postId,

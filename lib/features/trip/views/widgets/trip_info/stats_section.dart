@@ -9,7 +9,7 @@ import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/expense/views/expense_page.dart';
 import 'package:tripora/features/packing/views/packing_page.dart';
 import 'package:tripora/features/packing/viewmodels/packing_viewmodel.dart';
-import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
+import 'package:tripora/features/itinerary/views/itinerary_page.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -76,7 +76,7 @@ class _StatsSectionState extends State<StatsSection> {
                         )..selectDay(0),
                       ),
                     ],
-                    child: NotesItineraryPage(currentTab: 1),
+                    child: ItineraryPage(currentTab: 1),
                   ),
                 ),
               );

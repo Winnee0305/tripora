@@ -7,8 +7,8 @@ import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
-class NotesItineraryPageHeaderSection extends StatefulWidget {
-  const NotesItineraryPageHeaderSection({
+class ItineraryPageHeaderSection extends StatefulWidget {
+  const ItineraryPageHeaderSection({
     super.key,
     required this.userVm,
     this.isViewMode = false,
@@ -26,12 +26,12 @@ class NotesItineraryPageHeaderSection extends StatefulWidget {
   final int collectsCount;
 
   @override
-  State<NotesItineraryPageHeaderSection> createState() =>
-      _NotesItineraryPageHeaderSectionState();
+  State<ItineraryPageHeaderSection> createState() =>
+      _ItineraryPageHeaderSectionState();
 }
 
-class _NotesItineraryPageHeaderSectionState
-    extends State<NotesItineraryPageHeaderSection> {
+class _ItineraryPageHeaderSectionState
+    extends State<ItineraryPageHeaderSection> {
   late final CollectedPostRepository _collectedPostRepo;
   bool _isCollected = false;
   bool _isCheckingCollection = true;

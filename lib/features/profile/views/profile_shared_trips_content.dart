@@ -9,7 +9,7 @@ import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/features/exploration/models/travel_post.dart';
 import 'package:tripora/features/exploration/views/widgets/travel_post_card.dart';
 import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
-import 'package:tripora/features/notes_itinerary/views/notes_itinerary_page.dart';
+import 'package:tripora/features/itinerary/views/itinerary_page.dart';
 import 'package:tripora/features/profile/viewmodels/shared_trips_viewmodel.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -80,7 +80,7 @@ class _ProfileSharedTripsContentState extends State<ProfileSharedTripsContent> {
             // Pass UserViewModel from parent
             ChangeNotifierProvider.value(value: context.read<UserViewModel>()),
           ],
-          child: const NotesItineraryPage(currentTab: 1, isViewMode: true),
+          child: const ItineraryPage(currentTab: 1, isViewMode: true),
         ),
       ),
     );
