@@ -262,9 +262,11 @@ class _ItineraryPageHeaderSectionState
                   final shouldProceed = await showCupertinoDialog<bool>(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: Text(existingPost != null
-                          ? 'Update Published Itinerary?'
-                          : 'Publish Itinerary?'),
+                      title: Text(
+                        existingPost != null
+                            ? 'Update Published Itinerary?'
+                            : 'Publish Itinerary?',
+                      ),
                       content: Text(
                         existingPost != null
                             ? 'This itinerary has already been published. Do you want to update it with your latest changes?'
@@ -402,6 +404,9 @@ class _ItineraryPageHeaderSectionState
     if (shouldSync == true && context.mounted) {
       // Trigger sync
       await itineraryVm.syncItineraries();
+    } else if (shouldSync == false && context.mounted) {
+      // Discard changes - reload from saved state
+      itineraryVm.discardItineraryData();
     }
 
     // Pop the page

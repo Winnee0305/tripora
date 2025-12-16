@@ -137,6 +137,10 @@ class ItineraryViewModel extends ChangeNotifier {
     trip = tripData;
   }
 
+  void discardItineraryData() {
+    listToMap(itineraries, trip!.startDate!, trip!.endDate!);
+  }
+
   /// Convert flat list of itineraries to a per-day map,
   /// ensuring every day in the trip range exists
   void listToMap(
