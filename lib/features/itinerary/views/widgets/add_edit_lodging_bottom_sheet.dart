@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
+import 'package:tripora/core/reusable_widgets/app_calendar_picker.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmodel.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';
@@ -59,32 +61,38 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
   }
 
   Future<void> _selectDateTime(BuildContext context, bool isCheckIn) async {
-    final currentDateTime = isCheckIn
+    if (!mounted) return;
+
+    final base = isCheckIn
         ? (_checkInDateTime ?? DateTime.now())
         : (_checkOutDateTime ?? DateTime.now().add(const Duration(days: 1)));
 
-    // Select date
-    final date = await showDatePicker(
+    // DATE POPUP (styled, NOT bottom sheet)
+    final DateTime? date = await showDialog<DateTime>(
       context: context,
-      initialDate: currentDateTime,
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      barrierDismissible: false,
+      builder: (_) => _StyledCalendarDialog(
+        initialDate: base,
+        title: isCheckIn ? 'Select Check-in Date' : 'Select Check-out Date',
+      ),
     );
 
-    if (date == null) return;
+    if (date == null || !mounted) return;
 
-    if (!mounted) return;
-
-    // Select time
-    final time = await showTimePicker(
+    // TIME POPUP (styled wheel picker)
+    final TimeOfDay? time = await showDialog<TimeOfDay>(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(currentDateTime),
+      barrierDismissible: false,
+      builder: (_) => _StyledTimePickerDialog(
+        initialTime: TimeOfDay.fromDateTime(base),
+        title: isCheckIn ? 'Select Check-in Time' : 'Select Check-out Time',
+      ),
     );
 
-    if (time == null) return;
+    if (time == null || !mounted) return;
 
     setState(() {
-      final selectedDateTime = DateTime(
+      final selected = DateTime(
         date.year,
         date.month,
         date.day,
@@ -93,14 +101,13 @@ class _AddEditLodgingBottomSheetState extends State<AddEditLodgingBottomSheet> {
       );
 
       if (isCheckIn) {
-        _checkInDateTime = selectedDateTime;
-        // Auto-adjust checkout if it's before checkin
+        _checkInDateTime = selected;
         if (_checkOutDateTime != null &&
-            _checkOutDateTime!.isBefore(selectedDateTime)) {
-          _checkOutDateTime = selectedDateTime.add(const Duration(hours: 24));
+            _checkOutDateTime!.isBefore(selected)) {
+          _checkOutDateTime = selected.add(const Duration(hours: 24));
         }
       } else {
-        _checkOutDateTime = selectedDateTime;
+        _checkOutDateTime = selected;
       }
     });
   }
@@ -473,6 +480,155 @@ class _LocationSearchSheetState extends State<_LocationSearchSheet> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StyledCalendarDialog extends StatefulWidget {
+  final DateTime initialDate;
+  final String title;
+
+  const _StyledCalendarDialog({required this.initialDate, required this.title});
+
+  @override
+  State<_StyledCalendarDialog> createState() => _StyledCalendarDialogState();
+}
+
+class _StyledCalendarDialogState extends State<_StyledCalendarDialog> {
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.initialDate;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.title,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            CalendarDatePicker(
+              initialDate: _selectedDate,
+              firstDate: DateTime.now().subtract(const Duration(days: 365)),
+              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+              onDateChanged: (d) => _selectedDate = d,
+            ),
+
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, _selectedDate),
+                    child: const Text('Confirm'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StyledTimePickerDialog extends StatefulWidget {
+  final TimeOfDay initialTime;
+  final String title;
+
+  const _StyledTimePickerDialog({
+    required this.initialTime,
+    required this.title,
+  });
+
+  @override
+  State<_StyledTimePickerDialog> createState() =>
+      _StyledTimePickerDialogState();
+}
+
+class _StyledTimePickerDialogState extends State<_StyledTimePickerDialog> {
+  late TimeOfDay _time;
+
+  @override
+  void initState() {
+    super.initState();
+    _time = widget.initialTime;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.title,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            SizedBox(
+              height: 180,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                initialDateTime: DateTime(0, 1, 1, _time.hour, _time.minute),
+                minuteInterval: 5,
+                onDateTimeChanged: (dt) {
+                  _time = TimeOfDay.fromDateTime(dt);
+                },
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, _time),
+                    child: const Text('Confirm'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
