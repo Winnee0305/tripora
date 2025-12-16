@@ -127,10 +127,19 @@ class RegisterScreen extends StatelessWidget {
                         context: context,
                         builder: (_) => ListView(
                           padding: const EdgeInsets.all(20),
-                          children: const [
-                            ListTile(title: Text('Male')),
-                            ListTile(title: Text('Female')),
-                            ListTile(title: Text('Other')),
+                          children: [
+                            ListTile(
+                              title: const Text('Male'),
+                              onTap: () => Navigator.pop(context, 'male'),
+                            ),
+                            ListTile(
+                              title: const Text('Female'),
+                              onTap: () => Navigator.pop(context, 'female'),
+                            ),
+                            ListTile(
+                              title: const Text('Other'),
+                              onTap: () => Navigator.pop(context, 'other'),
+                            ),
                           ],
                         ),
                       );
@@ -182,9 +191,27 @@ class RegisterScreen extends StatelessWidget {
                         context: context,
                         builder: (_) => ListView(
                           padding: const EdgeInsets.all(20),
-                          children: const [
-                            ListTile(title: Text('Malaysia')),
-                            ListTile(title: Text('Other')),
+                          children: [
+                            ListTile(title: const Text('Malaysia'), onTap: () => Navigator.pop(context, 'MY')),
+                            ListTile(title: const Text('Singapore'), onTap: () => Navigator.pop(context, 'SG')),
+                            ListTile(title: const Text('Indonesia'), onTap: () => Navigator.pop(context, 'ID')),
+                            ListTile(title: const Text('Thailand'), onTap: () => Navigator.pop(context, 'TH')),
+                            ListTile(title: const Text('Philippines'), onTap: () => Navigator.pop(context, 'PH')),
+                            ListTile(title: const Text('Vietnam'), onTap: () => Navigator.pop(context, 'VN')),
+                            ListTile(title: const Text('Cambodia'), onTap: () => Navigator.pop(context, 'KH')),
+                            ListTile(title: const Text('Laos'), onTap: () => Navigator.pop(context, 'LA')),
+                            ListTile(title: const Text('Myanmar'), onTap: () => Navigator.pop(context, 'MM')),
+                            ListTile(title: const Text('Brunei'), onTap: () => Navigator.pop(context, 'BN')),
+                            ListTile(title: const Text('United States'), onTap: () => Navigator.pop(context, 'US')),
+                            ListTile(title: const Text('United Kingdom'), onTap: () => Navigator.pop(context, 'GB')),
+                            ListTile(title: const Text('Canada'), onTap: () => Navigator.pop(context, 'CA')),
+                            ListTile(title: const Text('Australia'), onTap: () => Navigator.pop(context, 'AU')),
+                            ListTile(title: const Text('China'), onTap: () => Navigator.pop(context, 'CN')),
+                            ListTile(title: const Text('Japan'), onTap: () => Navigator.pop(context, 'JP')),
+                            ListTile(title: const Text('India'), onTap: () => Navigator.pop(context, 'IN')),
+                            ListTile(title: const Text('Germany'), onTap: () => Navigator.pop(context, 'DE')),
+                            ListTile(title: const Text('France'), onTap: () => Navigator.pop(context, 'FR')),
+                            ListTile(title: const Text('Other'), onTap: () => Navigator.pop(context, 'XX')),
                           ],
                         ),
                       );

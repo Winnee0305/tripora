@@ -19,27 +19,31 @@ class HomePage extends StatelessWidget {
     final vm = context.watch<HomeViewModel>();
 
     return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: vm.refreshHome,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                HomeHeaderSection(),
-                const SizedBox(height: 30),
-                BookNowSection(),
-                const SizedBox(height: 30),
-                ChangeNotifierProvider.value(
-                  value: vm.forYouViewModel,
-                  child: const ForYouSection(),
+      body: RefreshIndicator(
+        onRefresh: vm.refreshHome,
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    HomeHeaderSection(),
+                    const SizedBox(height: 30),
+                    BookNowSection(),
+                    const SizedBox(height: 30),
+                    ChangeNotifierProvider.value(
+                      value: vm.forYouViewModel,
+                      child: const ForYouSection(),
+                    ),
+                    const SizedBox(height: 30),
+                    ContinueTripSection(),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 30),
-                ContinueTripSection(),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

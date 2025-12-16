@@ -17,8 +17,11 @@ class PoiPageViewmodel extends ChangeNotifier {
   int get collectsCount => _collectsCount;
 
   PoiPageViewmodel(String placeId, {this.userId}) {
+    if (kDebugMode)
+      print('🔍 PoiPageViewmodel initialized with userId: $userId');
     final firestoreService = FirestoreService();
     _collectedPoiRepository = CollectedPoiRepository(firestoreService);
+    _historyRepository = PoiHistoryRepository(firestoreService);
     _init(placeId);
   }
 

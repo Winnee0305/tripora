@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tripora/core/services/for_you_recommender_service.dart';
 import 'package:tripora/features/poi/models/poi.dart';
 import 'package:tripora/core/repositories/collected_poi_repository.dart';
+import 'package:tripora/core/repositories/poi_history_repository.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 
 class ForYouViewModel extends ChangeNotifier {
@@ -9,6 +10,8 @@ class ForYouViewModel extends ChangeNotifier {
   final ForYouRecommenderService _recommenderService =
       ForYouRecommenderService();
   late final CollectedPoiRepository _collectedPoiRepository;
+  late final PoiHistoryRepository _poiHistoryRepository;
+  late final FirestoreService _firestoreService;
 
   int _currentPage = 0;
   bool _isLoading = false;
@@ -23,17 +26,28 @@ class ForYouViewModel extends ChangeNotifier {
   bool get isPersonalized => _isPersonalized;
 
   List<Poi> destinations = [];
+  bool _hasInitialized = false;
 
   ForYouViewModel({String? userId}) {
     _userId = userId;
-    _collectedPoiRepository = CollectedPoiRepository(FirestoreService());
-    _initializeRecommendations();
+    _firestoreService = FirestoreService();
+    _collectedPoiRepository = CollectedPoiRepository(_firestoreService);
+    _poiHistoryRepository = PoiHistoryRepository(_firestoreService);
+
+    // Only initialize if user ID is already available
+    if (_userId != null) {
+      _initializeRecommendations();
+    }
   }
 
   /// Set user ID for collection tracking
   void setUserId(String userId) {
     _userId = userId;
-    if (destinations.isNotEmpty) {
+
+    // Initialize recommendations if not already done
+    if (!_hasInitialized) {
+      _initializeRecommendations();
+    } else if (destinations.isNotEmpty) {
       _loadCollectionStatus();
     }
   }
@@ -61,6 +75,70 @@ class ForYouViewModel extends ChangeNotifier {
     }
   }
 
+  /// Fetch user behavior (collected, trip, and viewed place IDs)
+  Future<UserBehavior> _buildUserBehavior() async {
+    if (_userId == null) {
+      print('⚠️ User ID is null, skipping user behavior');
+      return UserBehavior();
+    }
+
+    try {
+      print('📥 Building user behavior for userId: $_userId');
+
+      // Fetch collected place IDs
+      final collectedIds = await _collectedPoiRepository.getCollectedPoiIds(
+        _userId!,
+      );
+      print('✅ Collected POIs: ${collectedIds.length} - $collectedIds');
+
+      // Fetch viewed place IDs from POI history (limit to 50 recent views)
+      final poiHistory = await _poiHistoryRepository.getPoiHistory(
+        _userId!,
+        limit: 50,
+      );
+      final viewedIds = poiHistory.map((h) => h.placeId).toList();
+      print('✅ Viewed POIs: ${viewedIds.length} - $viewedIds');
+
+      // Fetch trip place IDs (get all trips and extract their itinerary place IDs)
+      final trips = await _firestoreService.getTrips(_userId!);
+      print('✅ Found ${trips.length} trips');
+      final tripIds = <String>[];
+      for (var trip in trips) {
+        try {
+          // Fetch itineraries for each trip (they're in a subcollection)
+          final itineraries = await _firestoreService.getItineraries(
+            _userId!,
+            trip.tripId,
+          );
+          print('  📍 Trip ${trip.tripId}: ${itineraries.length} itineraries');
+          for (var itinerary in itineraries) {
+            if (itinerary.placeId.isNotEmpty) {
+              tripIds.add(itinerary.placeId);
+            }
+          }
+        } catch (e) {
+          print('❌ Error fetching itineraries for trip ${trip.tripId}: $e');
+        }
+      }
+      print('✅ Trip POIs: ${tripIds.length} - $tripIds');
+
+      final behavior = UserBehavior(
+        collectedPlaceIds: collectedIds,
+        tripPlaceIds: tripIds,
+        viewedPlaceIds: viewedIds,
+      );
+
+      print(
+        '📊 User Behavior Summary - Collected: ${behavior.collectedPlaceIds.length}, Viewed: ${behavior.viewedPlaceIds.length}, Trips: ${behavior.tripPlaceIds.length}, isEmpty: ${behavior.isEmpty}',
+      );
+
+      return behavior;
+    } catch (e) {
+      print('❌ Error building user behavior: $e');
+      return UserBehavior();
+    }
+  }
+
   /// Toggle collection status for a POI
   Future<void> togglePoiCollection(Poi poi) async {
     if (_userId == null) return;
@@ -82,23 +160,29 @@ class ForYouViewModel extends ChangeNotifier {
 
   /// Initialize by loading recommendations from backend
   Future<void> _initializeRecommendations() async {
+    _hasInitialized = true;
     await loadRecommendations();
   }
 
   /// Load recommendations from the backend service
-  /// Can optionally include user behavior for personalization
-  Future<void> loadRecommendations({
-    UserBehavior? userBehavior,
-    int topN = 5,
-  }) async {
+  /// Automatically fetches user behavior for personalization
+  Future<void> loadRecommendations({int topN = 5}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
+      // Build user behavior from database
+      final userBehavior = await _buildUserBehavior();
+
+      final finalBehavior = userBehavior.isEmpty ? null : userBehavior;
+      print(
+        '🔍 Final user behavior to send: ${finalBehavior == null ? "null (empty)" : finalBehavior.toJson()}',
+      );
+
       final result = await _recommenderService.getForYouRecommendations(
         topN: topN,
-        userBehavior: userBehavior,
+        userBehavior: finalBehavior,
       );
 
       if (result['success'] == true) {
@@ -160,9 +244,9 @@ class ForYouViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Refresh recommendations (useful for getting new variety)
-  Future<void> refreshRecommendations({UserBehavior? userBehavior}) async {
-    await loadRecommendations(userBehavior: userBehavior);
+  /// Refresh recommendations
+  Future<void> refreshRecommendations() async {
+    await loadRecommendations();
   }
 
   void onPageChanged(int index) {

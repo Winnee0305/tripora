@@ -5,6 +5,7 @@ import 'package:tripora/features/exploration/views/widgets/post_section.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';
 import 'package:tripora/features/exploration/views/widgets/search_suggestion_section.dart';
 import 'package:tripora/features/poi/views/poi_page.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class ExplorationPage extends StatefulWidget {
   const ExplorationPage({super.key});
@@ -36,6 +37,8 @@ class _ExplorationPageState extends State<ExplorationPage>
 
   @override
   Widget build(BuildContext context) {
+    final userVm = context.watch<UserViewModel>();
+
     return ChangeNotifierProvider(
       create: (_) => SearchSuggestionViewModel(),
       child: Scaffold(
@@ -54,8 +57,10 @@ class _ExplorationPageState extends State<ExplorationPage>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    PoiPage(placeId: suggestion['place_id']),
+                                builder: (_) => PoiPage(
+                                  placeId: suggestion['place_id'],
+                                  userId: userVm.user?.uid,
+                                ),
                               ),
                             );
                           },
