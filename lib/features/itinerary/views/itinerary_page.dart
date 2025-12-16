@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tripora/core/models/itinerary_data.dart';
 import 'package:tripora/core/theme/app_colors.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
@@ -13,6 +14,7 @@ import 'package:tripora/features/itinerary/views/itinerary_content.dart';
 import 'package:tripora/features/itinerary/viewmodels/itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/viewmodels/post_itinerary_view_model.dart';
 import 'package:tripora/features/itinerary/views/widgets/ai_plan_button.dart';
+import 'package:tripora/features/itinerary/views/widgets/map_screen.dart';
 import 'package:tripora/features/itinerary/views/widgets/multi_day_itinerary_list.dart';
 import 'package:tripora/features/trip/viewmodels/trip_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -112,6 +114,32 @@ class _ItineraryPageState extends State<ItineraryPage> {
     }
   }
 
+  /// Extract LatLngs from PostItineraryViewModel's itineraries
+  List<LatLng> _getDestinationsFromPostItinerary(
+    PostItineraryViewModel? postItineraryVm,
+  ) {
+    if (postItineraryVm == null) return <LatLng>[];
+
+    final destinations = <LatLng>[];
+    final itinerariesMap = postItineraryVm.itinerariesMap;
+
+    if (itinerariesMap == null) {
+      return destinations;
+    }
+
+    // Extract all LatLngs from all days
+    for (final dayItems in itinerariesMap.values) {
+      for (final item in dayItems) {
+        // Check if item is ItineraryData with a place that has coordinates
+        if (item is ItineraryData && item.place != null) {
+          destinations.add(LatLng(item.place!.lat, item.place!.lng));
+        }
+      }
+    }
+
+    return destinations;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -119,14 +147,26 @@ class _ItineraryPageState extends State<ItineraryPage> {
     final userVm = context.read<UserViewModel>();
     final screenSize = MediaQuery.of(context).size;
 
-    // Get post data if in view mode
-    final postData = widget.isViewMode
-        ? context.read<PostItineraryViewModel>().postData
+    // Get itinerary data based on view mode
+    final itineraryVm = widget.isViewMode
+        ? null
+        : context.watch<ItineraryViewModel>();
+
+    final postItineraryVm = widget.isViewMode
+        ? context.watch<PostItineraryViewModel>()
         : null;
+
+    // Get post data if in view mode
+    final postData = widget.isViewMode ? postItineraryVm?.postData : null;
     final postId = postData?.postId;
     final authorName = postData?.userName;
     final authorImageUrl = postData?.userImageUrl;
     final collectsCount = postData?.collectsCount ?? 0;
+
+    // Get destinations for map
+    final destinations = widget.isViewMode
+        ? _getDestinationsFromPostItinerary(postItineraryVm)
+        : itineraryVm?.getItineraryLatLngs() ?? <LatLng>[];
 
     // Initialize FAB position if not set (bottom-right corner with padding)
     _fabPosition ??= Offset(screenSize.width - 80, screenSize.height - 180);
@@ -135,13 +175,47 @@ class _ItineraryPageState extends State<ItineraryPage> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // ----- Map Background -----
+          // ----- Map Background or Empty State -----
           Positioned.fill(
-            child: Image.asset("assets/images/exp_map.png", fit: BoxFit.cover),
+            child: destinations.isEmpty
+                ? Container(
+                    color: theme.colorScheme.secondary.withOpacity(0.1),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            CupertinoIcons.map,
+                            size: 64,
+                            color: theme.colorScheme.onSurface.withOpacity(0.3),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No Destinations Yet',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.6,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Add itineraries to see them on the map',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : MapScreen(
+                    destinations: destinations,
+                    color: AppColors.design3,
+                  ),
           ),
-          // Positioned.fill(
-          //   child: MapScreen(destinations: itineraryVm.getItineraryLatLngs()),
-          // ),
 
           // ----- Header (Back, Home, etc.)
           ItineraryPageHeaderSection(

@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
@@ -7,8 +10,9 @@ import 'package:tripora/core/utils/constants.dart';
 
 class MapScreen extends StatefulWidget {
   final List<LatLng> destinations; // first = origin, last = destination
+  final Color color;
 
-  const MapScreen({super.key, required this.destinations});
+  const MapScreen({super.key, required this.destinations, required this.color});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -29,19 +33,89 @@ class _MapScreenState extends State<MapScreen> {
     _setPolylines();
   }
 
+  @override
+  void didUpdateWidget(MapScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Rebuild markers and polylines when destinations change
+    if (oldWidget.destinations != widget.destinations) {
+      _markers.clear();
+      _polylines.clear();
+      _setMarkers();
+      _setPolylines();
+    }
+  }
+
   // ------------------------------------------------------------
   // MARKERS
   // ------------------------------------------------------------
-  void _setMarkers() {
+  Future<BitmapDescriptor> _createNumberedMarker(int number) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double size = 100;
+
+    // Draw pin shape (circle with a point)
+    final Paint pinPaint = Paint()..color = widget.color; // Blue
+    const double circleRadius = 30;
+
+    // Draw circle (top of pin)
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 - 10),
+      circleRadius,
+      pinPaint,
+    );
+
+    // Draw point (bottom of pin)
+    final Path pointPath = Path();
+    pointPath.moveTo(size / 2, size);
+    pointPath.lineTo(size / 2 - 15, size / 2 + 10);
+    pointPath.lineTo(size / 2 + 15, size / 2 + 10);
+    pointPath.close();
+    canvas.drawPath(pointPath, pinPaint);
+
+    // Draw number text
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: number.toString(),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+        (size / 2) - (textPainter.width / 2),
+        (size / 2 - 10) - (textPainter.height / 2),
+      ),
+    );
+
+    final ui.Image image = await pictureRecorder.endRecording().toImage(
+      size.toInt(),
+      size.toInt(),
+    );
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+  }
+
+  void _setMarkers() async {
     for (int i = 0; i < widget.destinations.length; i++) {
+      final markerIcon = await _createNumberedMarker(i + 1);
       _markers.add(
         Marker(
           markerId: MarkerId('marker_$i'),
           position: widget.destinations[i],
-          infoWindow: InfoWindow(title: 'Destination ${i + 1}'),
+          icon: markerIcon,
+          infoWindow: InfoWindow(title: 'Stop ${i + 1}'),
         ),
       );
     }
+    setState(() {});
   }
 
   // ------------------------------------------------------------

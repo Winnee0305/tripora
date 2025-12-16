@@ -77,6 +77,31 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
     }
   }
 
+  /// Calculate the global destination index across all days
+  int _getGlobalDestinationIndex(
+    int currentDay,
+    int indexInDay,
+    Map<int, List<dynamic>> itinerariesMap,
+  ) {
+    int globalIndex = 0;
+
+    // Count destinations from all days before current day
+    for (int d = 1; d < currentDay; d++) {
+      final dayItems = itinerariesMap[d] ?? [];
+      globalIndex += dayItems.where((i) => i.isDestination).length;
+    }
+
+    // Add destinations from current day up to current index
+    final currentDayItems = itinerariesMap[currentDay] ?? [];
+    for (int i = 0; i < indexInDay && i < currentDayItems.length; i++) {
+      if (currentDayItems[i].isDestination) {
+        globalIndex++;
+      }
+    }
+
+    return globalIndex;
+  }
+
   @override
   Widget build(BuildContext context) {
     final weatherVm = context.watch<WeatherViewModel>();
@@ -188,7 +213,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                   WeatherCard(
                     condition: dayWeatherForecast.condition,
                     temperature: dayWeatherForecast.temperature,
-                    lastUpdated: "Updated just now",
+                    lastUpdated: DateTime.now().toIso8601String(),
                   )
                 else
                   const SizedBox(height: 0),
@@ -320,11 +345,12 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      // Calculate destination number (exclude notes from numbering)
-                      final destinationIndex = items
-                          .sublist(0, index)
-                          .where((i) => i.isDestination)
-                          .length;
+                      // Calculate global destination index across all days
+                      final globalDestinationIndex = _getGlobalDestinationIndex(
+                        day,
+                        index,
+                        itinerariesMap,
+                      );
                       // Use a unique key for proper widget identity
                       final uniqueKey = item.id.isEmpty
                           ? ValueKey(
@@ -338,7 +364,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                           itinerary: item,
                           isFirst: index == 0,
                           isLast: index == items.length - 1,
-                          index: destinationIndex,
+                          index: globalDestinationIndex,
                           // No drag handle in view mode
                           showDragHandle: !widget.isViewMode,
                         ),
@@ -354,11 +380,13 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                         vm.reorderWithinDay(day, oldIndex, newIndex),
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      // Calculate destination number (exclude notes from numbering)
-                      final destinationIndex = items
-                          .sublist(0, index)
-                          .where((i) => i.isDestination)
-                          .length;
+                      // Calculate global destination index across all days
+                      final globalDestinationIndex = _getGlobalDestinationIndex(
+                        day,
+                        index,
+                        itinerariesMap,
+                      );
+
                       // Each item is both draggable and a drop target
                       // Use a unique key combining day, index, and id to handle items without IDs
                       final uniqueKey = item.id.isEmpty
@@ -406,7 +434,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                       itinerary: item,
                                       isFirst: index == 0,
                                       isLast: index == items.length - 1,
-                                      index: destinationIndex,
+                                      index: globalDestinationIndex,
                                     ),
                                   ),
                                   // The drag handle (hidden in view mode)
@@ -436,7 +464,8 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
                                                     itinerary: item,
                                                     isFirst: true,
                                                     isLast: true,
-                                                    index: index,
+                                                    index:
+                                                        globalDestinationIndex,
                                                   ),
                                                 ),
                                               ),
