@@ -18,12 +18,12 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RegisterViewModel>();
-    final containerHeight = MediaQuery.of(context).size.height * 0.64;
 
-    return SizedBox(
-      height: containerHeight,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 34),
 
@@ -42,22 +42,21 @@ class RegisterScreen extends StatelessWidget {
                   "Create a new account",
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: ManropeFontWeight.light,
-                    letterSpacing: 0,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 30),
 
-          // ----- Scrollable Fields -----
-          SizedBox(
-            height: containerHeight * 0.54,
+          const SizedBox(height: 24),
+
+          // ===== ONLY THIS PART SCROLLS =====
+          Expanded(
             child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Column(
                 children: [
-                  SizedBox(height: 4),
                   AppTextField(
                     label: "First Name",
                     onChanged: vm.setFirstName,
@@ -66,6 +65,7 @@ class RegisterScreen extends StatelessWidget {
                     isValid: vm.isFirstNameValid,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Last Name",
                     onChanged: vm.setLastName,
@@ -74,6 +74,7 @@ class RegisterScreen extends StatelessWidget {
                     isValid: vm.isLastNameValid,
                   ),
                   const SizedBox(height: 28),
+
                   AppTextField(
                     label: "Username",
                     onChanged: vm.setUsername,
@@ -112,7 +113,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 28),
 
-                  // Gender Selection
+                  // Gender
                   AppTextField(
                     label: "Gender",
                     text: vm.gender.isEmpty ? "" : _getGenderLabel(vm.gender),
@@ -124,44 +125,26 @@ class RegisterScreen extends StatelessWidget {
                     onTap: () async {
                       final selected = await showModalBottomSheet<String>(
                         context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
+                        builder: (_) => ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: const [
+                            ListTile(title: Text('Male')),
+                            ListTile(title: Text('Female')),
+                            ListTile(title: Text('Other')),
+                          ],
                         ),
-                        builder: (context) {
-                          const genders = [
-                            {'label': 'Male', 'value': 'male'},
-                            {'label': 'Female', 'value': 'female'},
-                            {'label': 'Other', 'value': 'other'},
-                          ];
-                          return ListView(
-                            padding: const EdgeInsets.all(20),
-                            shrinkWrap: true,
-                            children: genders.map((gender) {
-                              return ListTile(
-                                title: Text(gender['label']!),
-                                onTap: () {
-                                  Navigator.pop(context, gender['value']);
-                                },
-                              );
-                            }).toList(),
-                          );
-                        },
                       );
-                      if (selected != null) {
-                        vm.setGender(selected);
-                      }
+                      if (selected != null) vm.setGender(selected);
                     },
                   ),
                   const SizedBox(height: 28),
 
-                  // Date of Birth Selection
+                  // DOB
                   AppTextField(
                     label: "Date of Birth",
-                    text: vm.dateOfBirth != null
-                        ? '${vm.dateOfBirth!.day}/${vm.dateOfBirth!.month}/${vm.dateOfBirth!.year}'
-                        : "",
+                    text: vm.dateOfBirth == null
+                        ? ""
+                        : '${vm.dateOfBirth!.day}/${vm.dateOfBirth!.month}/${vm.dateOfBirth!.year}',
                     readOnly: true,
                     chooseButton: true,
                     icon: CupertinoIcons.calendar,
@@ -171,12 +154,7 @@ class RegisterScreen extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30),
-                          ),
-                        ),
-                        builder: (context) => AppCalendarPicker(
+                        builder: (_) => AppCalendarPicker(
                           initialDate: vm.dateOfBirth ?? DateTime(2000),
                           firstDate: DateTime(1900),
                           lastDate: DateTime.now(),
@@ -188,7 +166,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 28),
 
-                  // Nationality Selection
+                  // Nationality
                   AppTextField(
                     label: "Nationality",
                     text: vm.nationality.isEmpty
@@ -200,53 +178,17 @@ class RegisterScreen extends StatelessWidget {
                     helperText: vm.nationalityMessage,
                     isValid: vm.isNationalityValid,
                     onTap: () async {
-                      const countries = [
-                        {'label': 'Malaysia', 'value': 'MY'},
-                        {'label': 'Singapore', 'value': 'SG'},
-                        {'label': 'Indonesia', 'value': 'ID'},
-                        {'label': 'Thailand', 'value': 'TH'},
-                        {'label': 'Philippines', 'value': 'PH'},
-                        {'label': 'Vietnam', 'value': 'VN'},
-                        {'label': 'Cambodia', 'value': 'KH'},
-                        {'label': 'Laos', 'value': 'LA'},
-                        {'label': 'Myanmar', 'value': 'MM'},
-                        {'label': 'Brunei', 'value': 'BN'},
-                        {'label': 'United States', 'value': 'US'},
-                        {'label': 'United Kingdom', 'value': 'GB'},
-                        {'label': 'Canada', 'value': 'CA'},
-                        {'label': 'Australia', 'value': 'AU'},
-                        {'label': 'China', 'value': 'CN'},
-                        {'label': 'Japan', 'value': 'JP'},
-                        {'label': 'India', 'value': 'IN'},
-                        {'label': 'Germany', 'value': 'DE'},
-                        {'label': 'France', 'value': 'FR'},
-                        {'label': 'Other', 'value': 'XX'},
-                      ];
                       final selected = await showModalBottomSheet<String>(
                         context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
+                        builder: (_) => ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: const [
+                            ListTile(title: Text('Malaysia')),
+                            ListTile(title: Text('Other')),
+                          ],
                         ),
-                        builder: (context) {
-                          return ListView(
-                            padding: const EdgeInsets.all(20),
-                            shrinkWrap: true,
-                            children: countries.map((country) {
-                              return ListTile(
-                                title: Text(country['label']!),
-                                onTap: () {
-                                  Navigator.pop(context, country['value']);
-                                },
-                              );
-                            }).toList(),
-                          );
-                        },
                       );
-                      if (selected != null) {
-                        vm.setNationality(selected);
-                      }
+                      if (selected != null) vm.setNationality(selected);
                     },
                   ),
                 ],
@@ -254,20 +196,20 @@ class RegisterScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
-          // ----- Authentication Error Message -----
-          if (vm.authError != null) ...[
+          // ----- Error -----
+          if (vm.authError != null)
             Text(
               vm.authError!,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.redAccent,
                 fontWeight: FontWeight.w500,
               ),
-              textAlign: TextAlign.center,
             ),
-          ],
-          const SizedBox(height: 6),
+
+          const SizedBox(height: 8),
 
           // ----- Register Button -----
           AppButton.primary(
@@ -280,7 +222,7 @@ class RegisterScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => const NavigationShell(),
                         ),
-                        (route) => false, // remove all previous routes
+                        (_) => false,
                       );
                     }
                   },
@@ -290,12 +232,11 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          // ----- Login link -----
+          // ----- Login Link -----
           RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: ManropeFontWeight.light,
-                letterSpacing: 0,
               ),
               children: [
                 const TextSpan(text: "Already have an account? "),
@@ -304,7 +245,6 @@ class RegisterScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: ManropeFontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
-                    letterSpacing: 0,
                   ),
                   recognizer: TapGestureRecognizer()..onTap = onToggleToLogin,
                 ),
@@ -312,14 +252,12 @@ class RegisterScreen extends StatelessWidget {
             ),
           ),
 
-          const Spacer(),
-
+          const SizedBox(height: 16),
           Text(
             "Copyright © 2025 Tripora. All rights reserved.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: ManropeFontWeight.light,
-              letterSpacing: 0,
             ),
           ),
         ],

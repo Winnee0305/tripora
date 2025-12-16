@@ -1,6 +1,7 @@
 // views/place_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
+import 'package:tripora/core/utils/format_utils.dart';
 import '../viewmodels/poi_page_viewmodel.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -247,11 +248,14 @@ class _PoiHeaderScreenState extends State<PoiHeaderScreen> {
                               Icon(
                                 CupertinoIcons.location_solid,
                                 size: 12,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.7),
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                widget.vm.poi!.country,
+                                "${extractMalaysiaState(widget.vm.poi!.address)}, ${widget.vm.poi!.country}",
+
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       fontWeight: ManropeFontWeight.light,

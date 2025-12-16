@@ -89,127 +89,100 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<LoginViewModel>(); // observe VM
-    final containerHeight = MediaQuery.of(context).size.height * 0.64;
+    final vm = context.watch<LoginViewModel>();
 
-    return SizedBox(
-      height: containerHeight,
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        0,
+        34,
+        0,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 34),
           // ----- Title
-          SizedBox(
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Welcome Back.",
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Login to your account",
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: ManropeFontWeight.light,
-                    letterSpacing: 0,
-                  ),
-                ),
-              ],
+          Text(
+            "Welcome Back.",
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Login to your account",
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: ManropeFontWeight.light,
             ),
           ),
+
           const SizedBox(height: 30),
 
-          // ----- Scrollable text fields + forgot password
-          SizedBox(
-            height: containerHeight * 0.54, // fixed height for scrollable area
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppTextField(
-                    label: "Email Address",
-                    icon: CupertinoIcons.mail_solid,
-                    onChanged: vm.setEmail,
-                    helperText: vm.emailMessage,
-                    isValid: vm.isEmailValid,
-                  ),
-                  const SizedBox(height: 28),
+          // ----- Email
+          AppTextField(
+            label: "Email Address",
+            icon: CupertinoIcons.mail_solid,
+            onChanged: vm.setEmail,
+            helperText: vm.emailMessage,
+            isValid: vm.isEmailValid,
+          ),
 
-                  AppTextField(
-                    label: "Password",
-                    icon: CupertinoIcons.lock_fill,
-                    obscureText: true,
-                    onChanged: vm.setPassword,
-                    helperText: vm.passwordMessage,
-                    isValid: vm.isPasswordValid,
-                  ),
+          const SizedBox(height: 28),
 
-                  const SizedBox(height: 12),
-                  // Forgot password stays here, inside scroll
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => _showForgotPasswordDialog(context, vm),
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.titleLarge
-                            ?.copyWith(
-                              decoration: TextDecoration.underline,
-                              fontWeight: ManropeFontWeight.light,
-                            ),
-                        foregroundColor: Theme.of(
-                          context,
-                        ).colorScheme.onSurface,
-                      ),
-                      child: const Text("Forgot Password?"),
-                    ),
-                  ),
-                ],
-              ),
+          // ----- Password
+          AppTextField(
+            label: "Password",
+            icon: CupertinoIcons.lock_fill,
+            obscureText: true,
+            onChanged: vm.setPassword,
+            helperText: vm.passwordMessage,
+            isValid: vm.isPasswordValid,
+          ),
+
+          const SizedBox(height: 12),
+
+          // ----- Forgot password
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () => _showForgotPasswordDialog(context, vm),
+              child: const Text("Forgot Password?"),
             ),
           ),
 
-          // ----- Authentication Error Message -----
-          if (vm.authError != null) ...[
+          const SizedBox(height: 16),
+
+          // ----- Auth error
+          if (vm.authError != null)
             Text(
               vm.generalErrorMessage,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.redAccent,
                 fontWeight: FontWeight.w500,
               ),
-              textAlign: TextAlign.center,
             ),
-          ],
-          const SizedBox(height: 6),
+
+          const SizedBox(height: 16),
 
           // ----- Login button
           AppButton.primary(
             onPressed: vm.isLoading
                 ? null
                 : () async {
-                    final success = await vm.submitLogin();
-                    if (success) {
-                      // ✅ Don’t navigate manually
-                      // AuthLayout will automatically detect and rebuild the correct UI
-                      debugPrint(
-                        '[LoginScreen] Login successful — waiting for AuthLayout to rebuild...',
-                      );
-                    }
+                    await vm.submitLogin();
                   },
             text: vm.isLoading ? "Verifying..." : "Login",
             icon: vm.isLoading ? null : CupertinoIcons.arrow_right_circle_fill,
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
 
           // ----- Register link
           RichText(
+            textAlign: TextAlign.center,
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: ManropeFontWeight.light,
-                letterSpacing: 0,
               ),
               children: [
                 const TextSpan(text: "Don't have an account? "),
@@ -218,7 +191,6 @@ class LoginScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: ManropeFontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
-                    letterSpacing: 0,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = onToggleToRegister,
@@ -227,7 +199,7 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
 
-          const Spacer(),
+          const SizedBox(height: 32),
 
           // ----- Footer
           Text(
@@ -235,7 +207,6 @@ class LoginScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: ManropeFontWeight.light,
-              letterSpacing: 0,
             ),
           ),
         ],

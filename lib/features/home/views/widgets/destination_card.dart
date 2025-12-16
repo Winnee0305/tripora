@@ -108,7 +108,7 @@ class DestinationCard extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              Icons.location_on_outlined,
+                              CupertinoIcons.location_solid,
                               size: 12,
                               color: theme.colorScheme.onSurface.withOpacity(
                                 0.7,
