@@ -91,9 +91,9 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
 
     if (widget.isViewMode) {
       final postVm = context.watch<PostItineraryViewModel>();
-      itinerariesMap = postVm.itinerariesMap.cast<int, List<dynamic>>();
-      lodgingsMap = postVm.lodgingsMap.cast<int, List<dynamic>>();
-      flightsMap = postVm.flightsMap.cast<int, List<dynamic>>();
+      itinerariesMap = (postVm.itinerariesMap ?? {}).cast<int, List<dynamic>>();
+      lodgingsMap = (postVm.lodgingsMap ?? {}).cast<int, List<dynamic>>();
+      flightsMap = (postVm.flightsMap ?? {}).cast<int, List<dynamic>>();
       tripStartDate = postVm.trip?.startDate;
       isLoading = postVm.isLoading;
       vm = postVm; // For compatibility
@@ -695,7 +695,7 @@ class MultiDayItineraryListState extends State<MultiDayItineraryList> {
       builder: (bottomSheetContext) {
         return _EditItineraryModal(
           itinerary: itinerary,
-          isEditing: itinerary != null && itinerary.id.isNotEmpty,
+          isEditing: itinerary?.placeId != '',
           vm: vm,
         );
       },

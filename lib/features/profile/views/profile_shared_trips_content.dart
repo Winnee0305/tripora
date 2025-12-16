@@ -173,7 +173,7 @@ class _ProfileSharedTripsContentState extends State<ProfileSharedTripsContent> {
                                       snapshot.data != null &&
                                       snapshot.data!.trim().isNotEmpty)
                                   ? snapshot.data!
-                                  : 'assets/images/exp_profile_picture.png';
+                                  : 'assets/logo/tripora.JPG';
 
                               final post = Post(
                                 title: postData.tripName,

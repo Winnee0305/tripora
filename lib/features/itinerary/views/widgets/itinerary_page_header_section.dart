@@ -159,8 +159,7 @@ class _ItineraryPageHeaderSectionState
                 CircleAvatar(
                   radius: 16,
                   backgroundImage: _getImageProvider(
-                    widget.authorImageUrl ??
-                        'assets/images/exp_profile_picture.png',
+                    widget.authorImageUrl ?? 'assets/logo/tripora.JPG',
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -248,6 +247,7 @@ class _ItineraryPageHeaderSectionState
 
             // Share button
             AppButton.iconOnly(
+              backgroundVariant: BackgroundVariant.secondaryFilled,
               icon: CupertinoIcons.share,
               minWidth: 80,
               minHeight: 40,
@@ -257,14 +257,18 @@ class _ItineraryPageHeaderSectionState
                 // Check if already published
                 final existingPost = await itineraryVm?.getPublishedPost();
 
-                if (existingPost != null && context.mounted) {
-                  // Show alert dialog for confirmation
-                  final shouldUpdate = await showCupertinoDialog<bool>(
+                if (context.mounted) {
+                  // Show alert dialog (always, regardless of publish status)
+                  final shouldProceed = await showCupertinoDialog<bool>(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('Update Published Itinerary?'),
-                      content: const Text(
-                        'This itinerary has already been published. Do you want to update it with your latest changes?',
+                      title: Text(existingPost != null
+                          ? 'Update Published Itinerary?'
+                          : 'Publish Itinerary?'),
+                      content: Text(
+                        existingPost != null
+                            ? 'This itinerary has already been published. Do you want to update it with your latest changes?'
+                            : 'Do you want to publish this itinerary?',
                       ),
                       actions: [
                         CupertinoDialogAction(
@@ -275,68 +279,69 @@ class _ItineraryPageHeaderSectionState
                         CupertinoDialogAction(
                           isDefaultAction: true,
                           onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Update'),
+                          child: Text(
+                            existingPost != null ? 'Update' : 'Publish',
+                          ),
                         ),
                       ],
                     ),
                   );
 
-                  if (shouldUpdate != true) {
-                    debugPrint('❌ User cancelled update');
+                  if (shouldProceed != true) {
+                    debugPrint('❌ User cancelled');
                     return;
                   }
-                }
 
-                try {
-                  // Get user data for post
-                  final user = widget.userVm.user;
-                  if (user == null) {
-                    throw Exception('User data not available');
-                  }
+                  try {
+                    // Get user data for post
+                    final user = widget.userVm.user;
+                    if (user == null) {
+                      throw Exception('User data not available');
+                    }
 
-                  final userName = '${user.firstname} ${user.lastname}';
-                  // Sanitize profile image URL - treat whitespace-only as null
-                  final userImageUrl =
-                      (user.profileImageUrl != null &&
-                          user.profileImageUrl!.trim().isNotEmpty)
-                      ? user.profileImageUrl
-                      : null;
+                    final userName = '${user.firstname} ${user.lastname}';
+                    // Sanitize profile image URL - treat whitespace-only as null
+                    final userImageUrl =
+                        (user.profileImageUrl != null &&
+                            user.profileImageUrl!.trim().isNotEmpty)
+                        ? user.profileImageUrl
+                        : null;
 
-                  debugPrint(
-                    '👤 Publishing with userName: $userName, userImageUrl: $userImageUrl',
-                  );
+                    debugPrint(
+                      '👤 Publishing with userName: $userName, userImageUrl: $userImageUrl',
+                    );
 
-                  final postId = await itineraryVm?.publishItinerary(
-                    userName: userName,
-                    userImageUrl: userImageUrl,
-                  );
-                  debugPrint('✅ Published successfully with postId: $postId');
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          existingPost != null
-                              ? 'Itinerary updated successfully!'
-                              : 'Itinerary published successfully!',
+                    final postId = await itineraryVm?.publishItinerary(
+                      userName: userName,
+                      userImageUrl: userImageUrl,
+                    );
+                    debugPrint('✅ Published successfully with postId: $postId');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            existingPost != null
+                                ? 'Itinerary updated successfully!'
+                                : 'Itinerary published successfully!',
+                          ),
+                          duration: const Duration(seconds: 2),
                         ),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  debugPrint('❌ Error publishing itinerary: $e');
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Failed to publish: $e'),
-                        duration: const Duration(seconds: 3),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                      );
+                    }
+                  } catch (e) {
+                    debugPrint('❌ Error publishing itinerary: $e');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to publish: $e'),
+                          duration: const Duration(seconds: 3),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   }
                 }
               },
-              backgroundVariant: BackgroundVariant.secondaryFilled,
             ),
           ],
         ),

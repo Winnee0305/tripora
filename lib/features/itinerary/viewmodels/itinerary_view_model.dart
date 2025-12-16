@@ -507,7 +507,8 @@ class ItineraryViewModel extends ChangeNotifier {
             placeId: poi['google_place_id'] ?? '',
             type: 'destination',
             date: date,
-            userNotes: poi['name'] ?? '', // Use POI name as notes
+            userNotes:
+                poi['recommendation_reason'] ?? '', // Use POI name as notes
             sequence: i,
             lastUpdated: DateTime.now(),
           );
