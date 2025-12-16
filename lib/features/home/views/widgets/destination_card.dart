@@ -42,12 +42,13 @@ class DestinationCard extends StatelessWidget {
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  child: destination.imageUrl.isNotEmpty
-                      ? AppLoadingNetworkImage(imageUrl: destination.imageUrl)
-                      : Image.asset(
-                          'assets/images/exp_placeholder.png',
-                          fit: BoxFit.cover,
-                        ),
+                  // child: destination.imageUrl.isNotEmpty
+                  //     ? AppLoadingNetworkImage(imageUrl: destination.imageUrl)
+                  //     : Image.asset(
+                  //         'assets/images/exp_placeholder.png',
+                  //         fit: BoxFit.cover,
+                  //       ),
+                  child: AppLoadingNetworkImage(imageUrl: destination.imageUrl),
                 ),
               ),
               Positioned(
