@@ -96,11 +96,16 @@ class FlightAutocompleteService {
             return [];
           }
 
+          if (kDebugMode) {
+            print('Found ${flights.length} flight(s) for: $flightNumber');
+          }
+
           return flights.map((flight) {
-            final flightData = flight['flight'] ?? {};
-            final airline = flight['airline'] ?? {};
-            final departure = flight['departure'] ?? {};
-            final arrival = flight['arrival'] ?? {};
+            final flightData = flight['flight'] as Map<String, dynamic>? ?? {};
+            final airline = flight['airline'] as Map<String, dynamic>? ?? {};
+            final departure =
+                flight['departure'] as Map<String, dynamic>? ?? {};
+            final arrival = flight['arrival'] as Map<String, dynamic>? ?? {};
 
             return {
               'flightNumber': flightData['iata'] ?? flightNumber,
@@ -117,6 +122,10 @@ class FlightAutocompleteService {
               'flightStatus': flight['flight_status'] ?? '',
             };
           }).toList();
+        } else {
+          if (kDebugMode) {
+            print('No data field in response or data is not a list');
+          }
         }
       } else {
         if (kDebugMode) {

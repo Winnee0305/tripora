@@ -36,7 +36,7 @@ final destinationsImageCoordinates = [
     "lng": 110.3593,
   },
   {
-    "destination": "Melaka",
+    "destination": "Malacca",
     "imageName": "melaka",
     "lat": 2.1896,
     "lng": 102.2501,

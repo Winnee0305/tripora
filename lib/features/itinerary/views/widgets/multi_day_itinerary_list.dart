@@ -34,10 +34,7 @@ class _EditItineraryModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ItineraryViewModel>.value(
       value: vm,
-      child: AddEditItineraryBottomSheet(
-        itinerary: itinerary,
-        isEditing: isEditing,
-      ),
+      child: AddEditItineraryBottomSheet(itinerary: itinerary),
     );
   }
 }
