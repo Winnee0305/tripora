@@ -117,6 +117,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/images/exp_genting.png
     - assets/images/exp_penang.png
     - assets/images/exp_johor.png

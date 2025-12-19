@@ -18,7 +18,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables from .env file
-  await dotenv.load(fileName: ".env");
+  // isOptional: true allows the app to run without .env in development
+  await dotenv.load(fileName: ".env", isOptional: true);
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
