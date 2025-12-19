@@ -4,7 +4,11 @@
 
 **Tripora** is a comprehensive Flutter-based mobile application designed to revolutionize travel planning with intelligent AI assistance, collaborative features, and seamless integration with travel booking services.
 
-## 📱 Overview
+## 📱 Full Application
+- Frontend - Mobile Application `Tripora`: https://github.com/Winnee0305/tripora
+- Backend - AI Service `Multi-AI Agent Itinerary Engine`: https://github.com/Winnee0305/multi-ai-agent-itinerary-engine
+
+## 🎯 Mobile Application Overview
 
 <img src="assets/images/demo.png" alt="Tripora Logo" width="800">
 
