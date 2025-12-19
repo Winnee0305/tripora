@@ -1,5 +1,4 @@
 import 'package:tripora/core/models/expense_data.dart';
-import 'package:tripora/core/services/firebase_storage_service.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 
 class ExpenseRepository {

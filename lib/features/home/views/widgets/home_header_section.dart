@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
-import 'package:tripora/core/reusable_widgets/app_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:tripora/features/profile/viewmodels/profile_view_model.dart';
 import 'package:tripora/features/profile/views/profile_page.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 

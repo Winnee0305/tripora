@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_calendar_picker.dart';
-import 'package:tripora/core/reusable_widgets/app_loading_network_image.dart';
-import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/core/utils/auth_validators.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
@@ -39,8 +36,8 @@ class _AccountPageState extends State<AccountPage> {
   late String _selectedGender;
   late DateTime? _selectedDateOfBirth;
   late String _selectedNationality;
-
   bool _isEditing = false;
+
   bool _isSaving = false;
   late UserData _user;
   late SettingsViewModel _settingsVm;
@@ -192,18 +189,6 @@ class _AccountPageState extends State<AccountPage> {
         setState(() => _isSaving = false);
       }
     }
-  }
-
-  void _cancelEdits() {
-    _firstNameController.text = _user.firstname;
-    _lastNameController.text = _user.lastname;
-    _usernameController.text = _user.username;
-    _emailController.text = _user.email;
-    _selectedGender = _user.gender ?? '';
-    _selectedDateOfBirth = _user.dateOfBirth;
-    _selectedNationality = _user.nationality ?? '';
-
-    setState(() => _isEditing = false);
   }
 
   String _getGenderLabel(String genderValue) {

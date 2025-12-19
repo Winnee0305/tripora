@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 /// ViewModel that manages day selection in itinerary or trip planning screens.
 class DaySelectionViewModel extends ChangeNotifier {

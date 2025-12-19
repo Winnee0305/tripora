@@ -5,7 +5,6 @@ import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header_delegate.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/utils/math_utils.dart';
-import 'package:tripora/features/expense/models/expense.dart';
 import 'package:tripora/features/expense/viewmodels/expense_viewmodel.dart';
 import 'package:tripora/features/expense/views/widgets/add_edit_expense_bottom_sheet.dart';
 import 'package:tripora/features/expense/views/widgets/expense_card.dart';

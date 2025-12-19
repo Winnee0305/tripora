@@ -1,12 +1,9 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tripora/core/models/expense_data.dart';
 import 'package:tripora/core/models/trip_data.dart';
 import 'package:tripora/core/repositories/expense_repository.dart';
 import 'package:tripora/core/utils/date_utils.dart';
 import 'package:tripora/core/utils/format_utils.dart';
-import 'package:tripora/features/expense/models/expense.dart'
-    hide ExpenseCategory;
 
 class ExpenseViewModel extends ChangeNotifier {
   final ExpenseRepository _expenseRepo;

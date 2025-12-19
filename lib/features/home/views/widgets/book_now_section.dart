@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tripora/core/services/booking_url_service.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:tripora/features/home/viewmodels/book_now_viewmodel.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class BookNowSection extends StatelessWidget {
   const BookNowSection({super.key});

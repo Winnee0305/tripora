@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
-import 'package:tripora/core/reusable_widgets/app_toast.dart';
 
 /// A reusable Cupertino-style picture picker with confirmation.
 /// Returns the confirmed image path, or null if cancelled.

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/core/models/itinerary_data.dart';
-import 'package:tripora/core/services/map_service.dart';
 
 class EtaCard extends StatelessWidget {
   const EtaCard({super.key, required this.itinerary});

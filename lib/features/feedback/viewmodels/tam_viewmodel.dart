@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/features/feedback/models/tam_response.dart';
 

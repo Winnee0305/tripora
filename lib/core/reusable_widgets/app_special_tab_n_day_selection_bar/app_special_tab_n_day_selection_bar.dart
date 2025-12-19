@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/day_selection_viewmodel.dart';
-import 'package:tripora/core/reusable_widgets/app_special_tab_n_day_selection_bar/special_tab_card.dart';
 import 'package:tripora/core/utils/format_utils.dart';
 import 'day_tab_card.dart';
 import '../../../features/itinerary/views/widgets/multi_day_itinerary_list.dart';

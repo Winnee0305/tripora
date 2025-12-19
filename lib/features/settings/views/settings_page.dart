@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
-import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
 import 'package:tripora/features/settings/views/widgets/settings_tile.dart';

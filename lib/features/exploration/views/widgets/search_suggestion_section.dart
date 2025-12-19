@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_ink_well.dart';
-import 'package:tripora/core/services/place_details_service.dart';
 import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmodel.dart';
-import 'package:tripora/features/poi/views/poi_page.dart';
 
 class SearchSuggestionSection extends StatelessWidget {
   final void Function(String description, Map<String, dynamic> suggestion)?

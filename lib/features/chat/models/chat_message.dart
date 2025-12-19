@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum MessageSender { user, bot }
 
 class ChatMessage {

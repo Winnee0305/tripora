@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/models/lodging_data.dart';
 import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field.dart';
-import 'package:tripora/core/reusable_widgets/app_calendar_picker.dart';
 import 'package:tripora/core/theme/app_widget_styles.dart';
 import 'package:tripora/features/exploration/viewmodels/search_suggestion_viewmodel.dart';
 import 'package:tripora/features/exploration/views/widgets/location_search_bar.dart';

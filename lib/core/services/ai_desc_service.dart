@@ -72,9 +72,7 @@ class AiDescService {
           print('📄 Full text: $text');
         }
 
-        if (text != null) {
-          return text.toString();
-        }
+        return text.toString();
       } else {
         if (kDebugMode) {
           print('⚠️ Gemini API error: ${response.statusCode}');

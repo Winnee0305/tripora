@@ -1,13 +1,10 @@
-import 'package:animated_background/animated_background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripora/core/reusable_widgets/app_text_field2.dart';
 import 'package:tripora/features/chat/viewmodels/chat_viewmodel.dart';
-import 'package:tripora/features/chat/models/chat_message.dart';
 import 'package:tripora/features/chat/views/widgets/bubble_animated_background.dart';
 import 'package:tripora/features/chat/views/widgets/chat_content.dart';
-import 'package:tripora/features/chat/views/widgets/chat_input_bar.dart';
 import 'package:tripora/features/chat/views/widgets/chat_page_header.dart';
 import 'package:tripora/features/chat/views/widgets/empty_chat_screen.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
