@@ -6,6 +6,7 @@
 
 ## 📱 Overview
 
+<img src="assets/images/demo.png" alt="Tripora Logo" width="800">
 
 Tripora is your all-in-one travel companion that helps you plan, organize, and execute perfect trips. From flight booking to itinerary creation, expense tracking to cultural preparation, Tripora leverages AI agents and cloud services to make travel planning effortless.
 
