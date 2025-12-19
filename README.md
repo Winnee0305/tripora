@@ -1,10 +1,11 @@
 # Tripora - AI-Powered Travel Planning App
 
-![Tripora Logo](assets/logo/tripora.JPG)
+<img src="assets/logo/tripora.JPG" alt="Tripora Logo" width="150">
 
 **Tripora** is a comprehensive Flutter-based mobile application designed to revolutionize travel planning with intelligent AI assistance, collaborative features, and seamless integration with travel booking services.
 
 ## 📱 Overview
+
 
 Tripora is your all-in-one travel companion that helps you plan, organize, and execute perfect trips. From flight booking to itinerary creation, expense tracking to cultural preparation, Tripora leverages AI agents and cloud services to make travel planning effortless.
 
@@ -17,7 +18,6 @@ Tripora is your all-in-one travel companion that helps you plan, organize, and e
 - **🎒 Smart Packing** - AI-generated packing lists customized to your destination and trip type
 - **📍 Point of Interest Discovery** - Explore and save POIs with AI recommendations
 - **💬 Travel Chat** - AI chatbot for travel advice and questions
-- **👥 Travel Partners** - Collaborate with travel companions in real-time
 - **🏨 Lodging Management** - Book and track accommodations
 - **📝 Trip Notes** - Keep detailed notes and observations
 - **🌍 Cultural Preparation** - Learn etiquette and cultural tips for your destination
@@ -26,7 +26,7 @@ Tripora is your all-in-one travel companion that helps you plan, organize, and e
 
 ## 🏗️ Architecture
 
-Tripora follows a layered architecture pattern:
+Tripora follows a layered MVVM architecture pattern:
 
 ```
 lib/
@@ -38,7 +38,7 @@ lib/
 │   ├── reusable_widgets/   # Reusable UI components
 │   ├── utils/              # Utility functions
 │   └── viewmodels/         # State management
-├── features/               # Feature-specific implementations
+├── features/               # Feature-specific implementations (with each folder includers model, view, viewmodel)
 │   ├── auth/               # Authentication
 │   ├── chat/               # Chat functionality
 │   ├── expense/            # Expense tracking
@@ -241,28 +241,6 @@ Tripora uses **Provider** for state management:
 - Services integrate with external APIs
 - UI widgets consume providers for reactive UI updates
 
-## 🤝 Contributing
-
-1. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-2. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-3. Push to the branch (`git push origin feature/AmazingFeature`)
-4. Open a Pull Request
-
-## 📄 License
-
-This project is private and not licensed for public use.
-
 ## 👥 Authors
 
 Developed as a Capstone Project for Bachelor in Computer Science - Year 3, Semester 2
-
-## 📞 Support
-
-For questions or issues, please contact the development team.
-
-## 🙏 Acknowledgments
-
-- Flutter and Dart communities
-- Firebase team
-- Google Maps and Places API teams
-- All open-source contributors
