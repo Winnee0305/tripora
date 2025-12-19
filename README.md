@@ -6,7 +6,6 @@
 
 ## 📱 Overview
 
-
 Tripora is your all-in-one travel companion that helps you plan, organize, and execute perfect trips. From flight booking to itinerary creation, expense tracking to cultural preparation, Tripora leverages AI agents and cloud services to make travel planning effortless.
 
 ### Key Features
@@ -64,7 +63,7 @@ lib/
 - **Backend**: Firebase (Auth, Firestore, Storage)
 - **APIs**: Google Places, Google Maps
 - **Local Storage**: JSON files via path_provider
-- **UI Libraries**: 
+- **UI Libraries**:
   - Cupertino Icons
   - Lucide Icons
   - Flutter Staggered Grid View
@@ -87,17 +86,18 @@ lib/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd Tripora
    ```
-
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
-
 3. **Set up environment variables**
+
    - Copy the template file:
      ```bash
      cp .env.example .env
@@ -124,35 +124,37 @@ lib/
      AVIATION_STACK_API_KEY=your_aviationstack_api_key
      ```
    - **Important**: Never commit `.env` to version control (already in `.gitignore`)
-
 4. **Obtain API Keys**
-   
+
    **Google APIs** (Google Maps & Gemini):
+
    - Visit [Google Cloud Console](https://console.cloud.google.com)
    - Create a new project or select existing one
    - Enable "Maps SDK for Android" and "Google Maps Platform"
    - Enable "Generative Language API" (for Gemini)
    - Create API Key credentials
    - Copy keys to `.env` file
-   
+
    **Firebase**:
+
    - Go to [Firebase Console](https://console.firebase.google.com/)
    - Create a new Firebase project or select existing one
    - Run `flutterfire configure` to set up platform-specific configs
    - The required keys will be auto-populated or available in Firebase Console
-   
+
    **AviationStack** (Flight Autocomplete):
+
    - Sign up at [AviationStack](https://aviationstack.com/)
    - Verify your email
    - Copy your API key from dashboard
    - Add to `.env` as `AVIATION_STACK_API_KEY`
-
 5. **Configure Firebase**
+
    - For Android: Ensure `android/app/google-services.json` is present
    - For iOS: Ensure `ios/Runner/GoogleService-Info.plist` is present
    - Run: `flutterfire configure`
-
 6. **Run the app**
+
    ```bash
    flutter run
    ```
@@ -175,6 +177,7 @@ lib/
 ### Features Module
 
 Each feature follows a modular structure:
+
 - **views/**: UI screens and page layouts
 - **widgets/**: Feature-specific widgets
 - **viewmodels/**: Business logic and state management
@@ -182,6 +185,7 @@ Each feature follows a modular structure:
 ## 🔑 Key Services
 
 ### AI Services
+
 - **AI Agents** - Intelligent travel recommendations
 - **AI Chatbot** - Travel advice and Q&A
 - **AI Description Generator** - Smart location/activity descriptions
@@ -189,6 +193,7 @@ Each feature follows a modular structure:
 - **For You Recommender** - Personalized activity recommendations
 
 ### External Integrations
+
 - **Firebase Authentication** - User login & registration
 - **Cloud Firestore** - Real-time database
 - **Firebase Storage** - Image and file storage
@@ -232,6 +237,7 @@ dart format lib/
 
 - [System Architecture](docs/architecture.md) - High-level system design
 - [Flight Autocomplete Setup](docs/flight_autocomplete_setup.md) - Flight API configuration
+- [Multi-Itinerary Agent](https://github.com/Winnee0305/multi-ai-agent-itinerary-engine) - AI agent for generating multi-day itineraries
 
 ## 🔐 Firebase Setup
 
@@ -251,23 +257,24 @@ All API keys are stored securely in the `.env` file and are **not** committed to
 
 Create a `.env` file in the project root (copy from `.env.example`) with the following variables:
 
-| Variable | Source | Purpose |
-|----------|--------|---------|
-| `GOOGLE_MAPS_API_KEY` | Google Cloud Console | Maps and Places API |
-| `GEMINI_API_KEY` | Google Cloud Console | AI description generation |
-| `FIREBASE_API_KEY_ANDROID` | Firebase Console | Android Firebase auth |
-| `FIREBASE_API_KEY_IOS` | Firebase Console | iOS Firebase auth |
-| `FIREBASE_APP_ID_ANDROID` | Firebase Console | Android app identification |
-| `FIREBASE_APP_ID_IOS` | Firebase Console | iOS app identification |
-| `FIREBASE_MESSAGING_SENDER_ID` | Firebase Console | Push notifications |
-| `FIREBASE_PROJECT_ID` | Firebase Console | Firestore database |
-| `FIREBASE_STORAGE_BUCKET` | Firebase Console | File storage |
-| `FIREBASE_IOS_BUNDLE_ID` | Firebase Console | iOS bundle identifier |
-| `AVIATION_STACK_API_KEY` | AviationStack Dashboard | Flight data & autocomplete |
+| Variable                         | Source                  | Purpose                    |
+| -------------------------------- | ----------------------- | -------------------------- |
+| `GOOGLE_MAPS_API_KEY`          | Google Cloud Console    | Maps and Places API        |
+| `GEMINI_API_KEY`               | Google Cloud Console    | AI description generation  |
+| `FIREBASE_API_KEY_ANDROID`     | Firebase Console        | Android Firebase auth      |
+| `FIREBASE_API_KEY_IOS`         | Firebase Console        | iOS Firebase auth          |
+| `FIREBASE_APP_ID_ANDROID`      | Firebase Console        | Android app identification |
+| `FIREBASE_APP_ID_IOS`          | Firebase Console        | iOS app identification     |
+| `FIREBASE_MESSAGING_SENDER_ID` | Firebase Console        | Push notifications         |
+| `FIREBASE_PROJECT_ID`          | Firebase Console        | Firestore database         |
+| `FIREBASE_STORAGE_BUCKET`      | Firebase Console        | File storage               |
+| `FIREBASE_IOS_BUNDLE_ID`       | Firebase Console        | iOS bundle identifier      |
+| `AVIATION_STACK_API_KEY`       | AviationStack Dashboard | Flight data & autocomplete |
 
 ### Loading Environment Variables
 
 The app automatically loads the `.env` file on startup in `main.dart`:
+
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -291,6 +298,7 @@ void main() async {
 ### Getting Each API Key
 
 **Google Cloud APIs** (Maps & Gemini):
+
 1. Visit [Google Cloud Console](https://console.cloud.google.com)
 2. Create/select a project
 3. Enable required APIs:
@@ -301,6 +309,7 @@ void main() async {
 5. Copy key to `.env` file
 
 **Firebase**:
+
 1. Go to [Firebase Console](https://console.firebase.google.com)
 2. Create/select a project
 3. Enable Authentication (Email/Password, Google Sign-In)
@@ -309,6 +318,7 @@ void main() async {
 6. Or manually copy keys from Project Settings
 
 **AviationStack** (Flight Data):
+
 1. Sign up at [AviationStack](https://aviationstack.com/signup/free)
 2. Verify your email
 3. Go to Dashboard and copy your API key
@@ -320,6 +330,7 @@ void main() async {
 See [pubspec.yaml](pubspec.yaml) for complete dependency list.
 
 Key dependencies:
+
 - `provider` - State management
 - `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage` - Backend
 - `google_maps_flutter` - Maps integration
@@ -331,6 +342,7 @@ Key dependencies:
 ## 🎨 Theming
 
 The app uses a custom theme system defined in `lib/core/theme/`:
+
 - **Colors**: Defined in `app_colors.dart`
 - **Shadows**: Defined in `app_shadow_theme.dart`
 - **Typography**: Manrope font family with multiple weights
@@ -338,6 +350,7 @@ The app uses a custom theme system defined in `lib/core/theme/`:
 ## 🔄 State Management
 
 Tripora uses **Provider** for state management:
+
 - ViewModels extend `ChangeNotifier` for reactive updates
 - Repositories handle data access
 - Services integrate with external APIs
