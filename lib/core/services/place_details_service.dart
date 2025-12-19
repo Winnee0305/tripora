@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:tripora/core/utils/constants.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 
@@ -11,10 +12,9 @@ class PlaceDetailsService {
   final String apiKey;
   final FirestoreService _firestoreService;
 
-  PlaceDetailsService({
-    this.apiKey = mapApiKey,
-    FirestoreService? firestoreService,
-  }) : _firestoreService = firestoreService ?? FirestoreService();
+  PlaceDetailsService({String? apiKey, FirestoreService? firestoreService})
+    : apiKey = apiKey ?? mapApiKey,
+      _firestoreService = firestoreService ?? FirestoreService();
 
   Future<Map<String, dynamic>?> fetchPlaceDetails(String placeId) async {
     if (placeId.isEmpty) return null;

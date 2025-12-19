@@ -98,19 +98,61 @@ lib/
    ```
 
 3. **Set up environment variables**
-   - Create a `.env` file in the root directory
-   - Add your API keys:
+   - Copy the template file:
+     ```bash
+     cp .env.example .env
      ```
-     GOOGLE_PLACES_API_KEY=your_key_here
-     GOOGLE_MAPS_API_KEY=your_key_here
+   - Edit `.env` and add your API keys:
      ```
+     # Google APIs
+     GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+     GEMINI_API_KEY=your_gemini_api_key
 
-4. **Configure Firebase**
+     # Firebase (Android)
+     FIREBASE_API_KEY_ANDROID=your_firebase_android_api_key
+     FIREBASE_APP_ID_ANDROID=your_firebase_android_app_id
+     FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+     FIREBASE_PROJECT_ID=your_firebase_project_id
+     FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+
+     # Firebase (iOS)
+     FIREBASE_API_KEY_IOS=your_firebase_ios_api_key
+     FIREBASE_APP_ID_IOS=your_firebase_ios_app_id
+     FIREBASE_IOS_BUNDLE_ID=your_firebase_ios_bundle_id
+
+     # Flight Autocomplete (AviationStack)
+     AVIATION_STACK_API_KEY=your_aviationstack_api_key
+     ```
+   - **Important**: Never commit `.env` to version control (already in `.gitignore`)
+
+4. **Obtain API Keys**
+   
+   **Google APIs** (Google Maps & Gemini):
+   - Visit [Google Cloud Console](https://console.cloud.google.com)
+   - Create a new project or select existing one
+   - Enable "Maps SDK for Android" and "Google Maps Platform"
+   - Enable "Generative Language API" (for Gemini)
+   - Create API Key credentials
+   - Copy keys to `.env` file
+   
+   **Firebase**:
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create a new Firebase project or select existing one
+   - Run `flutterfire configure` to set up platform-specific configs
+   - The required keys will be auto-populated or available in Firebase Console
+   
+   **AviationStack** (Flight Autocomplete):
+   - Sign up at [AviationStack](https://aviationstack.com/)
+   - Verify your email
+   - Copy your API key from dashboard
+   - Add to `.env` as `AVIATION_STACK_API_KEY`
+
+5. **Configure Firebase**
    - For Android: Ensure `android/app/google-services.json` is present
    - For iOS: Ensure `ios/Runner/GoogleService-Info.plist` is present
    - Run: `flutterfire configure`
 
-5. **Run the app**
+6. **Run the app**
    ```bash
    flutter run
    ```
@@ -203,15 +245,75 @@ dart format lib/
 
 ## 🌍 API Configuration
 
-### Google Places API
-- Enable in Google Cloud Console
-- Add API key to `.env` file
-- Configure in `place_auto_complete_service.dart`
+All API keys are stored securely in the `.env` file and are **not** committed to version control.
 
-### Google Maps API
-- Enable in Google Cloud Console
-- Add API key to `.env` file
-- Configure in iOS and Android manifest files
+### Environment Variables (.env)
+
+Create a `.env` file in the project root (copy from `.env.example`) with the following variables:
+
+| Variable | Source | Purpose |
+|----------|--------|---------|
+| `GOOGLE_MAPS_API_KEY` | Google Cloud Console | Maps and Places API |
+| `GEMINI_API_KEY` | Google Cloud Console | AI description generation |
+| `FIREBASE_API_KEY_ANDROID` | Firebase Console | Android Firebase auth |
+| `FIREBASE_API_KEY_IOS` | Firebase Console | iOS Firebase auth |
+| `FIREBASE_APP_ID_ANDROID` | Firebase Console | Android app identification |
+| `FIREBASE_APP_ID_IOS` | Firebase Console | iOS app identification |
+| `FIREBASE_MESSAGING_SENDER_ID` | Firebase Console | Push notifications |
+| `FIREBASE_PROJECT_ID` | Firebase Console | Firestore database |
+| `FIREBASE_STORAGE_BUCKET` | Firebase Console | File storage |
+| `FIREBASE_IOS_BUNDLE_ID` | Firebase Console | iOS bundle identifier |
+| `AVIATION_STACK_API_KEY` | AviationStack Dashboard | Flight data & autocomplete |
+
+### Loading Environment Variables
+
+The app automatically loads the `.env` file on startup in `main.dart`:
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
+  
+  // Initialize Firebase and other services...
+}
+```
+
+### Security Best Practices
+
+- ✅ Store `.env` in `.gitignore` - Never commit API keys
+- ✅ Use `.env.example` as a template for team members
+- ✅ Regenerate compromised keys immediately
+- ✅ Use environment-specific `.env` files (.env.local, .env.dev, etc.)
+- ✅ Restrict API key permissions in respective consoles
+- ✅ Rotate keys periodically in production
+
+### Getting Each API Key
+
+**Google Cloud APIs** (Maps & Gemini):
+1. Visit [Google Cloud Console](https://console.cloud.google.com)
+2. Create/select a project
+3. Enable required APIs:
+   - Maps SDK for Android
+   - Maps SDK for iOS
+   - Generative Language API (Gemini)
+4. Go to Credentials → Create API Key
+5. Copy key to `.env` file
+
+**Firebase**:
+1. Go to [Firebase Console](https://console.firebase.google.com)
+2. Create/select a project
+3. Enable Authentication (Email/Password, Google Sign-In)
+4. Create Firestore Database and Storage
+5. Run `flutterfire configure` to auto-populate keys
+6. Or manually copy keys from Project Settings
+
+**AviationStack** (Flight Data):
+1. Sign up at [AviationStack](https://aviationstack.com/signup/free)
+2. Verify your email
+3. Go to Dashboard and copy your API key
+4. Add to `.env` file
+5. Note: Free tier has limits (100 requests/month)
 
 ## 📦 Dependencies
 

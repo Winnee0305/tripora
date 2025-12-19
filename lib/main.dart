@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tripora/core/services/firebase_auth_service.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
 import 'package:tripora/core/services/firebase_storage_service.dart';
@@ -15,6 +16,9 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables from .env file
+  await dotenv.load(fileName: ".env");
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

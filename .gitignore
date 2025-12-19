@@ -12,6 +12,12 @@ pubspec.lock
 .flutter-plugins-dependencies
 
 # --------------------------
+# Environment Variables
+# --------------------------
+.env
+.env.local
+
+# --------------------------
 # Build outputs
 # --------------------------
 build/

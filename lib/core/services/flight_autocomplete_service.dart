@@ -1,36 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Flight Autocomplete Service using AviationStack API
-///
-/// TROUBLESHOOTING "invalid_access_key" ERROR:
-/// 1. Verify your email with AviationStack (check spam folder)
-/// 2. Log in to https://aviationstack.com/dashboard
-/// 3. Check if your API key is correct (copy from dashboard)
-/// 4. Ensure you haven't exceeded free tier limit (100 requests/month)
-/// 5. Try regenerating your API key in the dashboard
-/// 6. If all else fails, set _useMockData = true for testing
-///
-/// FREE TIER LIMITATIONS:
-/// - 100 API requests per month
-/// - HTTP only (no HTTPS)
-/// - 1 month historical data
-/// - Hourly data updates
 class FlightAutocompleteService {
-  // Get your API key from https://aviationstack.com/
-  // To get a FREE API key:
-  // 1. Sign up at https://aviationstack.com/signup/free
-  // 2. Verify your email
-  // 3. Copy your API key from the dashboard
-  // 4. Replace the value below
-  //
-  // IMPORTANT: If the API key shows an "invalid_access_key" error:
-  // - Make sure you've verified your email
-  // - Check if your free tier quota (100 requests/month) is exceeded
-  // - Try regenerating the API key in your dashboard
-  // - Ensure you're using the correct key (not the secret key)
-  static const String _apiKey = 'db27b9e31095c6a9a849b6ce5614e9ea';
+  static String get _apiKey => dotenv.env['AVIATION_STACK_API_KEY'] ?? '';
   static const String _baseUrl = 'http://api.aviationstack.com/v1';
 
   // Set to true to use mock data for testing without API calls

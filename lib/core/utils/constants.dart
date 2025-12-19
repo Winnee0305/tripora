@@ -1,8 +1,10 @@
-/// Google Maps API Key
-const String mapApiKey = "AIzaSyAquCucR9tQRpi4WiEKKsq6POjOj1NG5EY";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Gemini API Key for AI description generation
-const String geminiApiKey = "AIzaSyDTieZnqz7d2xkYdIJgts_SX7SF3Kz-taY";
+/// Google Maps API Key (loaded from .env)
+String get mapApiKey => dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
+
+/// Gemini API Key for AI description generation (loaded from .env)
+String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
 final destinationsImageCoordinates = [
   {

@@ -7,10 +7,8 @@ class AutocompleteService {
   final String apiKey;
   final String sessionToken;
 
-  AutocompleteService({
-    this.apiKey = mapApiKey,
-    this.sessionToken = "1234567890",
-  });
+  AutocompleteService({String? apiKey, this.sessionToken = "1234567890"})
+    : apiKey = apiKey ?? mapApiKey;
 
   /// Fetch suggestions from Google Places Autocomplete API
   Future<List<dynamic>> fetchSuggestions(String input) async {
