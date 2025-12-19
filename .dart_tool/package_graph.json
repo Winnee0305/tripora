@@ -9,6 +9,7 @@
       "dependencies": [
         "animated_background",
         "cloud_firestore",
+        "csv",
         "cupertino_icons",
         "firebase_auth",
         "firebase_core",
@@ -75,6 +76,11 @@
         "vector_math",
         "vm_service"
       ]
+    },
+    {
+      "name": "csv",
+      "version": "6.0.0",
+      "dependencies": []
     },
     {
       "name": "packages_info",

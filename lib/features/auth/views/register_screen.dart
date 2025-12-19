@@ -9,6 +9,7 @@ import 'package:tripora/core/reusable_widgets/app_button.dart';
 import 'package:tripora/core/reusable_widgets/app_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tripora/features/navigation/views/navigation_shell.dart';
+import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 
 class RegisterScreen extends StatelessWidget {
   final VoidCallback onToggleToLogin;
@@ -192,26 +193,86 @@ class RegisterScreen extends StatelessWidget {
                         builder: (_) => ListView(
                           padding: const EdgeInsets.all(20),
                           children: [
-                            ListTile(title: const Text('Malaysia'), onTap: () => Navigator.pop(context, 'MY')),
-                            ListTile(title: const Text('Singapore'), onTap: () => Navigator.pop(context, 'SG')),
-                            ListTile(title: const Text('Indonesia'), onTap: () => Navigator.pop(context, 'ID')),
-                            ListTile(title: const Text('Thailand'), onTap: () => Navigator.pop(context, 'TH')),
-                            ListTile(title: const Text('Philippines'), onTap: () => Navigator.pop(context, 'PH')),
-                            ListTile(title: const Text('Vietnam'), onTap: () => Navigator.pop(context, 'VN')),
-                            ListTile(title: const Text('Cambodia'), onTap: () => Navigator.pop(context, 'KH')),
-                            ListTile(title: const Text('Laos'), onTap: () => Navigator.pop(context, 'LA')),
-                            ListTile(title: const Text('Myanmar'), onTap: () => Navigator.pop(context, 'MM')),
-                            ListTile(title: const Text('Brunei'), onTap: () => Navigator.pop(context, 'BN')),
-                            ListTile(title: const Text('United States'), onTap: () => Navigator.pop(context, 'US')),
-                            ListTile(title: const Text('United Kingdom'), onTap: () => Navigator.pop(context, 'GB')),
-                            ListTile(title: const Text('Canada'), onTap: () => Navigator.pop(context, 'CA')),
-                            ListTile(title: const Text('Australia'), onTap: () => Navigator.pop(context, 'AU')),
-                            ListTile(title: const Text('China'), onTap: () => Navigator.pop(context, 'CN')),
-                            ListTile(title: const Text('Japan'), onTap: () => Navigator.pop(context, 'JP')),
-                            ListTile(title: const Text('India'), onTap: () => Navigator.pop(context, 'IN')),
-                            ListTile(title: const Text('Germany'), onTap: () => Navigator.pop(context, 'DE')),
-                            ListTile(title: const Text('France'), onTap: () => Navigator.pop(context, 'FR')),
-                            ListTile(title: const Text('Other'), onTap: () => Navigator.pop(context, 'XX')),
+                            ListTile(
+                              title: const Text('Malaysia'),
+                              onTap: () => Navigator.pop(context, 'MY'),
+                            ),
+                            ListTile(
+                              title: const Text('Singapore'),
+                              onTap: () => Navigator.pop(context, 'SG'),
+                            ),
+                            ListTile(
+                              title: const Text('Indonesia'),
+                              onTap: () => Navigator.pop(context, 'ID'),
+                            ),
+                            ListTile(
+                              title: const Text('Thailand'),
+                              onTap: () => Navigator.pop(context, 'TH'),
+                            ),
+                            ListTile(
+                              title: const Text('Philippines'),
+                              onTap: () => Navigator.pop(context, 'PH'),
+                            ),
+                            ListTile(
+                              title: const Text('Vietnam'),
+                              onTap: () => Navigator.pop(context, 'VN'),
+                            ),
+                            ListTile(
+                              title: const Text('Cambodia'),
+                              onTap: () => Navigator.pop(context, 'KH'),
+                            ),
+                            ListTile(
+                              title: const Text('Laos'),
+                              onTap: () => Navigator.pop(context, 'LA'),
+                            ),
+                            ListTile(
+                              title: const Text('Myanmar'),
+                              onTap: () => Navigator.pop(context, 'MM'),
+                            ),
+                            ListTile(
+                              title: const Text('Brunei'),
+                              onTap: () => Navigator.pop(context, 'BN'),
+                            ),
+                            ListTile(
+                              title: const Text('United States'),
+                              onTap: () => Navigator.pop(context, 'US'),
+                            ),
+                            ListTile(
+                              title: const Text('United Kingdom'),
+                              onTap: () => Navigator.pop(context, 'GB'),
+                            ),
+                            ListTile(
+                              title: const Text('Canada'),
+                              onTap: () => Navigator.pop(context, 'CA'),
+                            ),
+                            ListTile(
+                              title: const Text('Australia'),
+                              onTap: () => Navigator.pop(context, 'AU'),
+                            ),
+                            ListTile(
+                              title: const Text('China'),
+                              onTap: () => Navigator.pop(context, 'CN'),
+                            ),
+                            ListTile(
+                              title: const Text('Japan'),
+                              onTap: () => Navigator.pop(context, 'JP'),
+                            ),
+                            ListTile(
+                              title: const Text('India'),
+                              onTap: () => Navigator.pop(context, 'IN'),
+                            ),
+                            ListTile(
+                              title: const Text('Germany'),
+                              onTap: () => Navigator.pop(context, 'DE'),
+                            ),
+                            ListTile(
+                              title: const Text('France'),
+                              onTap: () => Navigator.pop(context, 'FR'),
+                            ),
+                            ListTile(
+                              title: const Text('Other'),
+                              onTap: () => Navigator.pop(context, 'XX'),
+                            ),
                           ],
                         ),
                       );
@@ -243,14 +304,22 @@ class RegisterScreen extends StatelessWidget {
             onPressed: vm.isLoading
                 ? null
                 : () async {
-                    final success = await vm.submitRegister();
-                    if (success) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => const NavigationShell(),
-                        ),
-                        (_) => false,
-                      );
+                    final userData = await vm.submitRegister();
+                    if (userData != null) {
+                      debugPrint("📌 Register screen received user data:");
+                      debugPrint("   - First Name: ${userData.firstname}");
+                      debugPrint("   - Last Name: ${userData.lastname}");
+                      // Set user data in UserViewModel before navigation
+                      if (context.mounted) {
+                        context.read<UserViewModel>().setUserData(userData);
+                        debugPrint("✅ User data set in UserViewModel");
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => const NavigationShell(),
+                          ),
+                          (_) => false,
+                        );
+                      }
                     }
                   },
             text: vm.isLoading ? "Verifying..." : "Register",

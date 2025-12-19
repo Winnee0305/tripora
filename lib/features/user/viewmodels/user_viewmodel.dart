@@ -19,6 +19,15 @@ class UserViewModel extends ChangeNotifier {
 
   UserData? get user => _user;
 
+  /// Sets user data directly (used for newly registered users to avoid DB fetch delay)
+  void setUserData(UserData userData) {
+    _user = userData;
+    debugPrint(
+      "✅ User data set directly: ${_user?.firstname} ${_user?.lastname}",
+    );
+    notifyListeners();
+  }
+
   /// Loads the user profile and triggers image preloading separately
   Future<void> loadUser(BuildContext context) async {
     if (_userRepo.idUidEmpty) return;

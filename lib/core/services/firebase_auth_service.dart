@@ -133,6 +133,11 @@ class AuthService {
           });
 
       debugPrint("✅ User record created in Firestore for $username");
+    } on FirebaseException catch (e) {
+      debugPrint(
+        "❌ Firebase error creating user record: ${e.code} - ${e.message}",
+      );
+      rethrow;
     } catch (e) {
       debugPrint("❌ Failed to create Firestore user record: $e");
       rethrow;

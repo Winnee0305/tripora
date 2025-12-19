@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/services/firebase_auth_service.dart';
 import 'package:tripora/core/utils/auth_validators.dart';
 import 'package:tripora/features/auth/viewmodels/auth_form_viewmodel.dart';
@@ -162,9 +163,9 @@ class RegisterViewModel extends AuthFormViewModel {
   }
 
   // ---- Register ----
-  Future<bool> submitRegister() async {
+  Future<UserData?> submitRegister() async {
     final allValid = runValidationAndTouchAll();
-    if (!allValid) return false;
+    if (!allValid) return null;
 
     setLoading(true);
     setAuthError(null);
@@ -175,7 +176,7 @@ class RegisterViewModel extends AuthFormViewModel {
       if (!isUnique) {
         setAuthError("Username already taken. Please choose another one.");
         debugPrint("⚠️ Username '$_username' is already used.");
-        return false;
+        return null;
       }
 
       // Create Firebase Auth account
@@ -189,7 +190,9 @@ class RegisterViewModel extends AuthFormViewModel {
       // Update display name in Firebase Auth
       await authService.value.updateUsername(username: _username);
 
-      // Create Firestore user record
+      // ✅ Create Firestore user record BEFORE signing in
+      // This ensures the full profile is written before auth state changes
+      debugPrint("📝 Creating Firestore user record for UID: $uid");
       await authService.value.createUserRecord(
         uid: uid,
         firstname: _firstname,
@@ -200,21 +203,57 @@ class RegisterViewModel extends AuthFormViewModel {
         dateOfBirth: _dateOfBirth,
         nationality: _nationality,
       );
+      debugPrint("✅ Firestore user record created successfully");
 
-      // Wait for Firestore to propagate the document
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Wait for Firestore to propagate
+      debugPrint("⏳ Waiting for Firestore document to be available...");
+      await Future.delayed(const Duration(milliseconds: 1500));
 
-      debugPrint("✅ Registration success for user: $_username");
+      // Verify the document was created
+      final userDoc = await authService.value.firebaseFirestore
+          .collection('users')
+          .doc(uid)
+          .get();
+      if (!userDoc.exists) {
+        throw Exception("User document was not created in Firestore");
+      }
+      debugPrint("✅ User document verified in Firestore");
+
+      // Now sign in the user AFTER document is confirmed
+      debugPrint("🔐 Signing in user...");
       await authService.value.signIn(email: _email, password: _password);
-      return true;
+      debugPrint("✅ User authenticated successfully");
+
+      // Create UserData object to return
+      final userData = UserData(
+        uid: uid,
+        firstname: _firstname,
+        lastname: _lastname,
+        username: _username,
+        email: _email,
+        gender: _gender,
+        dateOfBirth: _dateOfBirth,
+        nationality: _nationality,
+        profileImageUrl: '',
+        createdAt: DateTime.now(),
+      );
+
+      debugPrint("✅ UserData object created:");
+      debugPrint("   - UID: ${userData.uid}");
+      debugPrint("   - First Name: ${userData.firstname}");
+      debugPrint("   - Last Name: ${userData.lastname}");
+      debugPrint("   - Username: ${userData.username}");
+      debugPrint("   - Email: ${userData.email}");
+      debugPrint("✅ Registration success for user: $_username");
+      return userData;
     } on FirebaseAuthException catch (e) {
       setAuthError(e.message ?? "Registration failed. Please try again.");
       debugPrint("❌ FirebaseAuthException: ${e.code} — ${e.message}");
-      return false;
+      return null;
     } catch (e) {
       setAuthError("An unexpected error occurred. Please try again.");
       debugPrint("❌ Unknown registration error: $e");
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }

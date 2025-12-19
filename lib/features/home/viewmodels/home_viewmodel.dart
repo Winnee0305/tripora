@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tripora/features/feedback/tam_response_to_csv.dart';
 import 'package:tripora/features/home/viewmodels/for_you_viewmodel.dart';
 
 /// ===========================
@@ -25,5 +26,6 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> refreshHome() async {
     await forYouViewModel.refreshRecommendations();
+    await exportTamResponsesToCsv();
   }
 }
