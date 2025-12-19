@@ -84,6 +84,7 @@ lib/
 - Firebase account
 - Google Places API key
 - Google Maps API key
+- Multi-AI Agent Backend
 
 ### Installation
 
@@ -233,6 +234,7 @@ dart format lib/
 
 - [System Architecture](docs/architecture.md) - High-level system design
 - [Flight Autocomplete Setup](docs/flight_autocomplete_setup.md) - Flight API configuration
+- [Multi-Itinerary Agent](https://github.com/Winnee0305/multi-ai-agent-itinerary-engine) - AI agent for generating multi-day itineraries
 
 ## 🔐 Firebase Setup
 
