@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:tripora/core/models/user_data.dart';
 import 'package:tripora/core/reusable_widgets/app_sticky_header.dart';
 import 'package:tripora/core/services/firebase_firestore_service.dart';
+import 'package:tripora/core/theme/app_text_style.dart';
 import 'package:tripora/features/settings/viewmodels/settings_viewmodel.dart';
 import 'package:tripora/features/settings/views/widgets/settings_tile.dart';
 import 'package:tripora/features/settings/views/account_page.dart';
+import 'package:tripora/features/settings/views/disclaimer_page.dart';
 import 'package:tripora/features/user/viewmodels/user_viewmodel.dart';
 import 'package:tripora/features/feedback/views/tam_form.dart';
 import 'package:tripora/features/feedback/viewmodels/tam_viewmodel.dart';
@@ -67,23 +69,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     const SizedBox(height: 12),
 
-                    SettingsTile(
-                      icon: Icons.notifications,
-                      title: 'Notification settings',
-                      trailing: Switch(
-                        value: settingsVm.notifications,
-                        onChanged: (v) => settingsVm.toggleNotifications(v),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    SettingsTile(
-                      icon: Icons.tune,
-                      title: 'User preferences',
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-
                     Stack(
                       children: [
                         SettingsTile(
@@ -137,6 +122,20 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                           ),
                       ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    SettingsTile(
+                      icon: Icons.info_outline,
+                      title: 'Disclaimer',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DisclaimerPage(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 26),
                   ],
@@ -195,6 +194,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     ); // go back to root, and allow AuthLayout to handle redirection
                   }
                 },
+              ),
+            ),
+            Text(
+              "Copyright © 2025 Tripora. All rights reserved.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: ManropeFontWeight.light,
               ),
             ),
           ],
